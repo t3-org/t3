@@ -1,0 +1,48 @@
+####################
+# Hexa
+####################
+[err_internal_error]
+other = "occured internal error (:"
+
+[err_invalid_id]
+other = "ID value is invalid"
+
+
+####################
+# Hexa Echo
+####################
+
+[err_missing_jwt_token]
+other = "missing or malformed jwt token (dont forget 'Bearer' prefix)."
+
+[err_invalid_or_expired_jwt]
+other = "invalida or expired authorization token"
+
+[err_user_must_be_guest]
+other = "user must be guest to access to this API"
+
+[err_user_must_authenticate]
+other = "user must authenticate to access to this API"
+
+[err_refresh_token_is_empty]
+other = "refresh token is empty"
+
+[err_invalid_refresh_token]
+other = "refresh token is invalid"
+
+[err_unknown_error]
+other = "occured internal error (:"
+
+[route_not_found]
+other="Route not found"
+
+[err_route_available_in_debug_mode]
+other = "This route is avaiable just in debug mode!"
+
+
+#####################
+#  ozzo-vcomplement
+#####################
+[err_invalid_input_data]
+other = "your input data is invalid"
+

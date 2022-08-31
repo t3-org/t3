@@ -1,0 +1,26 @@
+####################
+# Lab
+####################
+[pong]
+other = "pong"
+
+#######################
+# identity messages
+#######################
+[user_created]
+other = "user created"
+
+
+####################
+# phone verification
+####################
+[success_set_phone_and_send_verification_code]
+other = "Phone set successfully, we will sms the verification code for you"
+
+####################
+# Email verification
+####################
+[success_set_email_and_send_verification_code]
+other = "Email set successfully, we will send the verification code to your email"
+
+

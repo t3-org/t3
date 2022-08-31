@@ -1,0 +1,33 @@
+.idea/
+.DS_Store
+/lab
+/tmp
+/build
+
+
+.env
+# Project level config file.
+config.yaml
+config.*.yaml
+!config.example.yaml
+
+# Add http-client private env data
+requests.http
+*.tmp.http
+http-client.private.env.json
+
+# files contains changed apps from specific commit(we use that script in our CI).
+.changed_files
+.changed_apps
+
+# Private documents.
+docs/api/private/
+docs/dev/private/
+# Compiled test files
+*.test
+
+# Coverage output files
+coverage.txt
+coverage.html
+
+TODOs.md

@@ -1,0 +1,15 @@
+.idea
+.env
+
+# lab directories
+/lab
+/cmd/lab
+# Compiled test files
+*.test
+
+# Coverage output files
+coverage.txt
+coverage.html
+
+# Docs
+docs/private

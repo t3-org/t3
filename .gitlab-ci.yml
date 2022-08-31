@@ -1,0 +1,82 @@
+variables:
+     PROJECT_NAME:   sso
+     PROJECT_NAME_DOC:   sso-doc
+     DOCKER_REGISTRY: nexus.barkat.ir:7071
+     DOCKER_TLS_CERTDIR: ""
+     IMAGE: $DOCKER_REGISTRY/${PROJECT_NAME}:${CI_COMMIT_SHORT_SHA}
+
+stages:
+     - build
+     - build-doc
+     - stage
+     - production
+
+build-image:
+     tags:
+         - deploy-shell
+     stage: build
+     before_script:
+         - echo $CI_REGISTRY_PASSWORD
+         - echo $DOCKER_REGISTRY
+         - echo $CI_REGISTRY_PASSWORD | docker login --username barkatuser --password-stdin $DOCKER_REGISTRY
+
+     script:
+         - docker build --tag $PROJECT_NAME:${CI_COMMIT_SHORT_SHA}  .
+         - docker tag $PROJECT_NAME:${CI_COMMIT_SHORT_SHA} $DOCKER_REGISTRY/${PROJECT_NAME}:${CI_COMMIT_SHORT_SHA}
+         - docker push $DOCKER_REGISTRY/${PROJECT_NAME}:${CI_COMMIT_SHORT_SHA}
+     only:
+         refs:
+             - master
+             - develop
+             - main
+
+build-image-doc:
+     tags:
+         - deploy-shell
+     stage: build-doc
+     before_script:
+         - echo $CI_REGISTRY_PASSWORD
+         - echo $DOCKER_REGISTRY
+         - echo $CI_REGISTRY_PASSWORD | docker login --username barkatuser --password-stdin $DOCKER_REGISTRY
+
+     script:
+         - docker build --tag $PROJECT_NAME_DOC:${CI_COMMIT_SHORT_SHA}  docs/general
+         - docker tag $PROJECT_NAME_DOC:${CI_COMMIT_SHORT_SHA} $DOCKER_REGISTRY/$PROJECT_NAME_DOC:${CI_COMMIT_SHORT_SHA}
+         - docker push $DOCKER_REGISTRY/$PROJECT_NAME_DOC:${CI_COMMIT_SHORT_SHA}
+     only:
+       changes:
+         - docs/general/*
+
+
+deploy_stage:
+     tags:
+         - deploy-ssh-stage
+     stage: stage
+     before_script:
+         - whoami
+     script:
+         - echo "Deploy project on production namespace"
+         - echo ${IMAGE}
+         - echo ${PROJECT_NAME} ${IMAGE} 
+         - /home/stage/script.sh  ${IMAGE} ${PROJECT_NAME}
+     only:
+         refs:
+             - develop
+             - main
+
+
+deploy_production:
+     tags: 
+         - deploy-ssh-production
+     stage: production
+     before_script:
+         - whoami
+
+     script:
+         - echo "Deploy project on production namespace"
+         - echo ${IMAGE}
+         - echo ${PROJECT_NAME} ${IMAGE} 
+         - /home/production/script.sh  ${IMAGE} ${PROJECT_NAME}
+     only:
+         refs:
+             - master
