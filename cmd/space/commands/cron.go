@@ -72,6 +72,6 @@ func runCron(o *cmdOpts, cmd *cobra.Command, args []string) error {
 		return tracer.Trace(err)
 	}
 
-	app.Banner("Shield cron jobs")
+	app.Banner("Space cron jobs")
 	return tracer.Trace(cronJobs.Run())
 }

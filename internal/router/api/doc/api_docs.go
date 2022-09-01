@@ -1,11 +1,11 @@
 // Package doc.
 //
-// Shield API docs
+// Space API docs
 //
 // Terms Of Service:
 //
 //     Schemes: http, https
-//     Host: shield.ir
+//     Host: space.app
 //     BasePath:
 //     Version: 0.1.0
 //

@@ -1,7 +1,7 @@
 services:
   prometheus:
     image: prom/prometheus:v2.27.1
-    container_name: shield-prometheus
+    container_name: app-prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     ports:
@@ -12,7 +12,7 @@ services:
       - prom_data:/prometheus
   grafana:
     image: grafana/grafana:7.5.7
-    container_name: shield-grafana
+    container_name: app-grafana
     ports:
       - 3000:3000
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
       - ./grafana:/etc/grafana/provisioning/datasources
   jaeger:
     image: jaegertracing/all-in-one:1.26
-    container_name: shield-jaeger
+    container_name: app-jaeger
     ports:
       - 5775:5775
       - 6831:6831

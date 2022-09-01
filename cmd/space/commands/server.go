@@ -137,6 +137,6 @@ func serverCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 	}
 
 	// Start server
-	app.Banner("Shield")
+	app.Banner("Space")
 	return tracer.Trace(e.Run())
 }

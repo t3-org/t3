@@ -20,20 +20,20 @@ import (
 type DB struct {
 	// Driver specifies what type of DB should we use.
 	// It could be either postgres or mysql.
-	Driver string
+	Driver string `json:"driver" mapstructure:"driver"`
 	// DataSource is the DB url.
 	// For postgres it's as following:
 	// postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
 	// e.g., postgres://postgres:123456@127.0.0.1:5432/dummy
-	DataSource string
+	DataSource string `json:"data_source" mapstructure:"data_source"`
 
-	MaxOpenConns                int
-	MaxIdleConns                int
-	ConnMaxIdleTimeMilliseconds int
-	ConnMaxLifetimeMilliseconds int
+	MaxOpenConns                int `json:"max_open_conns" mapstructure:"max_open_conns"`
+	MaxIdleConns                int `json:"max_idle_conns" mapstructure:"max_idle_conns"`
+	ConnMaxIdleTimeMilliseconds int `json:"conn_max_idle_time_milliseconds" mapstructure:"conn_max_idle_time_milliseconds"`
+	ConnMaxLifetimeMilliseconds int `json:"conn_max_lifetime_milliseconds" mapstructure:"conn_max_lifetime_milliseconds"`
 
-	// QueryTimeoutMilliseconds          int // TODO: apply query timeout if needed.
-	MigrationsStatementTimeoutSeconds int
+	// QueryTimeoutMilliseconds          int `json:"query_timeout_milliseconds" mapstructure:"query_timeout_milliseconds"` // TODO: apply query timeout if needed.
+	MigrationsStatementTimeoutSeconds int `json:"migrations_statement_timeout_seconds" mapstructure:"migrations_statement_timeout_seconds"`
 }
 
 func (s DB) ConnMaxLifetime() time.Duration {

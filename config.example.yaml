@@ -1,21 +1,26 @@
-app_name: "Shield"
-environment: debug
-initialize_admin_phone: "+989343579396"
+app_name: "Space"
+instance_name: "single_local"
+environment: development
 debug: true
 port: 4000
-db_name: shield
-db_username: root
-db_password: 12345
-db_host: localhost
-db_port: 27017
-mongo_auth_source: admin
-mongo_enable_log_monitor: false
-probe_server_address: ":11000" # Change prometheus endpoint in your prometheus server configs if you changed this address.
+db:
+  driver: postgres
+  data_source: postgres://root:12345@localhost/space?sslmode=disable&connect_timeout=10&binary_parameters=yes
+  max_open_conns: 300 # unlimited.
+  max_idle_conns: 20
+  conn_max_idle_time_milliseconds: 300000
+  conn_max_lifetime_milliseconds: 3600000 # one hour.
+  migrations_statement_timeout_seconds: 100000
+
+probe_server_address: ":11000"
 open_telemetry:
   tracing:
-    noop_tracer: true
+    noop_tracer: false # set true to disable jaeger
+    jaeger_addr: "http://localhost:14268/api/traces"
+    always_sample: true # in production set to false.
   metric:
-    enabled: false
+    enabled: true
+
 log_stack:
   - printer
 sentry_environment: development
@@ -36,84 +41,19 @@ auth_token_cookie:
   path: /
   http_only: true
   secure: false
+  same_site: none
 csrf_cookie:
   name: csrf_token
   max_age: 2000
   path: /
   http_only: true
   secure: false
-
-otp_expiry_seconds: 120
-otp_time_window_minutes: 20
-otp_max_count_per_window: 5
-sms_driver: log # Available values: log, kavenegar
-kavenegar_api_key:
-kavenegar_verification_template: barekat
-oauth_server:
-  iss: "https://shield.local"
-  force_https: false
-  encryption_key: "32bitKeyWhichIsVerySecureAndGood"
-  private_key_path: "./testdata/keys/sample_key"
-  public_key_path: "./sample_key.pub.pem"
-  kid: shield_primary_key
-  id_token_expires_in: 86400
-  authorization_code_length: 10
-  client_secret_length: 30
-  err_redirect_uri: "https://shield.app/oauth-err"
-  login_url: "shield.local:4000/api/v1/lab/msg"
-  login_callback_parameter: "next"
-  access_token_length: 30
-  refresh_token_length: 30
-
-oauth_client:
-  client_id: "{put value here}"
-  client_secret: "{put value here}"
-
-shield_service_id: "{put the shield itself service's id here}"
+  same_site: none
 
 redis_address: "127.0.0.1:6379"
-login_rate_limit:
-  tokens: 5
-  interval_seconds: 6
 
-ldap:
+cache:
   enabled: true
-  url: "ldap://localhost:389"
-  bind_dn: "cn=admin,dc=example,dc=org"
-  bind_password: "admin"
-  base_dn: "ou=people,dc=example,dc=org"
-  user_filter: "(objectClass=inetOrgPerson)" # %s is the user's username.
-  id_attr: "entryUUID"
-  username_attr: "uid"
-  firstname_attr: "givenName"
-  lastname_attr: "sn"
-  phone_attr: "telephoneNumber"
-  lsat_update_attr: "modifytimestamp" # In active directory this field could be "whenChanged"
-  sync_batch_size: 50
-  sync_schedule: "* */1 * * *" # Every hour
-
-  # Active directory config example
-  #ldap:
-  #  enabled: true
-  #  url: "ldap://localhost:389"
-  #  bind_dn: "cn=shield,ou=service-account,dc=b,dc=example,dc=com"
-  #  bind_password: "{bind password}"
-  #  base_dn: "dc=b,dc,example,dc=com"
-  #  user_filter: "(objectClass=user)"
-  #  id_attr: "objectGUID"
-  #  username_attr: "userPrincipalName"
-  #  firstname_attr: "givenName"
-  #  lastname_attr: "sn"
-  #  phone_attr: "telephoneNumber"
-  #  lsat_update_attr: "whenChanged"
-  #  sync_batch_size: 50
-  #  sync_schedule: "* */1 * * *"
-
-s3:
-  name: "public"
-  endpoint: "localhost:9000"
-  access_key_id: admin
-  secret_key: 12345678
-  secure: false
-  bucket: shield
-  path_prefix: p
+  redis:
+    prefix: sc_ #sc = space cache
+    default_ttl_seconds: 1800

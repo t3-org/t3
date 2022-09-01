@@ -64,6 +64,6 @@ func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
 		return tracer.Trace(err)
 	}
 
-	app.Banner("Shield worker")
+	app.Banner("Space worker")
 	return tracer.Trace(worker.Run())
 }

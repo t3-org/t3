@@ -14,7 +14,7 @@ func RegisterCronJobs(crons hjob.CronJobs, sp base.ServiceProvider, a app.App) e
 	cfg := sp.Config().(*config.Config)
 	_, _ = res, cfg
 	err := gutil.AnyErr(
-	//crons.Register(cfg.LDAP.SyncSchedule, hjob.NewCronJob("shield.user.sync_ldap_users"), res.SyncLdapUsers),
+	//crons.Register(cfg.LDAP.SyncSchedule, hjob.NewCronJob("space.user.sync_ldap_users"), res.SyncLdapUsers),
 
 	// Register other jobs here.
 	)

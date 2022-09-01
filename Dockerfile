@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -o built/app cmd/shield/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -o built/app cmd/space/main.go
 
 FROM golang:1.18.4-alpine
 

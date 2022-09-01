@@ -19,7 +19,7 @@ var (
 //--------------------------------
 
 var (
-	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "shield.system.property_not_found")
+	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "space.system.property_not_found")
 )
 
 //--------------------------------

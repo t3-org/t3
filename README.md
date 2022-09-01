@@ -1,27 +1,17 @@
-Shield API Implemented using Golang.
+Space is an example project created by Hexa next gen.
 
 __Prerequisites__
 
-- Redis
-- MongoDB
+- Postgres
 
 ### How to run the project
 
-- dependencies: monogDB, redis, minio, ldap(optional)
 - generate a config file: `cp config.example.yaml config.yaml`
 - Update config values.
-- Set proper minio configs:
-
-```bash
- # Assume the alias name is "shield-local"
-mc mb shield-local/shield/p # for public files
-mc policy set download shield-local/shield/p
-  ```
-
 - Run the server:
 
 ```bash
-  go run ./cmd/shield/main.go server listen
+  go run ./cmd/space/main.go server listen
 ```
 
 ### How to update docs?
@@ -37,11 +27,11 @@ yarn --cwd ./docs/general install
 ### How to deploy docs using Docker?
 
 - build docs: `make build-docs`.
-- build the image: `docker build -t shield-docs -f ./docs/general/Dockerfile ./docs/general`
+- build the image: `docker build -t space-docs -f ./docs/general/Dockerfile ./docs/general`
 - Use the image in your server. To run it locally run the following command:
 
 ```bash
-docker run --rm -p 8080:80 shield-docs
+docker run --rm -p 8080:80 space-docs
 # and then open localhost:8080 on your browser.
 ```
 
@@ -138,36 +128,9 @@ open_telemetry:
     always_sample: true # in production set to false.
 ```
 
-### How to enable ldap in local env:
-
-- run `docker-compose up -d`
-
-- LDAP seed file is: `testdata/ldap_bootstrap.ldif` which containers multiple users.
-
-- All LDAP users password are: `12345`
-
-- When you import records, LDAP will generates new `entryUUID` field for them. It's the field that we use, to fetch LDAP
-  records, we keep it in our database, so when you import LDAP users next time, you need to set
-  `entryUUID` field for the user that you want to use to login for testing purpose (change this value manually on DB in
-  your dev environment)
-
-- run Shield.
-
 ### Deployment notes
 
 - To run the app's server, run `{build_app} server listen` command.
-- At first time run , the `shield_service_id`, `oauth_client.client_id` and `oauth_client.client_secret` should be
-  empty.
-- Put the app's config file in `/etc/shield/config.yaml` path.
-- Run the server (deploy the app)
-- To get the shield service id, oauth client id and the secret run following command in the app's container:
-
-```bash
-{built_app} oauth client info shield
-```
-
-- Put the `shield_service_id`, `oauth_client.client_id` and `oauth_client.client_secret` in the config file and restart
-  the app.
 - liveness, readiness endpoints:
 
 ```http request
@@ -177,18 +140,3 @@ http://{probe_server_address}/live
 // Readiness
 http://{probe_server_address}/ready
 ```
-
-- To just run a simple LDAP server without docker-compose file, run following command:
-
-```bash
-docker run \
-        --volume "$(pwd)/testdata/ldap_bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/bootstrap.ldif" \
-        osixia/openldap:stable --copy-service
-```
-
-- To generate `claims` param in `authorization_code`, at the `url` which redirect the user to the Shield:
-
-```bash
-echo -n '{"id_token":{"name":null,"given_name":null}}' | jq -sRr @uri
-```
-

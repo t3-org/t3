@@ -3,9 +3,9 @@ package commands
 import "github.com/spf13/cobra"
 
 var rootCmd = &cobra.Command{
-	Use:   "shield",
-	Short: "Shield IAM",
-	Long:  "Shield IAM",
+	Use:   "Space",
+	Short: "Space",
+	Long:  "Space",
 }
 
 func Run() error {
