@@ -31,7 +31,7 @@ func serverCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 		return tracer.Trace(err)
 	}
 
-	if err := runProbeServer(o.SP); err != nil {
+	if err := runProbeServer(o.SP.ProbeServer(), o.SP.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 

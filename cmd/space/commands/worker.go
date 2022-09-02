@@ -32,7 +32,7 @@ func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
 	}
 
 	// Run healthChecker server:
-	if err := runProbeServer(o.SP); err != nil {
+	if err := runProbeServer(o.SP.ProbeServer(), o.SP.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 

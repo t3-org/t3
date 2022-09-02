@@ -102,5 +102,3 @@ func NewServiceProvider(r hexa.ServiceRegistry) ServiceProvider {
 }
 
 var _ ServiceProvider = &serviceProvider{}
-
-// TODO: Remove old codes in the cmd/ dir that we used to created some services (like app,store,...) and use providers.
