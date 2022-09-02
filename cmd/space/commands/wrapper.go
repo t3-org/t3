@@ -11,10 +11,10 @@ import (
 	"github.com/spf13/cobra"
 	"space.org/space/infra"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/provider"
+	"space.org/space/internal/registry/services"
 )
 
 type cmdOpts struct {
@@ -51,14 +51,14 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 
 func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error {
 	return withApp(func(o *cmdOpts, cmd *cobra.Command, args []string) error {
-		services := base.NewServices(o.Registry)
+		s := services.New(o.Registry)
 		u := infra.NewServiceUser(infra.UserIdCommandLine)
 		ctx := hexa.NewContext(nil, hexa.ContextParams{
 			CorrelationId:  gutil.UUID(),
 			Locale:         "en-US",
 			User:           u,
-			BaseLogger:     services.Logger(),
-			BaseTranslator: services.Translator(),
+			BaseLogger:     s.Logger(),
+			BaseTranslator: s.Translator(),
 		})
 		return cmdF(ctx, o, cmd, args)
 	})

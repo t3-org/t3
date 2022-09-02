@@ -4,10 +4,10 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/htel"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
 	"space.org/space/internal/registry"
+	"space.org/space/internal/registry/services"
 )
 
 // appCore is implementation of the App
@@ -20,9 +20,9 @@ type appCore struct {
 
 // New returns new instance of the App
 func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
-	services := base.NewServices(r)
+	s := services.New(r)
 	return &appCore{
-		cfg:   services.Config().(*config.Config),
+		cfg:   s.Config().(*config.Config),
 		store: store,
 	}, nil
 }

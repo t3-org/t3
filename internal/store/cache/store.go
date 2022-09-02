@@ -6,8 +6,8 @@ import (
 	"github.com/kamva/hexa"
 	hcache "github.com/kamva/hexa-cache"
 	"github.com/kamva/hexa/hlog"
-	"space.org/space/internal/base"
 	"space.org/space/internal/model"
+	"space.org/space/internal/registry/services"
 )
 
 type CacheStore struct {
@@ -29,7 +29,7 @@ type storesList struct {
 
 func New(r hexa.ServiceRegistry, next model.Store) *CacheStore {
 	cs := &CacheStore{Store: next}
-	cp := base.NewServices(r).CacheProvider()
+	cp := services.New(r).CacheProvider()
 	_ = cp
 
 	cs.stores = &storesList{

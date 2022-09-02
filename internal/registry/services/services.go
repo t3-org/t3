@@ -1,4 +1,4 @@
-package base
+package services
 
 import (
 	"github.com/kamva/hexa"
@@ -95,7 +95,7 @@ func (s *services) Worker() hjob.Worker {
 	return srv
 }
 
-func NewServices(r hexa.ServiceRegistry) Services {
+func New(r hexa.ServiceRegistry) Services {
 	return &services{r}
 }
 

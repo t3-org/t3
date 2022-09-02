@@ -38,10 +38,10 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.opentelemetry.io/otel/trace"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
 	"space.org/space/internal/registry"
+	"space.org/space/internal/registry/services"
 	"space.org/space/internal/router/api"
 	"space.org/space/internal/router/crons"
 	"space.org/space/internal/router/jobs"
@@ -268,20 +268,20 @@ func CacheProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	services := base.NewServices(r)
+	svcs := services.New(r)
 	var s model.Store
 
-	s, err := sqlstore.New(services.Logger(), cfg.DB)
+	s, err := sqlstore.New(svcs.Logger(), cfg.DB)
 	if err != nil {
 		hlog.Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
 		return tracer.Trace(err)
 	}
 
-	if services.CacheProvider() != nil { // Add the cache layer.
+	if svcs.CacheProvider() != nil { // Add the cache layer.
 		s = cachestore.New(r, s)
 	}
 
-	s = store.NewTracingLayerStore("sql", services.OpenTelemetry().TracerProvider(), s)
+	s = store.NewTracingLayerStore("sql", svcs.OpenTelemetry().TracerProvider(), s)
 	r.Register(registry.ServiceNameStore, s)
 
 	// Set global DB store on the model package:
@@ -304,7 +304,7 @@ func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
 }
 
 func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	services := base.NewServices(r)
+	s := services.New(r)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	u, err := hexa.NewGuest().SetMeta(hexa.UserMetaKeyName, "cron_job")
@@ -317,8 +317,8 @@ func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 			Locale:         "en",
 			User:           u,
 			CorrelationId:  gutil.UUID(),
-			BaseLogger:     services.Logger(),
-			BaseTranslator: services.Translator(),
+			BaseLogger:     s.Logger(),
+			BaseTranslator: s.Translator(),
 		})
 	}
 
@@ -333,14 +333,14 @@ func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
-	services := base.NewServices(r)
+	s := services.New(r)
 	metricsCfg := hecho.MetricsConfig{
-		MeterProvider: services.OpenTelemetry().MeterProvider(),
+		MeterProvider: s.OpenTelemetry().MeterProvider(),
 	}
 
 	tracingCfg := hecho.TracingConfig{
 		Propagator:     propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}),
-		TracerProvider: services.OpenTelemetry().TracerProvider(),
+		TracerProvider: s.OpenTelemetry().TracerProvider(),
 		ServerName:     cfg.ServiceName(),
 	}
 
@@ -354,9 +354,9 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	e.Server.MaxHeaderBytes = cfg.MaxHeaderSizeKb << 10 // kb to bytes
 
 	e.HideBanner = true
-	e.Logger = hecho.HexaToEchoLogger(services.Logger(), cfg.EchoLogLevel)
+	e.Logger = hecho.HexaToEchoLogger(s.Logger(), cfg.EchoLogLevel)
 	e.Debug = cfg.Debug
-	e.HTTPErrorHandler = hecho.HTTPErrorHandler(services.Logger(), services.Translator(), e.Debug)
+	e.HTTPErrorHandler = hecho.HTTPErrorHandler(s.Logger(), s.Translator(), e.Debug)
 
 	//e.Use(hecho.LimitBodySize(cfg.MaxBodySizeKb << 10))
 
@@ -395,7 +395,7 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	//e.Use(hecho.CurrentUserBySub(a.UserFinder()))
 
 	// HexaContext set hexa context on each request.
-	e.Use(hecho.HexaContext(services.Logger(), services.Translator()))
+	e.Use(hecho.HexaContext(s.Logger(), s.Translator()))
 
 	// SetContextLogger set the echo logger on each echo's context.
 	e.Use(hecho.SetContextLogger(cfg.EchoLogLevel))

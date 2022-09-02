@@ -4,9 +4,9 @@ import (
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/provider"
+	"space.org/space/internal/registry/services"
 )
 
 var serverCmd = &cobra.Command{
@@ -28,16 +28,16 @@ func init() {
 }
 
 func serverCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	services := base.NewServices(o.Registry)
+	s := services.New(o.Registry)
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
-	if err := runProbeServer(o.Registry, services.ProbeServer(), services.HealthReporter()); err != nil {
+	if err := runProbeServer(o.Registry, s.ProbeServer(), s.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 
 	// Start server
 	app.Banner("Space")
-	return tracer.Trace(services.HttpServer().Run())
+	return tracer.Trace(s.HttpServer().Run())
 }
