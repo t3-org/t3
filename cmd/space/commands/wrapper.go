@@ -14,12 +14,13 @@ import (
 	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
+	"space.org/space/internal/registry/provider"
 )
 
 type cmdOpts struct {
-	App app.App
-	SP  base.ServiceProvider
 	Cfg *config.Config
+	SP  base.ServiceProvider
+	App app.App
 }
 
 // WithAppHandler gets the app, service-provider and config as params to handle the command
@@ -30,17 +31,21 @@ type WithCtxHandler func(ctx context.Context, o *cmdOpts, cmd *cobra.Command, ar
 
 func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		a, sp, err := boot()
+		err := registry.ProvideServices(registry.Registry(), provider.Providers(registry.BaseServices()))
 		if err != nil {
 			return tracer.Trace(err)
 		}
+
+		sp := registry.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
+		a := registry.Service(registry.ServiceNameApp).(app.App)
+
 		cfg := sp.Config().(*config.Config)
 
 		timeout := time.Second * 30
 		go sr.ShutdownBySignals(registry.Registry(), timeout)
 		defer registry.Shutdown(timeout)
 
-		return cmdF(&cmdOpts{App: a, SP: sp, Cfg: cfg}, cmd, args)
+		return cmdF(&cmdOpts{Cfg: cfg, SP: sp, App: a}, cmd, args)
 	}
 }
 

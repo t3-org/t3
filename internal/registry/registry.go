@@ -24,3 +24,7 @@ func Shutdown(timeout time.Duration) error {
 	defer cancel()
 	return tracer.Trace(r.Shutdown(ctx))
 }
+
+func Service(name string) any {
+	return r.Service(name)
+}

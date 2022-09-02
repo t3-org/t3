@@ -1,17 +1,11 @@
 package commands
 
 import (
-	"github.com/hibiken/asynq"
-	"github.com/kamva/hexa"
-	hjob "github.com/kamva/hexa-job"
-	"github.com/kamva/hexa-job/hsynq"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
-	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
-	"space.org/space/internal/router/jobs"
+	"space.org/space/internal/registry/provider"
 )
 
 var workerCommand = &cobra.Command{
@@ -32,30 +26,8 @@ func init() {
 	workerCommand.AddCommand(workerRunCommand)
 }
 
-func bootWorker(cfg *config.Config, sp base.ServiceProvider, a app.App) (hjob.Worker, error) {
-	srv := asynq.NewServer(
-		cfg.AsynqConfig.RedisOpts(),
-		asynq.Config{
-			// Specify how many concurrent workers to use
-			Concurrency: cfg.AsynqConfig.WorkerConcurrency,
-			// Optionally specify multiple queues with different priority.
-			Queues: cfg.AsynqConfig.Queues(),
-		},
-	)
-
-	w := hsynq.NewWorker(srv, hexa.NewContextPropagator(sp.Logger(), sp.Translator()), hsynq.NewJsonTransformer())
-	if err := jobs.RegisterJobs(w, sp, a); err != nil {
-		return nil, tracer.Trace(err)
-	}
-	registry.Register(registry.WorkerService, w)
-	return w, nil
-}
-
 func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	a, sp, cfg := o.App, o.SP, o.Cfg
-
-	worker, err := bootWorker(cfg, sp, a)
-	if err != nil {
+	if err := registry.Provide(registry.Registry(), provider.WorkerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
@@ -65,5 +37,5 @@ func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
 	}
 
 	app.Banner("Space worker")
-	return tracer.Trace(worker.Run())
+	return tracer.Trace(o.SP.Worker().Run())
 }

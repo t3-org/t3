@@ -332,6 +332,8 @@ github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f h1:KFqa//EtrMjl5KhQwqo
 github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f/go.mod h1:+yeJ+Y3R35PgqbWDx9BecACSsOLC3gGQ/Ef5hre00ds=
 github.com/kamva/hexa v0.0.0-20220821213150-e401adf1fcc7 h1:tk5SjTgdTUD2IHF7Wx1r0l+0tY+bkrPJUZQreQzjyLU=
 github.com/kamva/hexa v0.0.0-20220821213150-e401adf1fcc7/go.mod h1:AJ/6TiObRVKfW5lHY33NF8Ms0cphMQQosiFZQCRzAm0=
+github.com/kamva/hexa v0.0.0-20220901204808-679bb5aa3911 h1:Qgz+BN4qK4u1YJMI8iH/08wOt0WsMk4H/Wo7c1bQYZk=
+github.com/kamva/hexa v0.0.0-20220901204808-679bb5aa3911/go.mod h1:AJ/6TiObRVKfW5lHY33NF8Ms0cphMQQosiFZQCRzAm0=
 github.com/kamva/hexa-arranger v0.0.0-20220821205736-ff39a38747c2 h1:TDFparjhAWdsy/YicBl2RNNTrpL61nSwWrfBMbNel7k=
 github.com/kamva/hexa-arranger v0.0.0-20220821205736-ff39a38747c2/go.mod h1:C/sbsyL9IKzfqknezJJT99Fkj2zw9GJXfI1KGtTZARM=
 github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086 h1:N3pastenFPwM/ugaJiRWXwMYqr13fOd7EzfnxaueA8k=

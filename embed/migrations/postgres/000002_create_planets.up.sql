@@ -9,6 +9,3 @@ CREATE TABLE IF NOT EXISTS planets
 
 create index if not exists idx_planets_created_at on planets (created_at);
 create index if not exists idx_planets_updated_at on planets (updated_at);
-
-
-
