@@ -20,9 +20,9 @@ type appCore struct {
 
 // New returns new instance of the App
 func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
-	sp := base.NewServiceProvider(r)
+	services := base.NewServices(r)
 	return &appCore{
-		cfg:   sp.Config().(*config.Config),
+		cfg:   services.Config().(*config.Config),
 		store: store,
 	}, nil
 }

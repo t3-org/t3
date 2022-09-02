@@ -28,16 +28,16 @@ func init() {
 }
 
 func serverCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	sp := base.NewServiceProvider(o.Registry)
+	services := base.NewServices(o.Registry)
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
-	if err := runProbeServer(o.Registry, sp.ProbeServer(), sp.HealthReporter()); err != nil {
+	if err := runProbeServer(o.Registry, services.ProbeServer(), services.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 
 	// Start server
 	app.Banner("Space")
-	return tracer.Trace(sp.HttpServer().Run())
+	return tracer.Trace(services.HttpServer().Run())
 }

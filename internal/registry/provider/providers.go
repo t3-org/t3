@@ -268,20 +268,20 @@ func CacheProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	sp := base.NewServiceProvider(r)
+	services := base.NewServices(r)
 	var s model.Store
 
-	s, err := sqlstore.New(sp.Logger(), cfg.DB)
+	s, err := sqlstore.New(services.Logger(), cfg.DB)
 	if err != nil {
 		hlog.Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
 		return tracer.Trace(err)
 	}
 
-	if sp.CacheProvider() != nil { // Add the cache layer.
-		s = cachestore.New(sp, s)
+	if services.CacheProvider() != nil { // Add the cache layer.
+		s = cachestore.New(r, s)
 	}
 
-	s = store.NewTracingLayerStore("sql", sp.OpenTelemetry().TracerProvider(), s)
+	s = store.NewTracingLayerStore("sql", services.OpenTelemetry().TracerProvider(), s)
 	r.Register(registry.ServiceNameStore, s)
 
 	// Set global DB store on the model package:
@@ -304,7 +304,7 @@ func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
 }
 
 func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	sp := base.NewServiceProvider(r)
+	services := base.NewServices(r)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	u, err := hexa.NewGuest().SetMeta(hexa.UserMetaKeyName, "cron_job")
@@ -317,8 +317,8 @@ func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 			Locale:         "en",
 			User:           u,
 			CorrelationId:  gutil.UUID(),
-			BaseLogger:     sp.Logger(),
-			BaseTranslator: sp.Translator(),
+			BaseLogger:     services.Logger(),
+			BaseTranslator: services.Translator(),
 		})
 	}
 
@@ -333,14 +333,14 @@ func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
-	sp := base.NewServiceProvider(r)
+	services := base.NewServices(r)
 	metricsCfg := hecho.MetricsConfig{
-		MeterProvider: sp.OpenTelemetry().MeterProvider(),
+		MeterProvider: services.OpenTelemetry().MeterProvider(),
 	}
 
 	tracingCfg := hecho.TracingConfig{
 		Propagator:     propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}),
-		TracerProvider: sp.OpenTelemetry().TracerProvider(),
+		TracerProvider: services.OpenTelemetry().TracerProvider(),
 		ServerName:     cfg.ServiceName(),
 	}
 
@@ -354,9 +354,9 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	e.Server.MaxHeaderBytes = cfg.MaxHeaderSizeKb << 10 // kb to bytes
 
 	e.HideBanner = true
-	e.Logger = hecho.HexaToEchoLogger(sp.Logger(), cfg.EchoLogLevel)
+	e.Logger = hecho.HexaToEchoLogger(services.Logger(), cfg.EchoLogLevel)
 	e.Debug = cfg.Debug
-	e.HTTPErrorHandler = hecho.HTTPErrorHandler(sp.Logger(), sp.Translator(), e.Debug)
+	e.HTTPErrorHandler = hecho.HTTPErrorHandler(services.Logger(), services.Translator(), e.Debug)
 
 	//e.Use(hecho.LimitBodySize(cfg.MaxBodySizeKb << 10))
 
@@ -395,7 +395,7 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	//e.Use(hecho.CurrentUserBySub(a.UserFinder()))
 
 	// HexaContext set hexa context on each request.
-	e.Use(hecho.HexaContext(sp.Logger(), sp.Translator()))
+	e.Use(hecho.HexaContext(services.Logger(), services.Translator()))
 
 	// SetContextLogger set the echo logger on each echo's context.
 	e.Use(hecho.SetContextLogger(cfg.EchoLogLevel))

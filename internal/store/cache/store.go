@@ -3,6 +3,7 @@ package cachestore
 import (
 	"errors"
 
+	"github.com/kamva/hexa"
 	hcache "github.com/kamva/hexa-cache"
 	"github.com/kamva/hexa/hlog"
 	"space.org/space/internal/base"
@@ -26,9 +27,9 @@ type storesList struct {
 
 // Add other methods to return cache store here.
 
-func New(sp base.ServiceProvider, next model.Store) *CacheStore {
+func New(r hexa.ServiceRegistry, next model.Store) *CacheStore {
 	cs := &CacheStore{Store: next}
-	cp := sp.CacheProvider()
+	cp := base.NewServices(r).CacheProvider()
 	_ = cp
 
 	cs.stores = &storesList{

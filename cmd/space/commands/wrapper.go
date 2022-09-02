@@ -32,7 +32,6 @@ type WithCtxHandler func(ctx context.Context, o *cmdOpts, cmd *cobra.Command, ar
 func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		r := sr.New()
-
 		err := registry.ProvideServices(r, provider.Providers(registry.BaseServices()))
 		if err != nil {
 			return tracer.Trace(err)
@@ -52,14 +51,14 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 
 func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error {
 	return withApp(func(o *cmdOpts, cmd *cobra.Command, args []string) error {
-		sp := base.NewServiceProvider(o.Registry)
+		services := base.NewServices(o.Registry)
 		u := infra.NewServiceUser(infra.UserIdCommandLine)
 		ctx := hexa.NewContext(nil, hexa.ContextParams{
 			CorrelationId:  gutil.UUID(),
 			Locale:         "en-US",
 			User:           u,
-			BaseLogger:     sp.Logger(),
-			BaseTranslator: sp.Translator(),
+			BaseLogger:     services.Logger(),
+			BaseTranslator: services.Translator(),
 		})
 		return cmdF(ctx, o, cmd, args)
 	})

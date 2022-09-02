@@ -5,12 +5,11 @@ import (
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
 	"space.org/space/internal/input"
 )
 
 func (api *API) registerPlanetRoutes() {
-	res := &planetResource{sp: api.SP, app: api.App}
+	res := &planetResource{app: api.App}
 	planets := api.API.Group("/planets")
 
 	planets.GET("/code/:code", res.GetByCode).Name = "planets::getByCode"
@@ -19,7 +18,6 @@ func (api *API) registerPlanetRoutes() {
 
 type planetResource struct {
 	Resource
-	sp  base.ServiceProvider
 	app app.App
 }
 

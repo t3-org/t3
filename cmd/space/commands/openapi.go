@@ -37,7 +37,7 @@ func init() {
 }
 
 func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	sp := base.NewServiceProvider(o.Registry)
+	services := base.NewServices(o.Registry)
 	cfg := o.Cfg
 
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
@@ -45,7 +45,7 @@ func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 	}
 
 	extractor := hechodoc.NewExtractor(hechodoc.ExtractorOptions{
-		Echo:                    sp.HttpServer().Echo,
+		Echo:                    services.HttpServer().Echo,
 		ExtractDestinationPath:  cfg.ApiDocExportFilePath(),
 		SingleRouteTemplatePath: cfg.ApiDocsRouteTemplatePath(),
 		Converter:               docsRouteNameConverter,
@@ -55,13 +55,13 @@ func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 }
 
 func oaTrimCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	sp := base.NewServiceProvider(o.Registry)
+	services := base.NewServices(o.Registry)
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
 	trimmer := hechodoc.NewTrimmer(hechodoc.TrimmerOptions{
-		Echo:                   sp.HttpServer().Echo,
+		Echo:                   services.HttpServer().Echo,
 		ExtractDestinationPath: o.Cfg.ApiDocExportFilePath(),
 	})
 

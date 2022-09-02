@@ -28,16 +28,16 @@ func init() {
 }
 
 func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	sp := base.NewServiceProvider(o.Registry)
+	services := base.NewServices(o.Registry)
 	if err := registry.Provide(o.Registry, provider.WorkerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
 	// Run healthChecker server:
-	if err := runProbeServer(o.Registry, sp.ProbeServer(), sp.HealthReporter()); err != nil {
+	if err := runProbeServer(o.Registry, services.ProbeServer(), services.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 
 	app.Banner("Space worker")
-	return tracer.Trace(sp.Worker().Run())
+	return tracer.Trace(services.Worker().Run())
 }

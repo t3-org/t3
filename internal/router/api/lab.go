@@ -6,11 +6,10 @@ import (
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/labstack/echo/v4"
 	"space.org/space/internal/app"
-	"space.org/space/internal/base"
 )
 
 func (api *API) registerLabRoutes() {
-	res := &labResource{app: api.App, e: api.Echo, sp: api.SP}
+	res := &labResource{app: api.App, e: api.Echo}
 	lab := api.API.Group("/lab")
 
 	lab.GET("/routes", res.Routes, api.Debug).Name = "lab::routes"
@@ -20,7 +19,6 @@ func (api *API) registerLabRoutes() {
 type labResource struct {
 	Resource
 	e   *echo.Echo
-	sp  base.ServiceProvider
 	app app.App
 }
 
