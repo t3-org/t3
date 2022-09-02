@@ -18,9 +18,9 @@ import (
 )
 
 type cmdOpts struct {
-	Cfg *config.Config
-	SP  base.ServiceProvider
-	App app.App
+	Registry hexa.ServiceRegistry
+	Cfg      *config.Config
+	App      app.App
 }
 
 // WithAppHandler gets the app, service-provider and config as params to handle the command
@@ -31,33 +31,35 @@ type WithCtxHandler func(ctx context.Context, o *cmdOpts, cmd *cobra.Command, ar
 
 func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		err := registry.ProvideServices(registry.Registry(), provider.Providers(registry.BaseServices()))
+		r := sr.New()
+
+		err := registry.ProvideServices(r, provider.Providers(registry.BaseServices()))
 		if err != nil {
 			return tracer.Trace(err)
 		}
 
-		sp := registry.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
-		a := registry.Service(registry.ServiceNameApp).(app.App)
-
-		cfg := sp.Config().(*config.Config)
-
 		timeout := time.Second * 30
-		go sr.ShutdownBySignals(registry.Registry(), timeout)
-		defer registry.Shutdown(timeout)
+		go sr.ShutdownBySignals(r, timeout)
+		defer registry.Shutdown(r, timeout)
 
-		return cmdF(&cmdOpts{Cfg: cfg, SP: sp, App: a}, cmd, args)
+		return cmdF(&cmdOpts{
+			Registry: r,
+			Cfg:      r.Service(registry.ServiceNameConfig).(*config.Config),
+			App:      r.Service(registry.ServiceNameApp).(app.App),
+		}, cmd, args)
 	}
 }
 
 func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error {
 	return withApp(func(o *cmdOpts, cmd *cobra.Command, args []string) error {
+		sp := base.NewServiceProvider(o.Registry)
 		u := infra.NewServiceUser(infra.UserIdCommandLine)
 		ctx := hexa.NewContext(nil, hexa.ContextParams{
 			CorrelationId:  gutil.UUID(),
 			Locale:         "en-US",
 			User:           u,
-			BaseLogger:     o.SP.Logger(),
-			BaseTranslator: o.SP.Translator(),
+			BaseLogger:     sp.Logger(),
+			BaseTranslator: sp.Translator(),
 		})
 		return cmdF(ctx, o, cmd, args)
 	})

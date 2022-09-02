@@ -9,6 +9,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/kamva/hexa"
+	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	_ "github.com/lib/pq"
 	"github.com/mattermost/morph"
@@ -17,7 +18,6 @@ import (
 	ps "github.com/mattermost/morph/drivers/postgres"
 	"github.com/mattermost/morph/sources/embedded"
 	appembed "space.org/space/embed"
-	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
 )
@@ -144,14 +144,15 @@ func (s *sqlStore) Shutdown(_ context.Context) error {
 }
 
 // New returns new instance of the store.NoSqlStore implementation.
-func New(sp base.ServiceProvider, o config.DB) (SqlStore, error) {
+func New(l hlog.Logger, o config.DB) (SqlStore, error) {
+
 	// Initiate DB connection
 	db, err := newConn(o)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	health := hexa.NewPingHealth(sp.Logger(), "database", db.PingContext, nil)
+	health := hexa.NewPingHealth(l, "database", db.PingContext, nil)
 	builder := sq.StatementBuilder.PlaceholderFormat(placeholder(o.Driver))
 
 	// Create the store.

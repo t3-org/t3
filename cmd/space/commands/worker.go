@@ -4,6 +4,7 @@ import (
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
 	"space.org/space/internal/app"
+	"space.org/space/internal/base"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/provider"
 )
@@ -27,15 +28,16 @@ func init() {
 }
 
 func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	if err := registry.Provide(registry.Registry(), provider.WorkerProvider); err != nil {
+	sp := base.NewServiceProvider(o.Registry)
+	if err := registry.Provide(o.Registry, provider.WorkerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
 	// Run healthChecker server:
-	if err := runProbeServer(o.SP.ProbeServer(), o.SP.HealthReporter()); err != nil {
+	if err := runProbeServer(o.Registry, sp.ProbeServer(), sp.HealthReporter()); err != nil {
 		return tracer.Trace(err)
 	}
 
 	app.Banner("Space worker")
-	return tracer.Trace(o.SP.Worker().Run())
+	return tracer.Trace(sp.Worker().Run())
 }

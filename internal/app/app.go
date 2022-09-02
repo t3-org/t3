@@ -1,10 +1,13 @@
 package app
 
 import (
+	"github.com/kamva/hexa"
+	"github.com/kamva/hexa/htel"
 	"github.com/kamva/tracer"
 	"space.org/space/internal/base"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
+	"space.org/space/internal/registry"
 )
 
 // appCore is implementation of the App
@@ -13,21 +16,20 @@ type appCore struct {
 
 	cfg   *config.Config
 	store model.Store
-	sp    base.ServiceProvider
 }
 
 // New returns new instance of the App
-func New(sp base.ServiceProvider, store model.Store) (App, error) {
+func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
+	sp := base.NewServiceProvider(r)
 	return &appCore{
 		cfg:   sp.Config().(*config.Config),
 		store: store,
-		sp:    sp,
 	}, nil
 }
 
 // NewWithAllLayers returns a new app with all needed layers like DB transaction layer,...
-func NewWithAllLayers(sp base.ServiceProvider, store model.Store) (App, error) {
-	a, err := New(sp, store)
+func NewWithAllLayers(r hexa.ServiceRegistry, store model.Store) (App, error) {
+	a, err := New(r, store)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -36,7 +38,7 @@ func NewWithAllLayers(sp base.ServiceProvider, store model.Store) (App, error) {
 	// check driver type and create new instance TX layer for that DB type.
 	//txLayer := NewSQLTxLayer(store, a)
 	//a.(*appCore).tx = txLayer
-	return NewTracingLayer(sp.OpenTelemetry().TracerProvider(), a), nil
+	return NewTracingLayer(r.Service(registry.ServiceNameOpenTelemetry).(htel.OpenTelemetry).TracerProvider(), a), nil
 }
 
 var _ App = &appCore{}

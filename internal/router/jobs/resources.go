@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"github.com/kamva/hexa"
 	"space.org/space/internal/app"
 	"space.org/space/internal/base"
 )
@@ -10,9 +11,8 @@ type Resources struct {
 	app app.App
 }
 
-func newResources(sp base.ServiceProvider, a app.App) *Resources {
+func newResources(_ hexa.ServiceRegistry, a app.App) *Resources {
 	return &Resources{
-		sp:  sp,
 		app: a,
 	}
 }

@@ -5,18 +5,17 @@ package registry
 // - store + app
 // - the service that we run in the cmd function(e.g., grpc server, event listener or workflow worker)
 const (
-	ServiceNameConfig          = "config"
-	ServiceNameServiceProvider = "service_provider"
-	ServiceNameLogger          = "logger"
-	ServiceNameTranslator      = "translator"
-	ServiceNameProbeServer     = "probe_server"
-	ServiceNameHealthReporter  = "health_reporter_service"
-	ServiceNameTracerProvider  = "tracer_provider"
-	ServiceNameMeterProvider   = "meter_provider"
-	ServiceNameOpenTelemetry   = "open_telemetry"
-	ServiceNamePrometheus      = "prometheus"
-	ServiceNameRedis           = "redis"
-	ServiceNameCacheProvider   = "cache_provider"
+	ServiceNameConfig         = "config"
+	ServiceNameLogger         = "logger"
+	ServiceNameTranslator     = "translator"
+	ServiceNameProbeServer    = "probe_server"
+	ServiceNameHealthReporter = "health_reporter_service"
+	ServiceNameTracerProvider = "tracer_provider"
+	ServiceNameMeterProvider  = "meter_provider"
+	ServiceNameOpenTelemetry  = "open_telemetry"
+	ServiceNamePrometheus     = "prometheus"
+	ServiceNameRedis          = "redis"
+	ServiceNameCacheProvider  = "cache_provider"
 
 	ServiceNameHttpServer = "http_server"
 	ServiceNameJobs       = "jobs"
@@ -32,7 +31,6 @@ const (
 func bootPriority() []string {
 	return []string{
 		ServiceNameConfig,
-		ServiceNameServiceProvider,
 		ServiceNameLogger,
 		ServiceNameTranslator,
 		ServiceNameHealthReporter,
@@ -55,7 +53,6 @@ func bootPriority() []string {
 func BaseServices() []string {
 	return []string{
 		ServiceNameConfig,
-		ServiceNameServiceProvider,
 		ServiceNameLogger,
 		ServiceNameTranslator,
 		ServiceNameProbeServer,

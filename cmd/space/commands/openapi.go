@@ -4,6 +4,7 @@ import (
 	"github.com/kamva/hexa-echo/hechodoc"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
+	"space.org/space/internal/base"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/provider"
 )
@@ -36,13 +37,15 @@ func init() {
 }
 
 func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
+	sp := base.NewServiceProvider(o.Registry)
 	cfg := o.Cfg
-	if err := registry.Provide(registry.Registry(), provider.HttpServerProvider); err != nil {
+
+	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
 	extractor := hechodoc.NewExtractor(hechodoc.ExtractorOptions{
-		Echo:                    o.SP.HttpServer().Echo,
+		Echo:                    sp.HttpServer().Echo,
 		ExtractDestinationPath:  cfg.ApiDocExportFilePath(),
 		SingleRouteTemplatePath: cfg.ApiDocsRouteTemplatePath(),
 		Converter:               docsRouteNameConverter,
@@ -52,14 +55,14 @@ func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 }
 
 func oaTrimCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
-	cfg := o.Cfg
-	if err := registry.Provide(registry.Registry(), provider.HttpServerProvider); err != nil {
+	sp := base.NewServiceProvider(o.Registry)
+	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)
 	}
 
 	trimmer := hechodoc.NewTrimmer(hechodoc.TrimmerOptions{
-		Echo:                   o.SP.HttpServer().Echo,
-		ExtractDestinationPath: cfg.ApiDocExportFilePath(),
+		Echo:                   sp.HttpServer().Echo,
+		ExtractDestinationPath: o.Cfg.ApiDocExportFilePath(),
 	})
 
 	return tracer.Trace(trimmer.Trim())

@@ -52,22 +52,21 @@ import (
 )
 
 var providers = map[string]registry.Provider{
-	registry.ServiceNameServiceProvider: ServiceProviderProvider,
-	registry.ServiceNameLogger:          LoggerProvider,
-	registry.ServiceNameTranslator:      TranslatorProvider,
-	registry.ServiceNameProbeServer:     ProbeServerProvider,
-	registry.ServiceNameHealthReporter:  HealthReporterProvider,
-	registry.ServiceNameTracerProvider:  TracerProvider,
-	registry.ServiceNameMeterProvider:   MeterProvider,
-	registry.ServiceNameOpenTelemetry:   OpenTelemetryProvider,
-	registry.ServiceNameRedis:           RedisProvider,
-	registry.ServiceNameCacheProvider:   CacheProvider,
-	registry.ServiceNameHttpServer:      HttpServerProvider,
-	registry.ServiceNameJobs:            JobsProvider,
-	registry.ServiceNameWorker:          WorkerProvider,
-	registry.ServiceNameCron:            CronProvider,
-	registry.ServiceNameStore:           StoreProvider,
-	registry.ServiceNameApp:             AppProvider,
+	registry.ServiceNameLogger:         LoggerProvider,
+	registry.ServiceNameTranslator:     TranslatorProvider,
+	registry.ServiceNameProbeServer:    ProbeServerProvider,
+	registry.ServiceNameHealthReporter: HealthReporterProvider,
+	registry.ServiceNameTracerProvider: TracerProvider,
+	registry.ServiceNameMeterProvider:  MeterProvider,
+	registry.ServiceNameOpenTelemetry:  OpenTelemetryProvider,
+	registry.ServiceNameRedis:          RedisProvider,
+	registry.ServiceNameCacheProvider:  CacheProvider,
+	registry.ServiceNameHttpServer:     HttpServerProvider,
+	registry.ServiceNameJobs:           JobsProvider,
+	registry.ServiceNameWorker:         WorkerProvider,
+	registry.ServiceNameCron:           CronProvider,
+	registry.ServiceNameStore:          StoreProvider,
+	registry.ServiceNameApp:            AppProvider,
 }
 
 func Providers(names []string) map[string]registry.Provider {
@@ -81,11 +80,6 @@ func Providers(names []string) map[string]registry.Provider {
 		m[name] = p
 	}
 	return m
-}
-
-func ServiceProviderProvider(r hexa.ServiceRegistry, _ *config.Config) error {
-	r.Register(registry.ServiceNameServiceProvider, base.NewServiceProvider(r))
-	return nil
 }
 
 func LoggerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
@@ -274,10 +268,10 @@ func CacheProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	sp := r.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
+	sp := base.NewServiceProvider(r)
 	var s model.Store
 
-	s, err := sqlstore.New(sp, cfg.DB)
+	s, err := sqlstore.New(sp.Logger(), cfg.DB)
 	if err != nil {
 		hlog.Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
 		return tracer.Trace(err)
@@ -297,12 +291,11 @@ func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 }
 
 func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
-	sp := r.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
 	s := r.Service(registry.ServiceNameStore).(model.Store)
 
-	a, err := app.NewWithAllLayers(sp, s)
+	a, err := app.NewWithAllLayers(r, s)
 	if err != nil {
-		sp.Logger().Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
+		hlog.Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
 		return tracer.Trace(err)
 	}
 
@@ -310,8 +303,8 @@ func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
 	return nil
 }
 
-func CronProvider(r hexa.ServiceRegistry, _ *config.Config) error {
-	sp := r.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
+func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+	sp := base.NewServiceProvider(r)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	u, err := hexa.NewGuest().SetMeta(hexa.UserMetaKeyName, "cron_job")
@@ -331,15 +324,16 @@ func CronProvider(r hexa.ServiceRegistry, _ *config.Config) error {
 
 	cronJobs := hexarobfig.New(ctxGen, cron.New())
 
-	if err := crons.RegisterCronJobs(cronJobs, sp, a); err != nil {
+	if err := crons.RegisterCronJobs(cronJobs, r, cfg, a); err != nil {
 		return tracer.Trace(err)
 	}
 
-	registry.Register(registry.ServiceNameCron, cronJobs)
+	r.Register(registry.ServiceNameCron, cronJobs)
 	return nil
 }
 
-func tuneEcho(cfg *config.Config, sp base.ServiceProvider) *echo.Echo {
+func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
+	sp := base.NewServiceProvider(r)
 	metricsCfg := hecho.MetricsConfig{
 		MeterProvider: sp.OpenTelemetry().MeterProvider(),
 	}
@@ -413,29 +407,28 @@ func tuneEcho(cfg *config.Config, sp base.ServiceProvider) *echo.Echo {
 }
 
 func HttpServerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	sp := r.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
-	e := tuneEcho(cfg, sp)
+	e := tuneEcho(cfg, r)
 
 	// Register Routes
 	(&api.API{
 		Echo:  e,
 		API:   e.Group("api/v1"),
 		App:   a,
-		SP:    sp,
 		Guest: hecho.GuestMiddleware(),
 		Auth:  hecho.AuthMiddleware(),
 		Debug: hecho.DebugMiddleware(e),
 	}).RegisterRoutes()
 
 	echoService := &hecho.EchoService{Echo: e, Address: cfg.ListeningAddress()}
-	registry.Register(registry.ServiceNameHttpServer, echoService)
+	r.Register(registry.ServiceNameHttpServer, echoService)
 	return nil
 }
 
 func WorkerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
-	sp := r.Service(registry.ServiceNameServiceProvider).(base.ServiceProvider)
+	l := r.Service(registry.ServiceNameLogger).(hlog.Logger)
+	t := r.Service(registry.ServiceNameTranslator).(hexa.Translator)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	srv := asynq.NewServer(
@@ -448,11 +441,11 @@ func WorkerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 		},
 	)
 
-	w := hsynq.NewWorker(srv, hexa.NewContextPropagator(sp.Logger(), sp.Translator()), hsynq.NewJsonTransformer())
-	if err := jobs.RegisterJobs(w, sp, a); err != nil {
+	w := hsynq.NewWorker(srv, hexa.NewContextPropagator(l, t), hsynq.NewJsonTransformer())
+	if err := jobs.RegisterJobs(w, r, a); err != nil {
 		return tracer.Trace(err)
 	}
 
-	registry.Register(registry.ServiceNameWorker, w)
+	r.Register(registry.ServiceNameWorker, w)
 	return nil
 }
