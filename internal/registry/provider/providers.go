@@ -52,6 +52,7 @@ import (
 )
 
 var providers = map[string]registry.Provider{
+	registry.ServiceNameConfig:         ConfigProvider,
 	registry.ServiceNameLogger:         LoggerProvider,
 	registry.ServiceNameTranslator:     TranslatorProvider,
 	registry.ServiceNameProbeServer:    ProbeServerProvider,
@@ -69,6 +70,7 @@ var providers = map[string]registry.Provider{
 	registry.ServiceNameApp:            AppProvider,
 }
 
+// Providers returns provides with the specified names in the provided array.
 func Providers(names []string) map[string]registry.Provider {
 	m := make(map[string]registry.Provider)
 	for _, name := range names {
@@ -82,7 +84,19 @@ func Providers(names []string) map[string]registry.Provider {
 	return m
 }
 
-func LoggerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func ConfigProvider(r hexa.ServiceRegistry) error {
+	// Initialize configs:
+	cfg, err := config.New()
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	config.SetDefaultConfig(cfg)
+	r.Register(registry.ServiceNameConfig, cfg)
+	return nil
+}
+
+func LoggerProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
 	l, err := logdriver.NewStackLoggerDriver(cfg.StackLoggerOptions())
 	if err != nil {
 		return tracer.Trace(err)
@@ -93,19 +107,23 @@ func LoggerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func TranslatorProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func TranslatorProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	translator := huner.NewTranslator(cfg.I18nPath(), cfg.TranslateOptions())
 	hexatranslator.SetGlobal(translator)
 	r.Register(registry.ServiceNameTranslator, translator)
 	return nil
 }
 
-func HealthReporterProvider(r hexa.ServiceRegistry, _ *config.Config) error {
+func HealthReporterProvider(r hexa.ServiceRegistry) error {
 	r.Register(registry.ServiceNameHealthReporter, hexa.NewHealthReporter())
 	return nil
 }
 
-func ProbeServerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func ProbeServerProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	reporter := r.Service(registry.ServiceNameHealthReporter).(hexa.HealthReporter)
 	probeServer := probe.NewServer(&http.Server{Addr: cfg.ProbeServerAddress}, http.NewServeMux())
 
@@ -116,7 +134,9 @@ func ProbeServerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func JobsProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func JobsProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	l := r.Service(registry.ServiceNameLogger).(hlog.Logger)
 	t := r.Service(registry.ServiceNameTranslator).(hexa.Translator)
 
@@ -127,7 +147,9 @@ func JobsProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func TracerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func TracerProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	tcfg := cfg.OpenTelemetry.Tracing
 	if tcfg.NoopTracer {
 		tp := trace.NewNoopTracerProvider()
@@ -154,7 +176,7 @@ func TracerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 		// Record information about this application in an Resource.
 		tracesdk.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(cfg.ServiceName()),
+			semconv.ServiceNameKey.String(config.AppName),
 			attribute.String("environment", cfg.Environment),
 			attribute.String("service_instance", cfg.InstanceName),
 		)),
@@ -164,7 +186,9 @@ func TracerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func MeterProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func MeterProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	mcfg := cfg.OpenTelemetry.Metric
 
 	if !mcfg.Enabled {
@@ -182,7 +206,7 @@ func MeterProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 		),
 		controller.WithResource(resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String(cfg.ServiceName()),
+			semconv.ServiceNameKey.String(config.AppName),
 			attribute.String("service_instance", cfg.InstanceName),
 		)),
 	)
@@ -202,14 +226,16 @@ func MeterProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func OpenTelemetryProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func OpenTelemetryProvider(r hexa.ServiceRegistry) error {
 	tp := r.Service(registry.ServiceNameTracerProvider).(trace.TracerProvider)
 	mp := r.Service(registry.ServiceNameMeterProvider).(metric.MeterProvider)
 	r.Register(registry.ServiceNameOpenTelemetry, htel.NewOpenTelemetry(tp, mp))
 	return nil
 }
 
-func RedisProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func RedisProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	dial := func() (redis.Conn, error) {
 		c, err := redis.Dial("tcp", cfg.RedisAddress)
 		if err != nil {
@@ -251,7 +277,8 @@ func RedisProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func CacheProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func CacheProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
 	if cfg.Cache.Enabled {
 		return nil
 	}
@@ -267,7 +294,8 @@ func CacheProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func StoreProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
 	svcs := services.New(r)
 	var s model.Store
 
@@ -290,7 +318,7 @@ func StoreProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
+func AppProvider(r hexa.ServiceRegistry) error {
 	s := r.Service(registry.ServiceNameStore).(model.Store)
 
 	a, err := app.NewWithAllLayers(r, s)
@@ -303,7 +331,9 @@ func AppProvider(r hexa.ServiceRegistry, _ *config.Config) error {
 	return nil
 }
 
-func CronProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func CronProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	s := services.New(r)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
@@ -341,7 +371,7 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	tracingCfg := hecho.TracingConfig{
 		Propagator:     propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}),
 		TracerProvider: s.OpenTelemetry().TracerProvider(),
-		ServerName:     cfg.ServiceName(),
+		ServerName:     config.AppName,
 	}
 
 	e := echo.New()
@@ -406,7 +436,8 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	return e
 }
 
-func HttpServerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func HttpServerProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	e := tuneEcho(cfg, r)
@@ -426,7 +457,9 @@ func HttpServerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
 	return nil
 }
 
-func WorkerProvider(r hexa.ServiceRegistry, cfg *config.Config) error {
+func WorkerProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
 	l := r.Service(registry.ServiceNameLogger).(hlog.Logger)
 	t := r.Service(registry.ServiceNameTranslator).(hexa.Translator)
 	a := r.Service(registry.ServiceNameApp).(app.App)

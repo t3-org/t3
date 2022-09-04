@@ -15,7 +15,7 @@ import (
 
 // Services is a simple facade that provides services using
 // service registry. It provides the base services,
-// other microservices services,...
+// other microservices,...
 type Services interface {
 	Config() hexa.Config
 	Logger() hlog.Logger
@@ -95,6 +95,7 @@ func (s *services) Worker() hjob.Worker {
 	return srv
 }
 
+// New returns a Services facade.
 func New(r hexa.ServiceRegistry) Services {
 	return &services{r}
 }

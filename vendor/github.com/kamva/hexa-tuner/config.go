@@ -3,24 +3,32 @@ package huner
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path"
+	"strings"
+
 	"github.com/kamva/gutil"
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/hconf"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"github.com/spf13/viper"
-	"os"
-	"path"
-	"strings"
 )
 
-type ConfigFilePathsOpts struct {
-	AppName       string // e.g., senna
-	ServiceName   string // e.g., order
+const EnvironmentTest = "test" // We can use this reserved env name for test environments. it's completely optional.
+
+type ConfigFilePathsOptions struct {
+	EtcPath       string // e.g., senna
 	HomePath      string // e.g., /home/mehran/senna/order
 	FileName      string // e.g., config
 	FileExtension string // e.g., json or yaml
 	Environment   string // (optional) e.g., staging
+}
+
+// EtcPath returns path to the /etc directory.
+// Later we can make its base path os dependant.
+func EtcPath(p string) string {
+	return path.Join("/etc", p)
 }
 
 func EnvKeysPrefix() string {
@@ -35,25 +43,34 @@ func Environment(prefix string) string {
 	return os.Getenv(key)
 }
 
-// GetConfigFilePaths generates config path as follow:
-// - /etc/{appName}/{configFile.configExtension}
-// - /etc/{appName}/{serviceName.configExtension}
+// ConfigFilePaths generates config path as follow:
+// - {EtcPath}/{configFile.configExtension}
 // - {HomePath}/{configFile.configExtension}
+// - {HomePath}/{configFile.{environment}.configExtension}
 // - {HomePath}/.env
 // - {HomePath}/.{environment}.env
-func GetConfigFilePaths(o ConfigFilePathsOpts) []string {
-	configFile := fmt.Sprintf("%s.%s", o.FileName, o.FileExtension)
-	msConfigFile := fmt.Sprintf("%s.%s", o.ServiceName, o.FileExtension)
+// If you set onlyEnvDependant to true, it just includes files that include the
+// environment name in their config file name.
+func ConfigFilePaths(o ConfigFilePathsOptions, onlyEnvDependant bool) []string {
+	confFile := fmt.Sprintf("%s.%s", o.FileName, o.FileExtension)
 
-	files := []string{
-		path.Join("/etc", o.AppName, configFile),
-		path.Join("/etc", o.AppName, msConfigFile),
-		path.Join(o.HomePath, configFile),
-		path.Join(o.HomePath, ".env"),
+	var files []string
+
+	if !onlyEnvDependant { // including crossEnv paths.
+		files = append(files,
+			path.Join(o.EtcPath, confFile),  // {EtcPath}/{configFile.configExtension}
+			path.Join(o.HomePath, confFile), // {HomePath}/{configFile.configExtension}
+			path.Join(o.HomePath, ".env"),   // {HomePath}/.env
+		)
 	}
 
 	if o.Environment != "" {
-		files = append(files, path.Join(o.HomePath, fmt.Sprintf(".%s.env", o.Environment)))
+		files = append(files,
+			// {HomePath}/{configFile}.{env}.{extension}
+			path.Join(o.HomePath, fmt.Sprintf("%s.%s.%s", o.FileName, o.Environment, o.FileExtension)),
+			// {HomePath}/.{env}.env
+			path.Join(o.HomePath, fmt.Sprintf(".%s.env", o.Environment)),
+		)
 	}
 
 	var existedFiles []string
@@ -65,7 +82,7 @@ func GetConfigFilePaths(o ConfigFilePathsOpts) []string {
 	}
 
 	hlog.Debug("generated config file paths",
-		hlog.Any("available_paths", files),
+		hlog.Any("search_paths", files),
 		hlog.Any("existed_paths", existedFiles),
 		hlog.String("config", fmt.Sprintf("%+v", o)),
 	)

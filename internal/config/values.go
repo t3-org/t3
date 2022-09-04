@@ -15,8 +15,6 @@ import (
 const (
 	// AppName is name of the project to load its config...
 	AppName = "space"
-	// ServiceName is name of the microservice to load its config...
-	ServiceName = "space"
 	// FileName is name of the config file
 	FileName = "config"
 	// FileExtension is extension of the config file.
@@ -87,10 +85,6 @@ type Config struct {
 
 func (c *Config) validate() error {
 	return nil
-}
-
-func (c *Config) ServiceName() string {
-	return ServiceName
 }
 
 func (c Config) I18nPath() string {

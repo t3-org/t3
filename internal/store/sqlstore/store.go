@@ -119,7 +119,7 @@ func (s *sqlStore) migrate() error {
 		return tracer.Trace(fmt.Errorf("invalid DB driver: %s", s.o.Driver))
 	}
 
-	logOpt := morph.WithLogger(log.New(&morphWriter{}, "", log.Lshortfile))
+	logOpt := morph.WithLogger(log.New(hlog.NewWriter(nil, hlog.InfoLevel), "", log.Lshortfile))
 	keyOpt := morph.WithLock(s.o.MigrationsLockKey())
 
 	m, err := morph.New(context.Background(), driver, src, logOpt, keyOpt)
