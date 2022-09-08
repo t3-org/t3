@@ -9,11 +9,13 @@ import (
 )
 
 // TODO: move table implementation into an external go pacakge. e.g., github.com/kamva/sqld (sql database)
+
 type BuilderProvider func(ctx context.Context) sq.StatementBuilderType
 type Table struct {
-	name    string
-	fields  []string
-	builder BuilderProvider
+	name        string
+	fields      []string
+	builder     BuilderProvider
+	notfoundErr error
 }
 
 func NewTable(name string, fields []string, builder BuilderProvider) *Table {
@@ -36,6 +38,15 @@ func (t *Table) Create(ctx context.Context, dest []any) (sql.Result, error) {
 	return t.builder(ctx).Insert(t.name).Columns(t.fields...).Values(dest...).ExecContext(ctx)
 }
 
+func (t *Table) Upsert(ctx context.Context, dest []any, upsertPrefix string) (sql.Result, error) {
+	expr, err := UpsertSuffix(upsertPrefix, Clauses(t.fields, dest)...)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	return t.builder(ctx).Insert(t.name).Columns(t.fields...).Values(dest...).SuffixExpr(expr).ExecContext(ctx)
+}
+
 func (t *Table) CreateMany(ctx context.Context, dest ...[]any) (sql.Result, error) {
 	b := t.builder(ctx).Insert(t.name).Columns(t.fields...)
 	for _, d := range dest {
@@ -46,13 +57,16 @@ func (t *Table) CreateMany(ctx context.Context, dest ...[]any) (sql.Result, erro
 }
 
 func (t *Table) Update(ctx context.Context, id any, dest []any) (sql.Result, error) {
-	update := t.builder(ctx).Update(t.name).Where(idEq(id))
+	return t.UpdateBuilder(ctx, dest).Where(idEq(id)).ExecContext(ctx)
+}
 
+func (t *Table) UpdateBuilder(ctx context.Context, dest []any) sq.UpdateBuilder {
+	update := t.builder(ctx).Update(t.name)
 	for i, field := range t.fields {
 		update.Set(field, dest[i])
 	}
 
-	return update.ExecContext(ctx)
+	return update
 }
 
 func (t *Table) Select(ctx context.Context) sq.SelectBuilder {

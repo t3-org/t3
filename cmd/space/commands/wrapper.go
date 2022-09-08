@@ -37,6 +37,10 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 			return tracer.Trace(err)
 		}
 
+		if err := r.Boot(); err != nil {
+			return tracer.Trace(err)
+		}
+
 		timeout := time.Second * 30
 		go sr.ShutdownBySignals(r, timeout)
 		defer registry.Shutdown(r, timeout)

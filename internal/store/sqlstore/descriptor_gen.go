@@ -8,7 +8,7 @@ import (
 
 var (
 	planetColumns = []string{"id", "name", "code", "created_at", "updated_at"}
-	systemColumns = []string{"id", "name", "value", "created_at", "updated_at"}
+	systemColumns = []string{"name", "value", "created_at", "updated_at"}
 )
 
 func planetFields(m *model.Planet) []any {
@@ -16,5 +16,5 @@ func planetFields(m *model.Planet) []any {
 }
 
 func systemFields(m *model.System) []any {
-	return []interface{}{&m.ID, &m.Name, &m.Value, &m.CreatedAt, &m.UpdatedAt}
+	return []interface{}{&m.Name, &m.Value, &m.CreatedAt, &m.UpdatedAt}
 }

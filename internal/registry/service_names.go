@@ -26,11 +26,16 @@ const (
 
 	ServiceNameStore = "store"
 	ServiceNameApp   = "app"
+
+	// services to use in tests
+
+	ServiceNameTempDB = "temp_db"
 )
 
 func bootPriority() []string {
 	return []string{
 		ServiceNameConfig,
+		ServiceNameTempDB,
 		ServiceNameLogger,
 		ServiceNameTranslator,
 		ServiceNameHealthReporter,
@@ -65,5 +70,17 @@ func BaseServices() []string {
 		ServiceNameCacheProvider,
 		ServiceNameStore,
 		ServiceNameApp,
+	}
+}
+func TestHelperServices() []string {
+	return []string{
+		ServiceNameTempDB,
+	}
+}
+
+func MinimalServices() []string {
+	return []string{
+		ServiceNameConfig,
+		ServiceNameLogger,
 	}
 }

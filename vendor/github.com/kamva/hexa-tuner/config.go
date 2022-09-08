@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"github.com/kamva/gutil"
-	"github.com/kamva/hexa"
-	"github.com/kamva/hexa/hconf"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"github.com/spf13/viper"
@@ -35,12 +33,13 @@ func EnvKeysPrefix() string {
 	return os.Getenv("HEXA_CONF_PREFIX")
 }
 
-func Environment(prefix string) string {
+// EnvironmentKey returns the key we can use to get the run environment.
+func EnvironmentKey(prefix string) string {
 	key := "ENV"
 	if prefix != "" {
-		key = fmt.Sprintf("%s_%s", prefix, key)
+		return fmt.Sprintf("%s_%s", prefix, key)
 	}
-	return os.Getenv(key)
+	return key
 }
 
 // ConfigFilePaths generates config path as follow:
@@ -82,16 +81,16 @@ func ConfigFilePaths(o ConfigFilePathsOptions, onlyEnvDependant bool) []string {
 	}
 
 	hlog.Debug("generated config file paths",
-		hlog.Any("search_paths", files),
-		hlog.Any("existed_paths", existedFiles),
-		hlog.String("config", fmt.Sprintf("%+v", o)),
+		hlog.String("search_paths", strings.Join(files, ",")),
+		hlog.String("existed_paths", strings.Join(existedFiles, ",")),
+		hlog.String("paths_config", fmt.Sprintf("%+v", o)),
 	)
 
 	return existedFiles
 }
 
-// NewViperConfigDriver returns new instance of the viper driver for hexa config
-func NewViperConfigDriver(envPrefix string, files []string) (hexa.Config, error) {
+// NewViperConfig returns new instance of the viper
+func NewViperConfig(envPrefix string, files []string) (*viper.Viper, error) {
 	v := viper.New()
 
 	if len(files) == 0 {
@@ -120,5 +119,5 @@ func NewViperConfigDriver(envPrefix string, files []string) (hexa.Config, error)
 	v.SetEnvPrefix(envPrefix)
 	v.AutomaticEnv()
 
-	return hconf.NewViperDriver(v), nil
+	return v, nil
 }

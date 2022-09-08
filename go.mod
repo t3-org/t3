@@ -9,11 +9,11 @@ require (
 	github.com/gomodule/redigo v1.8.8
 	github.com/hibiken/asynq v0.18.4
 	github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
-	github.com/kamva/hexa v0.0.0-20220903190028-d8868bbfecbd
+	github.com/kamva/hexa v0.1.1-0.20220905213707-38c66ff5a43c
 	github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
 	github.com/kamva/hexa-echo v0.0.0-20220821210434-d10ae50436f2
 	github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb
-	github.com/kamva/hexa-tuner v0.1.1-0.20220904182844-7403a84f8d1f
+	github.com/kamva/hexa-tuner v0.1.1-0.20220907214358-717d733a4040
 	github.com/kamva/mgm/v3 v3.4.0
 	github.com/kamva/tracer v0.0.0-20201115122932-ea39052d56cd
 	github.com/labstack/echo/v4 v4.7.2
@@ -89,6 +89,7 @@ require (
 	github.com/prometheus/procfs v0.6.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sethvargo/go-limiter v0.7.2 // indirect
+	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6 // indirect
 	github.com/spf13/afero v1.1.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect

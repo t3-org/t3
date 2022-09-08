@@ -53,6 +53,7 @@ import (
 
 var providers = map[string]registry.Provider{
 	registry.ServiceNameConfig:         ConfigProvider,
+	registry.ServiceNameTempDB:         TmpDBProvider,
 	registry.ServiceNameLogger:         LoggerProvider,
 	registry.ServiceNameTranslator:     TranslatorProvider,
 	registry.ServiceNameProbeServer:    ProbeServerProvider,
@@ -90,6 +91,7 @@ func ConfigProvider(r hexa.ServiceRegistry) error {
 	if err != nil {
 		return tracer.Trace(err)
 	}
+
 	config.SetDefaultConfig(cfg)
 	r.Register(registry.ServiceNameConfig, cfg)
 	return nil
@@ -309,7 +311,10 @@ func StoreProvider(r hexa.ServiceRegistry) error {
 		s = cachestore.New(r, s)
 	}
 
-	s = store.NewTracingLayerStore("sql", svcs.OpenTelemetry().TracerProvider(), s)
+	if cfg.OpenTelemetry.Tracing.TraceDB {
+		s = store.NewTracingLayerStore("sql", svcs.OpenTelemetry().TracerProvider(), s)
+	}
+
 	r.Register(registry.ServiceNameStore, s)
 
 	// Set global DB store on the model package:

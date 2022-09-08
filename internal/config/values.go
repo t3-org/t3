@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/kamva/hexa"
 	hecho "github.com/kamva/hexa-echo"
 	huner "github.com/kamva/hexa-tuner"
 	"github.com/kamva/hexa/hlog"
@@ -13,7 +12,7 @@ import (
 )
 
 const (
-	// AppName is name of the project to load its config...
+	// AppName is the name of the app to load its config...
 	AppName = "space"
 	// FileName is name of the config file
 	FileName = "config"
@@ -22,15 +21,15 @@ const (
 )
 
 type Config struct {
-	hexa.Config
+	// Test contains test config which we don't need to provide it in non-test environments.
+	Test *Test `json:"test" mapstructure:"test"`
 
 	AppName      string `json:"app_name" mapstructure:"app_name"`
 	InstanceName string `json:"instance_name" mapstructure:"instance_name"`
+
 	// Environment is just for log, tracing,... you could set it to
 	// something like prod, dev, local,...
 	Environment string `json:"environment" mapstructure:"environment"`
-
-	InitializeAdminPhone string `json:"initialize_admin_phone" mapstructure:"initialize_admin_phone"`
 
 	//--------------------------------
 	// General Configs
@@ -87,8 +86,28 @@ func (c *Config) validate() error {
 	return nil
 }
 
+func (c *Config) setDefaults() error {
+	if c.AssetsBasePath == "" {
+		c.AssetsBasePath = path.Join(appRootPath(), "assets")
+	}
+
+	if c.ResourcesBasePath == "" {
+		c.ResourcesBasePath = path.Join(appRootPath(), "res")
+	}
+
+	return nil
+}
+
+func (c *Config) PathToResource(p string) string {
+	return path.Join(c.ResourcesBasePath, p)
+}
+
+func (c *Config) PathToAssets(p string) string {
+	return path.Join(c.ResourcesBasePath, p)
+}
+
 func (c Config) I18nPath() string {
-	return ResourcePath(c.ResourcesBasePath, "/i18n")
+	return c.PathToResource("i18n")
 }
 
 func (c *Config) StackLoggerOptions() ([]string, logdriver.StackOptions) {
@@ -145,16 +164,16 @@ func (c *Config) CSRFCookieContextKey() string {
 }
 
 func (c *Config) ApiDocsRouteTemplatePath() string {
-	return ResourcePath(c.ResourcesBasePath, "doc_route_template.tpl")
+	return c.PathToResource("doc_route_template.tpl")
 }
 
 func (c *Config) ApiDocExportFilePath() string {
-	return path.Join(ProjectRootPath(), "internal/router/api/doc/api_docs.go")
+	return path.Join(appRootPath(), "internal/router/api/doc/api_docs.go")
 }
 
 func (c *Config) ApiDocsDestinationFiles() []string {
 	return []string{
-		path.Join(ProjectRootPath(), "docs/api/api_docs.json"),
-		path.Join(ProjectRootPath(), "docs/api/api_docs.yaml"),
+		path.Join(appRootPath(), "docs/api/api_docs.json"),
+		path.Join(appRootPath(), "docs/api/api_docs.yaml"),
 	}
 }

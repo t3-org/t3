@@ -22,7 +22,7 @@ type appCore struct {
 func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
 	s := services.New(r)
 	return &appCore{
-		cfg:   s.Config().(*config.Config),
+		cfg:   s.Config(),
 		store: store,
 	}, nil
 }

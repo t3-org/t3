@@ -17,14 +17,16 @@ import (
 	ms "github.com/mattermost/morph/drivers/mysql"
 	ps "github.com/mattermost/morph/drivers/postgres"
 	"github.com/mattermost/morph/sources/embedded"
+	sqldblogger "github.com/simukti/sqldb-logger"
 	appembed "space.org/space/embed"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
+	"space.org/space/pkg/hlogadapter"
 )
 
 const (
-	DriverNamePostgres = "postgres"
-	DriverNameMysql    = "mysql"
+	DriverNamePostgres = config.DBDriverPostgres
+	DriverNameMysql    = config.DBDriverMysql
 )
 
 var sqldrivers = map[string]string{ // mapping from driver name to sql driver name.
@@ -99,7 +101,7 @@ func (s *sqlStore) migrate() error {
 	case DriverNamePostgres:
 		driver, err = ps.WithInstance(s.db, &ps.Config{Config: drivercfg})
 	case DriverNameMysql:
-		opts, err := s.o.PrepareForMysqlMigration()
+		opts, err := s.o.MysqlMigrationsDBConfig()
 		if err != nil {
 			return tracer.Trace(err)
 		}
@@ -155,7 +157,7 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 	health := hexa.NewPingHealth(l, "database", db.PingContext, nil)
 	builder := sq.StatementBuilder.PlaceholderFormat(placeholder(o.Driver))
 
-	// Create the store.
+	// Create the Store.
 	s := &sqlStore{
 		Health:  health,
 		o:       o,
@@ -171,7 +173,7 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 		system: newSystemStore(s),
 		planet: newPlanetStore(s),
 
-		// place your other store initializations here.
+		// place your other Store initializations here.
 	}
 
 	return s, nil
@@ -183,9 +185,14 @@ func newConn(opts config.DB) (*sql.DB, error) {
 		return nil, tracer.Trace(fmt.Errorf("invalid DB driver name, %s", opts.Driver))
 	}
 
-	db, err := sql.Open(sqldriver, opts.DataSource)
+	db, err := sql.Open(sqldriver, opts.DSN)
 	if err != nil {
 		return nil, tracer.Trace(err)
+	}
+
+	if opts.Log.Enabled {
+		minLogLevel := hlogadapter.FromHlogLevel(hlog.LevelFromString(config.C.LogLevel))
+		db = sqldblogger.OpenDriver(opts.DSN, db.Driver(), &hlogadapter.SqlLogger{}, opts.Log.Options(minLogLevel)...)
 	}
 
 	db.SetMaxOpenConns(opts.MaxOpenConns)

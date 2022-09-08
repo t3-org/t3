@@ -33,7 +33,7 @@ func New(r hexa.ServiceRegistry, next model.Store) *CacheStore {
 	_ = cp
 
 	cs.stores = &storesList{
-		//user:       &userCacheStore{UserStore: next.User(), rootCache: cs, cache: cp.Cache("user")},
+		//user:       &userCacheStore{UserStore: next.Username(), rootCache: cs, cache: cp.Cache("user")},
 
 		// Add other cache implementations here.
 	}

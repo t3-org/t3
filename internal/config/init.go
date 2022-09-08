@@ -1,10 +1,10 @@
 package config
 
 import (
+	"os"
+
 	huner "github.com/kamva/hexa-tuner"
-	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
-	"gopkg.in/yaml.v2"
 )
 
 // C is default config to use in project.
@@ -12,34 +12,38 @@ var C *Config
 
 func New() (*Config, error) {
 	prefix := huner.EnvKeysPrefix()
-	env := huner.Environment(prefix)
+	env := os.Getenv(huner.EnvironmentKey(prefix))
 	files := huner.ConfigFilePaths(huner.ConfigFilePathsOptions{
 		EtcPath:       huner.EtcPath(AppName),
-		HomePath:      ProjectRootPath(),
+		HomePath:      appRootPath(),
 		FileName:      FileName,
 		FileExtension: FileExtension,
 		Environment:   env,
 	}, env == huner.EnvironmentTest)
 
-	v, err := huner.NewViperConfigDriver(prefix, files)
+	v, err := huner.NewViperConfig(prefix, files)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	cfg := Config{Config: v}
+	var cfg Config
 	err = v.Unmarshal(&cfg)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	prettyCfg, err := yaml.Marshal(cfg)
-	if err != nil {
-		return nil, tracer.Trace(err)
-	}
-	hlog.Debug("config", hlog.String("values", string(prettyCfg)))
+	//prettyCfg, err := yaml.Marshal(cfg)
+	//if err != nil {
+	//	return nil, tracer.Trace(err)
+	//}
+	//hlog.Debug("config", hlog.String("values", string(prettyCfg)))
 
 	if err := cfg.validate(); err != nil {
 		return nil, err
+	}
+
+	if err := cfg.setDefaults(); err != nil {
+		return nil, tracer.Trace(err)
 	}
 
 	return &cfg, nil

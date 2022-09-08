@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"path"
 	"strings"
 	"time"
 
@@ -15,17 +17,28 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
+	sqldblogger "github.com/simukti/sqldb-logger"
 )
+
+const (
+	DBDriverMysql    = "mysql"
+	DBDriverPostgres = "postgres"
+)
+
+type Test struct {
+	// We'll use this connection to connect to the database to create and destroy the temporary DB.
+	DBRootConn DB `json:"db_root_conn" mapstructure:"db_root_conn"`
+}
 
 type DB struct {
 	// Driver specifies what type of DB should we use.
 	// It could be either postgres or mysql.
 	Driver string `json:"driver" mapstructure:"driver"`
-	// DataSource is the DB url.
+	// DSN(data source name) is the DB url.
 	// For postgres it's as following:
 	// postgresql://[user[:password]@][netloc][:port][/dbname][?param1=value1&...]
 	// e.g., postgres://postgres:123456@127.0.0.1:5432/dummy
-	DataSource string `json:"data_source" mapstructure:"data_source"`
+	DSN string `json:"dsn" mapstructure:"dsn"`
 
 	MaxOpenConns                int `json:"max_open_conns" mapstructure:"max_open_conns"`
 	MaxIdleConns                int `json:"max_idle_conns" mapstructure:"max_idle_conns"`
@@ -34,31 +47,34 @@ type DB struct {
 
 	// QueryTimeoutMilliseconds          int `json:"query_timeout_milliseconds" mapstructure:"query_timeout_milliseconds"` // TODO: apply query timeout if needed.
 	MigrationsStatementTimeoutSeconds int `json:"migrations_statement_timeout_seconds" mapstructure:"migrations_statement_timeout_seconds"`
+
+	// Log enables log on db layer queries....
+	Log DBLog `json:"log" mapstructure:"log"`
 }
 
-func (s DB) ConnMaxLifetime() time.Duration {
-	return time.Duration(s.ConnMaxLifetimeMilliseconds) * time.Millisecond
+func (c *DB) ConnMaxLifetime() time.Duration {
+	return time.Duration(c.ConnMaxLifetimeMilliseconds) * time.Millisecond
 }
 
-func (s DB) ConnMaxIdleTime() time.Duration {
-	return time.Duration(s.ConnMaxIdleTimeMilliseconds) * time.Millisecond
+func (c *DB) ConnMaxIdleTime() time.Duration {
+	return time.Duration(c.ConnMaxIdleTimeMilliseconds) * time.Millisecond
 }
 
-func (s DB) MigrationsStatementTimeout() time.Duration {
-	return time.Duration(s.MigrationsStatementTimeoutSeconds) * time.Second
+func (c *DB) MigrationsStatementTimeout() time.Duration {
+	return time.Duration(c.MigrationsStatementTimeoutSeconds) * time.Second
 }
 
-func (s DB) MigrationsTable() string {
+func (c *DB) MigrationsTable() string {
 	return "migrations"
 }
 
-func (s DB) MigrationsLockKey() string {
+func (c *DB) MigrationsLockKey() string {
 	return fmt.Sprintf("%s_migration_lock", AppName)
 }
 
-func (s DB) PrepareForMysqlMigration() (*DB, error) {
-	cpy := s
-	datasourceCfg, err := mysql.ParseDSN(cpy.DataSource)
+func (c *DB) MysqlMigrationsDBConfig() (*DB, error) {
+	cpy := *c
+	datasourceCfg, err := mysql.ParseDSN(cpy.DSN)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -72,8 +88,99 @@ func (s DB) PrepareForMysqlMigration() (*DB, error) {
 	}
 	datasourceCfg.Params["multiStatements"] = "true"
 
-	cpy.DataSource = datasourceCfg.FormatDSN()
+	cpy.DSN = datasourceCfg.FormatDSN()
 	return &cpy, nil
+}
+
+func (c *DB) SetName(name string) error {
+	if c.Driver == DBDriverPostgres {
+		dsnURL, err := url.Parse(c.DSN)
+		if err != nil {
+			return tracer.Trace(err)
+		}
+
+		// Set the DB name.
+		dsnURL.Path = name
+		c.DSN = dsnURL.String()
+
+		return nil
+	}
+
+	if c.Driver == DBDriverMysql {
+		dsn, err := mysql.ParseDSN(c.DSN)
+		if err != nil {
+			return tracer.Trace(err)
+		}
+		dsn.DBName = name
+		c.DSN = dsn.FormatDSN()
+		return nil
+	}
+
+	return errors.New("invalid DB driver name")
+}
+
+func (c *DB) Name() (string, error) {
+	if c.Driver == DBDriverPostgres {
+		dsnURL, err := url.Parse(c.DSN)
+		if err != nil {
+			return "", tracer.Trace(err)
+		}
+
+		return path.Base(dsnURL.Path), nil
+	}
+
+	if c.Driver == DBDriverMysql {
+		dsn, err := mysql.ParseDSN(c.DSN)
+		if err != nil {
+			return "", tracer.Trace(err)
+		}
+		return dsn.DBName, nil
+	}
+
+	return "", errors.New("invalid DB driver name")
+}
+
+func (c *DB) Username() (string, error) {
+	if c.Driver == DBDriverPostgres {
+		dsnURL, err := url.Parse(c.DSN)
+		if err != nil {
+			return "", tracer.Trace(err)
+		}
+
+		return path.Base(dsnURL.User.Username()), nil
+	}
+
+	if c.Driver == DBDriverMysql {
+		dsn, err := mysql.ParseDSN(c.DSN)
+		if err != nil {
+			return "", tracer.Trace(err)
+		}
+		return dsn.User, nil
+	}
+
+	return "", errors.New("invalid DB driver name")
+}
+
+type DBLog struct {
+	Enabled bool `json:"enabled" mapstructure:"enabled"`
+
+	// IncludeData includes query arguments and also returned data.
+	// Please note WrapResults must be true to be able to log DB returned data.
+	IncludeData bool `json:"include_data" mapstructure:"include_data"`
+
+	// WrapResults should be true if you want to enable log for Rows and Result methods.
+	WrapResults bool `json:"wrap_results" mapstructure:"wrap_results"`
+}
+
+func (d *DBLog) Options(minimumLevel sqldblogger.Level) []sqldblogger.Option {
+	return []sqldblogger.Option{
+		sqldblogger.WithLogArguments(d.IncludeData),
+		sqldblogger.WithWrapResult(d.WrapResults),
+		sqldblogger.WithConnectionIDFieldname("in_log_conn_id"),
+		sqldblogger.WithStatementIDFieldname("in_log_stmt_id"),
+		sqldblogger.WithTransactionIDFieldname("in_log_tx_id"),
+		sqldblogger.WithMinimumLevel(minimumLevel),
+	}
 }
 
 type Tracing struct {
@@ -88,6 +195,8 @@ type Tracing struct {
 	// AlwaysSample will be ignored if debug is false, to do not use
 	// many resources in non-debug mode.
 	AlwaysSample bool `json:"always_sample" mapstructure:"always_sample"`
+
+	TraceDB bool `json:"trace_db" mapstructure:"trace_db"`
 }
 
 type Metric struct {

@@ -10,7 +10,7 @@ import (
 	"space.org/space/pkg/sqld"
 )
 
-const tablePlanet = "planet"
+const tablePlanet = "planets"
 
 type planetStore struct {
 	s   SqlStore

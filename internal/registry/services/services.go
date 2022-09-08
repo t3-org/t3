@@ -17,7 +17,7 @@ import (
 // service registry. It provides the base services,
 // other microservices,...
 type Services interface {
-	Config() hexa.Config
+	Config() *config.Config
 	Logger() hlog.Logger
 	Translator() hexa.Translator
 	ProbeServer() probe.Server
@@ -35,7 +35,7 @@ type services struct {
 	r hexa.ServiceRegistry
 }
 
-func (s *services) Config() hexa.Config {
+func (s *services) Config() *config.Config {
 	srv, _ := s.r.Service(registry.ServiceNameConfig).(*config.Config)
 	return srv
 }

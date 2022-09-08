@@ -2,12 +2,13 @@ package huner
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/BurntSushi/toml"
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/hexatranslator"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
-	"strings"
 )
 
 type TranslateOpts struct {
@@ -15,7 +16,7 @@ type TranslateOpts struct {
 	FallbackLangs []string
 }
 
-// return new translator service.
+// NewTranslator returns a new translator service.
 func NewTranslator(pathPrefix string, cfg TranslateOpts) hexa.Translator {
 	defaultLang := language.English
 

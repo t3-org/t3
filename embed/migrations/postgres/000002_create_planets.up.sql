@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS planets
 (
-    id         VARCHAR(36) PRIMARY KEY,
-    name       VARCHAR(255),
-    code       VARCHAR(255) unique,
+    name       VARCHAR(255) primary key,
+    code      VARCHAR(255),
     updated_at timestamptz,
     created_at timestamptz
 );

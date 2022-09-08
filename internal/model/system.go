@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
 )
 
@@ -21,13 +20,11 @@ type SystemStore interface {
 
 type System struct {
 	Base  `json:",inline"`
-	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
 
 func (s *System) Create(name string, value string) {
-	s.ID = gutil.UUID()
 	s.Name = name
 	s.Value = value
 	s.Touch()
