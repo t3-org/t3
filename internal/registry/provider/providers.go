@@ -318,7 +318,7 @@ func StoreProvider(r hexa.ServiceRegistry) error {
 	r.Register(registry.ServiceNameStore, s)
 
 	// Set global DB store on the model package:
-	model.SetDBStore(s)
+	model.SetStore(s)
 
 	return nil
 }

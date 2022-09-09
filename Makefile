@@ -28,8 +28,6 @@ api-docs-server:
 publish-api-docs:
 	vercel ./docs/api --prod
 
-
-
 .PHONY: docs-server
 docs-server:
 	yarn --cwd ./docs/general docs:dev .
@@ -42,3 +40,10 @@ build-docs:
 publish-docs:
 	vercel ./docs/general --prod
 
+.PHONY: install-lint
+install-lint:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
+
+.PHONY: lint
+lint:
+	golangci-lint run ./...

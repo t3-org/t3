@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -367,65 +366,4 @@ type RedisCache struct {
 
 func (c RedisCache) TTL() time.Duration {
 	return time.Duration(c.DefaultTTLSeconds) * time.Second
-}
-
-const (
-	PropTypeFile = "file"
-	PropTypeText = "text"
-)
-
-var userPropTypes = []string{PropTypeFile, PropTypeText}
-
-type UserProps struct {
-	// Props field is list of available props that a user can use.
-	Props []*UserProperty `json:"props" mapstructure:"props"`
-}
-
-func (props *UserProps) validate() error {
-	for _, p := range props.Props {
-		if err := p.Validate(); err != nil {
-			return tracer.Trace(err)
-		}
-	}
-
-	return nil
-}
-
-func (props *UserProps) Prop(key string) *UserProperty {
-	for _, p := range props.Props {
-		if p.Key == key {
-			return p
-		}
-	}
-
-	return nil
-}
-
-const PropNameExtensionDivider = "." // Use by client scope mappers to divide prop name from the value that they want to return.
-type UserProperty struct {
-	Key   string `json:"key" mapstructure:"key"`     // Props key
-	Label string `json:"label" mapstructure:"label"` // Prop label e.g., user.prop.age
-	Type  string `json:"type" mapstructure:"type"`   // Available types are file|text.
-}
-
-func (p UserProperty) Validate() error {
-	if p.Key == "" {
-		return tracer.Trace(errors.New("user property key can not be empty"))
-	}
-	// Because at client scopes we use "." to specify the value that we want to return
-	// as prop's value. (e.g. signature.url to specify returning signature's url instead
-	// of it real value).
-	if strings.ContainsAny(p.Key, PropNameExtensionDivider) {
-		return tracer.Trace(errors.New("user property key can not contain dot(.) character"))
-	}
-
-	if p.Label == "" {
-		return tracer.Trace(errors.New("user property label can not be empty"))
-	}
-
-	if !gutil.Contains(userPropTypes, p.Type) {
-		return tracer.Trace(errors.New("user property type is invalid"))
-	}
-
-	return nil
 }

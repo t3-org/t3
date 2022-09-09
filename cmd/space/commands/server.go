@@ -27,7 +27,7 @@ func init() {
 	rootCmd.AddCommand(serverCmd)
 }
 
-func serverCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
+func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)

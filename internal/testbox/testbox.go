@@ -44,7 +44,7 @@ func (t *TestBox) Setup() error {
 		return tracer.Trace(err)
 	}
 
-	go sr.ShutdownBySignals(t.r, shutdownTimeout)
+	go sr.ShutdownBySignals(t.r, shutdownTimeout) //nolint
 	return nil
 }
 

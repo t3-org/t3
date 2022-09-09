@@ -172,7 +172,7 @@ func newDescriptor(structPkg string, s *lg.Struct) *ModelDescriptor {
 		}
 
 		col, ok := lg.Lookup(field.Tag, "sql", "json")
-		if ok && (col == "" || col == "-") { // skip for existed tag with emtpy or dash
+		if ok && (col == "" || col == "-") { // skip for existed tag with empty or dash
 			continue
 		}
 

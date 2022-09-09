@@ -6,12 +6,14 @@ import (
 	"github.com/kamva/hexa"
 )
 
+//nolint:unused
 var dbStore Store
 
-func SetDBStore(store Store) {
+func SetStore(store Store) {
 	dbStore = store
 }
 
+//nolint:unused
 func store() Store {
 	return dbStore
 }

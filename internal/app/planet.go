@@ -54,6 +54,7 @@ func (a *appCore) DeletePlanet(ctx context.Context, id string) error {
 	return tracer.Trace(a.store.Planet().Delete(ctx, planet))
 }
 
+//nolint:revive
 func (a *appCore) QueryPlanets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error) {
 	// TODO: implement me
 	panic("implement me")

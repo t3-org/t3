@@ -41,6 +41,7 @@ func New(r hexa.ServiceRegistry, next model.Store) *CacheStore {
 	return cs
 }
 
+//nolint:unused
 func handleCacheErr(err error) error {
 	if err == nil {
 		return nil
@@ -54,6 +55,7 @@ func handleCacheErr(err error) error {
 	return err
 }
 
+//nolint:unused
 func logErr(err error) {
 	if err != nil {
 		hlog.Error("can not set/remove data on the cache server", hlog.Err(err))

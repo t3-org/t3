@@ -8,14 +8,13 @@ import (
 	"github.com/kamva/tracer"
 )
 
-// TODO: move table implementation into an external go pacakge. e.g., github.com/kamva/sqld (sql database)
+// TODO: move table implementation into an external go package. e.g., github.com/kamva/sqld (sql database)
 
 type BuilderProvider func(ctx context.Context) sq.StatementBuilderType
 type Table struct {
-	name        string
-	fields      []string
-	builder     BuilderProvider
-	notfoundErr error
+	name    string
+	fields  []string
+	builder BuilderProvider
 }
 
 func NewTable(name string, fields []string, builder BuilderProvider) *Table {

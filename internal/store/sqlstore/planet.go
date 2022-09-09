@@ -58,12 +58,14 @@ func (s *planetStore) Update(ctx context.Context, planet *model.Planet) error {
 	return nil
 }
 
+//nolint:revive // To disable unused query param issue.
 func (s *planetStore) Count(ctx context.Context, query string) (int, error) {
 	var count int
 	err := s.tbl.Count(ctx).Scan(&count)
 	return count, err
 }
 
+//nolint:revive // To disable unused query param issue.
 func (s *planetStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Planet, error) {
 	rows, err := s.tbl.Select(ctx).Limit(limit).Offset(offset).QueryContext(ctx)
 	if err != nil {

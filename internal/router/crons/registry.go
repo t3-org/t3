@@ -12,6 +12,7 @@ import (
 func RegisterCronJobs(crons hjob.CronJobs, r hexa.ServiceRegistry, cfg *config.Config, a app.App) error {
 	res := newResources(r, a)
 	_, _ = res, cfg
+	_ = crons
 	err := gutil.AnyErr(
 	//crons.Register(cfg.LDAP.SyncSchedule, hjob.NewCronJob("space.user.sync_ldap_users"), res.SyncLdapUsers),
 

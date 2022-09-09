@@ -17,7 +17,7 @@ func (h *Service) HealthIdentifier() string {
 	return "redis"
 }
 
-func (h *Service) LivenessStatus(ctx context.Context) hexa.LivenessStatus {
+func (h *Service) LivenessStatus(_ context.Context) hexa.LivenessStatus {
 	con := h.Pool.Get()
 	if _, err := con.Do("PING"); err != nil {
 		hlog.Error("error on send ping to Redis", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
@@ -27,7 +27,7 @@ func (h *Service) LivenessStatus(ctx context.Context) hexa.LivenessStatus {
 	return hexa.StatusAlive
 }
 
-func (h *Service) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus {
+func (h *Service) ReadinessStatus(_ context.Context) hexa.ReadinessStatus {
 	con := h.Pool.Get()
 	if _, err := con.Do("PING"); err != nil {
 		hlog.Error("error on send ping to Redis", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))

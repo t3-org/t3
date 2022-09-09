@@ -36,7 +36,7 @@ func init() {
 	rootCmd.AddCommand(openapiCmd)
 }
 
-func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
+func oaExtractCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
 	cfg := o.Cfg
 
@@ -54,7 +54,7 @@ func oaExtractCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
 	return tracer.Trace(extractor.Extract())
 }
 
-func oaTrimCmdF(o *cmdOpts, cmd *cobra.Command, args []string) error {
+func oaTrimCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
 	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
 		return tracer.Trace(err)

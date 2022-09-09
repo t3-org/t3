@@ -10,7 +10,7 @@ import (
 // System keys
 
 const (
-//SystemHelloWorld = "HELLO_WORLD"
+// SystemHelloWorld = "HELLO_WORLD"
 )
 
 type SystemStore interface {

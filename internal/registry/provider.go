@@ -31,7 +31,7 @@ func Provide(r hexa.ServiceRegistry, p Provider) error {
 func serviceNamesFromMap(providers map[string]Provider) []string {
 	names := make([]string, len(providers))
 	var i int
-	for name, _ := range providers {
+	for name := range providers {
 		names[i] = name
 		i++
 	}

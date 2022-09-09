@@ -11,7 +11,6 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
-	_ "github.com/lib/pq"
 	"github.com/mattermost/morph"
 	"github.com/mattermost/morph/drivers"
 	ms "github.com/mattermost/morph/drivers/mysql"
@@ -100,13 +99,18 @@ func (s *sqlStore) migrate() error {
 	switch s.o.Driver {
 	case DriverNamePostgres:
 		driver, err = ps.WithInstance(s.db, &ps.Config{Config: drivercfg})
+		if err != nil {
+			return tracer.Trace(err)
+		}
 	case DriverNameMysql:
-		opts, err := s.o.MysqlMigrationsDBConfig()
+		var opts *config.DB
+		var db *sql.DB
+		opts, err = s.o.MysqlMigrationsDBConfig()
 		if err != nil {
 			return tracer.Trace(err)
 		}
 
-		db, err := newConn(*opts) // Create a new connection with the updated timout options
+		db, err = newConn(*opts) // Create a new connection with the updated timout options
 		if err != nil {
 			return tracer.Trace(err)
 		}
@@ -116,7 +120,6 @@ func (s *sqlStore) migrate() error {
 		if err != nil {
 			return tracer.Trace(err)
 		}
-
 	default:
 		return tracer.Trace(fmt.Errorf("invalid DB driver: %s", s.o.Driver))
 	}

@@ -42,8 +42,8 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 		}
 
 		timeout := time.Second * 30
-		go sr.ShutdownBySignals(r, timeout)
-		defer registry.Shutdown(r, timeout)
+		go sr.ShutdownBySignals(r, timeout) //nolint
+		defer registry.Shutdown(r, timeout) //nolint
 
 		return cmdF(&cmdOpts{
 			Registry: r,
@@ -53,11 +53,12 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 	}
 }
 
+//nolint:unused
 func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error {
 	return withApp(func(o *cmdOpts, cmd *cobra.Command, args []string) error {
 		s := services.New(o.Registry)
 		u := infra.NewServiceUser(infra.UserIdCommandLine)
-		ctx := hexa.NewContext(nil, hexa.ContextParams{
+		ctx := hexa.NewContext(context.Background(), hexa.ContextParams{
 			CorrelationId:  gutil.UUID(),
 			Locale:         "en-US",
 			User:           u,

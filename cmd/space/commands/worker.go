@@ -27,7 +27,7 @@ func init() {
 	workerCommand.AddCommand(workerRunCommand)
 }
 
-func runWorker(o *cmdOpts, cmd *cobra.Command, args []string) error {
+func runWorker(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
 	if err := registry.Provide(o.Registry, provider.WorkerProvider); err != nil {
 		return tracer.Trace(err)

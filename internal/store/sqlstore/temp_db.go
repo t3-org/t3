@@ -55,7 +55,7 @@ func (d *tempDB) dropDB() error {
 	return nil
 }
 
-func (d *tempDB) Shutdown(ctx context.Context) error {
+func (d *tempDB) Shutdown(_ context.Context) error {
 	return d.dropDB()
 }
 

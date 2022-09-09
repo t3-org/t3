@@ -26,7 +26,7 @@ func init() {
 	cronCommand.AddCommand(cronRunCommand)
 }
 
-func runCron(o *cmdOpts, cmd *cobra.Command, args []string) error {
+func runCron(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
 	if err := registry.Provide(o.Registry, provider.CronProvider); err != nil {
 		return tracer.Trace(err)

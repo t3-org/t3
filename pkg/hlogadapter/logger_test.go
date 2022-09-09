@@ -41,10 +41,10 @@ func TestZapAdapter_Log(t *testing.T) {
 		{sqldblogger.LevelInfo, "info"},
 		{sqldblogger.LevelDebug, "debug"},
 		{sqldblogger.LevelTrace, "debug"},
-		{sqldblogger.Level(99), "debug"}, // unknown
-
+		{sqldblogger.Level(99), "debug"},
 	}
 
+	l := &SqlLogger{}
 	for _, c := range cases {
 		t.Run(c.LevelString, func(t *testing.T) {
 			data := map[string]interface{}{
@@ -58,7 +58,7 @@ func TestZapAdapter_Log(t *testing.T) {
 				data["error"] = fmt.Errorf("dummy error").Error()
 			}
 
-			SqlLogger(context.TODO(), c.Level, "query", data)
+			l.Log(context.TODO(), c.Level, "query", data)
 
 			var content logContent
 

@@ -25,7 +25,7 @@ func (a *appCore) HealthStatus(ctx context.Context) hexa.HealthStatus {
 		Id: a.HealthIdentifier(),
 		Tags: map[string]string{
 			"version": Version,
-			"threads":fmt.Sprint(runtime.NumGoroutine()),
+			"threads": fmt.Sprint(runtime.NumGoroutine()),
 		},
 		Alive: a.LivenessStatus(ctx),
 		Ready: a.ReadinessStatus(ctx),

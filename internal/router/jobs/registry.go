@@ -10,6 +10,7 @@ import (
 
 func RegisterJobs(w hjob.Worker, r hexa.ServiceRegistry, a app.App) error {
 	res := newResources(r, a)
+	_ = w
 	_ = res
 	err := gutil.AnyErr(
 	//w.Register(model.JobNameSyncLdapUsers, res.SyncLdapUsers),

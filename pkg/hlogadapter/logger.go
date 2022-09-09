@@ -8,9 +8,11 @@ import (
 	sqldblogger "github.com/simukti/sqldb-logger"
 )
 
+// TODO: Move this package to hexa-contrib (create a github repo named hexa-contrib).
+
 type SqlLogger struct{}
 
-func (_ *SqlLogger) Log(ctx context.Context, level sqldblogger.Level, msg string, data map[string]interface{}) {
+func (*SqlLogger) Log(ctx context.Context, level sqldblogger.Level, msg string, data map[string]interface{}) {
 	l := hexa.Logger(ctx)
 	if !l.Enabled(FromSqlLoggerLevel(level)) {
 		return

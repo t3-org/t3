@@ -12,8 +12,6 @@ import (
 
 // appCore is implementation of the App
 type appCore struct {
-	tx App
-
 	cfg   *config.Config
 	store model.Store
 }

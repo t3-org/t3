@@ -46,7 +46,7 @@ func (r *labResource) filter(routes []*echo.Route, query string) []*echo.Route {
 // match check that provided value match the search or not.
 func (r *labResource) match(search string, values ...string) bool {
 	for _, val := range values {
-		if strings.Index(val, search) != -1 {
+		if strings.Contains(val, search) {
 			return true
 		}
 	}
