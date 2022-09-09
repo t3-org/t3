@@ -184,7 +184,7 @@ func TracerProvider(r hexa.ServiceRegistry) error {
 		)),
 	)
 
-	r.Register(registry.ServiceNameTracerProvider, tp)
+	r.Register(registry.ServiceNameTracerProvider, htel.NewTracerProvider(tp))
 	return nil
 }
 

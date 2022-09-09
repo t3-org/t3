@@ -32,7 +32,7 @@ func WriteWithOpts(c echo.Context, l hlog.Logger, t hexa.Translator, reply hexa.
 		l.With(hlog.String("translation_key", reply.ID())).Warn("translation for reply id not found.")
 	}
 
-	body := &hexa.HttpRespBody{
+	body := &hexa.HTTPRespBody{
 		Code:    reply.ID(),
 		Message: msg,
 		Data:    reply.Data(),

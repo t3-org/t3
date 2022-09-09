@@ -333,12 +333,16 @@ github.com/kamva/hexa v0.0.0-20220903190028-d8868bbfecbd h1:LZFCJrUvXQ34P/FzW3RS
 github.com/kamva/hexa v0.0.0-20220903190028-d8868bbfecbd/go.mod h1:AJ/6TiObRVKfW5lHY33NF8Ms0cphMQQosiFZQCRzAm0=
 github.com/kamva/hexa v0.1.1-0.20220905213707-38c66ff5a43c h1:Bio2zMtZ5Re6ywTXkNxh5DHIhuO6RydqVFNwim1dVVM=
 github.com/kamva/hexa v0.1.1-0.20220905213707-38c66ff5a43c/go.mod h1:AJ/6TiObRVKfW5lHY33NF8Ms0cphMQQosiFZQCRzAm0=
+github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5 h1:VxmbIGAtnMYik3L8Aqf/wIYY+gCxrEpoISwcwVdMEms=
+github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5/go.mod h1:AJ/6TiObRVKfW5lHY33NF8Ms0cphMQQosiFZQCRzAm0=
 github.com/kamva/hexa-arranger v0.0.0-20220821205736-ff39a38747c2 h1:TDFparjhAWdsy/YicBl2RNNTrpL61nSwWrfBMbNel7k=
 github.com/kamva/hexa-arranger v0.0.0-20220821205736-ff39a38747c2/go.mod h1:C/sbsyL9IKzfqknezJJT99Fkj2zw9GJXfI1KGtTZARM=
 github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086 h1:N3pastenFPwM/ugaJiRWXwMYqr13fOd7EzfnxaueA8k=
 github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086/go.mod h1:LsCXHIAJ+E9oZdLQQnCdfyDCY+l4HNMujvOxB8rZ97c=
 github.com/kamva/hexa-echo v0.0.0-20220821210434-d10ae50436f2 h1:8n7UZisJ13K77anqT3kc6zHqoBg8lEmbVcPthOuRuuo=
 github.com/kamva/hexa-echo v0.0.0-20220821210434-d10ae50436f2/go.mod h1:5WgM2IaUIQDZIHW07WdWMSsrK3+PXu6bRCbissvuRZQ=
+github.com/kamva/hexa-echo v0.1.1-0.20220909103021-ac8838308f71 h1:MmtkyM26JXIYniFOu7+coWxHKZ6c6j9wcKl8f7lC1jg=
+github.com/kamva/hexa-echo v0.1.1-0.20220909103021-ac8838308f71/go.mod h1:/oq3kW2WjDMAo6+H803JazKySZ4ggPezSHo8tahresg=
 github.com/kamva/hexa-event v0.0.0-20220821210927-91e71015f439 h1:r8DZi4M7nBLJh6zGABNnj9tgakK6Q0knjhUWS5W+/ts=
 github.com/kamva/hexa-event v0.0.0-20220821210927-91e71015f439/go.mod h1:5NWLyc0qmb3MSz4uf49WgbsYcdAnn3x59Ctdtoy4+Eo=
 github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb h1:m67li3hA8n6xIir+nmDqcPWaHCvSpU3OKVUW4LgjpII=

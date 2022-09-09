@@ -71,7 +71,7 @@ func handleError(hexaErr hexa.Error, c echo.Context, l hlog.Logger, t hexa.Trans
 
 	debugData["err"] = hexaErr.Error()
 
-	body := &hexa.HttpRespBody{
+	body := &hexa.HTTPRespBody{
 		Code:    hexaErr.ID(),
 		Message: msg,
 		Data:    hexaErr.Data(),

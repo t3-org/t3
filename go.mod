@@ -9,9 +9,9 @@ require (
 	github.com/gomodule/redigo v1.8.8
 	github.com/hibiken/asynq v0.18.4
 	github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
-	github.com/kamva/hexa v0.1.1-0.20220905213707-38c66ff5a43c
+	github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5
 	github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
-	github.com/kamva/hexa-echo v0.0.0-20220821210434-d10ae50436f2
+	github.com/kamva/hexa-echo v0.1.1-0.20220909103021-ac8838308f71
 	github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb
 	github.com/kamva/hexa-tuner v0.1.1-0.20220907214358-717d733a4040
 	github.com/kamva/mgm/v3 v3.4.0
