@@ -10,6 +10,8 @@ import (
 	"space.org/space/internal/registry"
 )
 
+// TODO: We can remove testbox completely and just have couple of helper methods around registry (in a helper package in hexa).
+
 var testbox *TestBox
 
 func SetGlobal(tbox *TestBox) {
@@ -36,7 +38,7 @@ func New(providers map[string]registry.Provider) *TestBox {
 }
 
 func (t *TestBox) Setup() error {
-	if err := registry.ProvideServices(t.r, t.providers); err != nil {
+	if err := registry.ProvideByProviders(t.r, t.providers); err != nil {
 		return tracer.Trace(err)
 	}
 
@@ -58,7 +60,7 @@ func (t *TestBox) TeardownIfPanic() {
 		return
 	}
 
-	hlog.Error("recovered from test")
+	hlog.Error("recovered from test", hlog.ErrStack(err.(error)))
 	if teardownErr := t.Teardown(); teardownErr != nil {
 		hlog.Error("can not teardown testbox completely", hlog.ErrStack(teardownErr))
 	}

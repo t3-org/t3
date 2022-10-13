@@ -5,10 +5,10 @@ import (
 	"space.org/space/infra"
 )
 
-const (
-	// Version is the app version
-	Version = "0.1.0"
-)
+// Version is the app version.
+// Inject the version using `-ldflags`.
+// go run -ldflags "-X space.org/space/internal/app.Version=`git rev-parse HEAD`" ./cmd/space/main.go version
+var Version string
 
 // Banner function print the app's banner
 func Banner(product string) {

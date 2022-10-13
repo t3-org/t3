@@ -27,7 +27,7 @@ func New() (*Config, error) {
 	}
 
 	var cfg Config
-	err = v.Unmarshal(&cfg)
+	err = v.Unmarshal(&cfg, huner.ViperDecoderTagName("json"))
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}

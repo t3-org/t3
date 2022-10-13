@@ -47,4 +47,9 @@ func (s *systemStore) Update(ctx context.Context, system *model.System) error {
 	return tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrSystemPropertyNotFound))
 }
 
+func (s *systemStore) Delete(ctx context.Context, name string) error {
+	_, err := s.tbl.DeleteBuilder(ctx).Where(sq.Eq{"name": name}).ExecContext(ctx)
+	return tracer.Trace(err)
+}
+
 var _ model.SystemStore = &systemStore{}

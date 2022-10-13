@@ -237,3 +237,22 @@ func (s *tracingLayerSystemStore) Save(ctx context.Context, system *model.System
 
 	return r1
 }
+func (s *tracingLayerSystemStore) Delete(ctx context.Context, name string) error {
+	if ctx == nil {
+		return s.next.Delete(ctx, name)
+	}
+
+	ctx, span := s.t.Start(ctx, "SystemStore.Delete")
+	defer span.End()
+
+	r1 := s.next.Delete(ctx, name)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}

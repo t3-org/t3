@@ -1,3 +1,4 @@
+//go:generate mockgen -source=store.go -destination=mock/store_gen.go -package=mockmodel
 package model
 
 import (
@@ -33,6 +34,22 @@ type Store interface {
 	Planet() PlanetStore
 
 	// Place other store providers here.
+}
+
+type SystemStore interface {
+	GetByName(ctx context.Context, name string) (*System, error)
+	Save(ctx context.Context, system *System) error
+	Delete(ctx context.Context, name string) error
+}
+
+type PlanetStore interface {
+	Get(ctx context.Context, id string) (*Planet, error)
+	GetByCode(ctx context.Context, code string) (*Planet, error)
+	Create(ctx context.Context, m *Planet) error
+	Update(ctx context.Context, m *Planet) error
+	Delete(ctx context.Context, m *Planet) error
+	Count(ctx context.Context, query string) (int, error)
+	Query(ctx context.Context, query string, offset, limit uint64) ([]*Planet, error)
 }
 
 type Health interface {

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"context"
 	"time"
 
 	"github.com/kamva/tracer"
@@ -12,11 +11,6 @@ import (
 const (
 // SystemHelloWorld = "HELLO_WORLD"
 )
-
-type SystemStore interface {
-	GetByName(ctx context.Context, name string) (*System, error)
-	Save(ctx context.Context, system *System) error
-}
 
 type System struct {
 	Base  `json:",inline"`

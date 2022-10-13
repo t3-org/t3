@@ -9,7 +9,7 @@ import (
 )
 
 func (api *API) registerPlanetRoutes() {
-	res := &planetResource{app: api.App}
+	res := newPlanet(api.App)
 	planets := api.API.Group("/planets")
 
 	planets.GET("/code/:code", res.GetByCode).Name = "planets::getByCode"
@@ -19,6 +19,10 @@ func (api *API) registerPlanetRoutes() {
 type planetResource struct {
 	Resource
 	app app.App
+}
+
+func newPlanet(a app.App) *planetResource {
+	return &planetResource{app: a}
 }
 
 func (r *planetResource) GetByCode(c echo.Context) error {

@@ -5,8 +5,10 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
-	"space.org/space/cmd/space/commands"
+	_ "space.org/space/internal/registry/provider"
 	_ "space.org/space/internal/router/api/doc"
+
+	"space.org/space/cmd/space/commands"
 )
 
 func main() {

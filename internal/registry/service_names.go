@@ -1,5 +1,7 @@
 package registry
 
+import "github.com/kamva/gutil"
+
 // What should we add to the service registry?
 // - all services in the service provider.
 // - store + app
@@ -10,10 +12,10 @@ const (
 	ServiceNameTranslator     = "translator"
 	ServiceNameProbeServer    = "probe_server"
 	ServiceNameHealthReporter = "health_reporter_service"
+	ServiceNamePrometheus     = "prometheus"
 	ServiceNameTracerProvider = "tracer_provider"
 	ServiceNameMeterProvider  = "meter_provider"
 	ServiceNameOpenTelemetry  = "open_telemetry"
-	ServiceNamePrometheus     = "prometheus"
 	ServiceNameRedis          = "redis"
 	ServiceNameCacheProvider  = "cache_provider"
 
@@ -29,7 +31,16 @@ const (
 
 	// services to use in tests
 
-	ServiceNameTempDB = "temp_db"
+	ServiceNameTempDB       = "temp_db"
+	ServiceNameTestReporter = "test_reporter" // gomock.TestReporter
+)
+
+// We use all service names as the provider name, unless provide multiple providers for a
+// service(e.g., mock of a service), in that situation we provide the provider name here.
+
+const (
+	ProviderNameMockStore = "mock_store"
+	ProviderNameMockApp   = "mock_app"
 )
 
 func bootPriority() []string {
@@ -40,10 +51,10 @@ func bootPriority() []string {
 		ServiceNameTranslator,
 		ServiceNameHealthReporter,
 		ServiceNameProbeServer,
+		ServiceNamePrometheus,
 		ServiceNameTracerProvider,
 		ServiceNameMeterProvider,
 		ServiceNameOpenTelemetry,
-		ServiceNamePrometheus,
 		ServiceNameRedis,
 		ServiceNameCacheProvider,
 		ServiceNameHttpServer,
@@ -55,23 +66,29 @@ func bootPriority() []string {
 	}
 }
 
-func BaseServices() []string {
-	return []string{
+func BaseServices(exclude ...string) []string {
+	l := []string{
 		ServiceNameConfig,
 		ServiceNameLogger,
 		ServiceNameTranslator,
 		ServiceNameProbeServer,
 		ServiceNameHealthReporter,
+		ServiceNamePrometheus,
 		ServiceNameTracerProvider,
 		ServiceNameMeterProvider,
 		ServiceNameOpenTelemetry,
-		ServiceNamePrometheus,
 		ServiceNameRedis,
 		ServiceNameCacheProvider,
 		ServiceNameStore,
 		ServiceNameApp,
 	}
+
+	if len(exclude) != 0 {
+		return gutil.Sub(l, exclude)
+	}
+	return l
 }
+
 func TestHelperServices() []string {
 	return []string{
 		ServiceNameTempDB,

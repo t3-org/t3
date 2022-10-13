@@ -22,64 +22,64 @@ const (
 
 type Config struct {
 	// Test contains test config which we don't need to provide it in non-test environments.
-	Test *Test `json:"test" mapstructure:"test"`
+	Test *Test `json:"test"`
 
-	AppName      string `json:"app_name" mapstructure:"app_name"`
-	InstanceName string `json:"instance_name" mapstructure:"instance_name"`
+	AppName      string `json:"app_name"`
+	InstanceName string `json:"instance_name"`
 
 	// Environment is just for log, tracing,... you could set it to
 	// something like prod, dev, local,...
-	Environment string `json:"environment" mapstructure:"environment"`
+	Environment string `json:"environment"`
 
 	//--------------------------------
 	// General Configs
 	//--------------------------------
 
-	Debug              bool          `json:"debug" mapstructure:"debug"`
-	ListeningIP        string        `json:"listening_ip" mapstructure:"listening_ip"`
-	Port               int           `json:"port" mapstructure:"port"`
-	DB                 DB            `json:"db" mapstructure:"db"`
-	ProbeServerAddress string        `json:"probe_server_address" mapstructure:"probe_server_address"`
-	OpenTelemetry      OpenTelemetry `json:"open_telemetry" mapstructure:"open_telemetry"`
+	Debug              bool          `json:"debug"`
+	ListeningIP        string        `json:"listening_ip"`
+	Port               int           `json:"port"`
+	DB                 DB            `json:"db"`
+	ProbeServerAddress string        `json:"probe_server_address"`
+	OpenTelemetry      OpenTelemetry `json:"open_telemetry"`
 
-	AssetsBasePath    string `json:"assets_base_path" mapstructure:"assets_base_path"`
-	ResourcesBasePath string `json:"resources_base_path" mapstructure:"resources_base_path"`
+	AssetsBasePath    string `json:"assets_base_path"`
+	ResourcesBasePath string `json:"resources_base_path"`
 
-	LogStack          []string `json:"log_stack" mapstructure:"log_stack"`
-	SentryDSN         string   `json:"sentry_dsn" mapstructure:"sentry_dsn"`
-	SentryEnvironment string   `json:"sentry_environment" mapstructure:"sentry_environment"`
-	TranslateFiles    []string `json:"translate_files" mapstructure:"translate_files"`
-	FallbackLanguages []string `json:"fallback_languages" mapstructure:"fallback_languages"`
-	LogLevel          string   `json:"log_level" mapstructure:"log_level"`
-	GRPCLogVerbosity  int      `json:"grpc_log_verbosity" mapstructure:"grpc_log_verbosity"`
+	LogStack          []string `json:"log_stack"`
+	SentryDSN         string   `json:"sentry_dsn"`
+	SentryEnvironment string   `json:"sentry_environment"`
+	TranslateFiles    []string `json:"translate_files"`
+	FallbackLanguages []string `json:"fallback_languages"`
+	LogLevel          string   `json:"log_level"`
+	GRPCLogVerbosity  int      `json:"grpc_log_verbosity"`
 
 	//--------------------------------
 	// HTTP server configs
 	//--------------------------------
-	EchoLogLevel      string   `json:"echo_log_level" mapstructure:"echo_log_level"`
-	AllowOrigins      []string `json:"allow_origins" mapstructure:"allow_origins"`
-	AllowHeaders      []string `json:"allow_headers" mapstructure:"allow_headers"`
-	AllowCredentials  bool     `json:"allow_credentials" mapstructure:"allow_credentials"`
-	AllowMethods      []string `json:"allow_methods" mapstructure:"allow_methods"`
-	CorsMaxAgeSeconds int      `json:"cors_max_age_seconds" mapstructure:"cors_max_age_seconds"`
-	AuthTokenCookie   Cookie   `json:"auth_token_cookie" mapstructure:"auth_token_cookie"`
-	CSRFCookie        Cookie   `json:"csrf_cookie" mapstructure:"csrf_cookie"`
+	EchoLogLevel      string   `json:"echo_log_level"`
+	AllowOrigins      []string `json:"allow_origins"`
+	AllowHeaders      []string `json:"allow_headers"`
+	AllowCredentials  bool     `json:"allow_credentials"`
+	AllowMethods      []string `json:"allow_methods"`
+	CorsMaxAgeSeconds int      `json:"cors_max_age_seconds"`
+	AuthTokenCookie   Cookie   `json:"auth_token_cookie"`
+	CSRFCookie        Cookie   `json:"csrf_cookie"`
 
 	// limit request response
-	RequestReadTimeoutMs       int `json:"request_read_timeout_ms" mapstructure:"request_read_timeout_ms"`
-	RequestReadHeaderTimeoutMs int `json:"request_read_header_timeout_ms" mapstructure:"request_read_header_timeout_ms"`
-	ResponseWriteTimeoutMs     int `json:"response_write_timeout_ms" mapstructure:"response_write_timeout_ms"`
+	RequestReadTimeoutMs       int `json:"request_read_timeout_ms"`
+	RequestReadHeaderTimeoutMs int `json:"request_read_header_timeout_ms"`
+	ResponseWriteTimeoutMs     int `json:"response_write_timeout_ms"`
 	// IdleTimeout is the maximum amount of time to wait for the next request when keep-alives are enabled.
-	ConnectionIdleTimeoutMs int   `json:"connection_idle_timeout_ms" mapstructure:"connection_idle_timeout_ms"`
-	MaxHeaderSizeKb         int   `json:"max_header_size_kb" mapstructure:"max_header_size_kb"` // 0 means unlimited.
-	MaxBodySizeKb           int64 `json:"max_body_size_kb" mapstructure:"max_body_size_kb"`     // 0 means unlimited.
+	ConnectionIdleTimeoutMs int   `json:"connection_idle_timeout_ms"`
+	MaxHeaderSizeKb         int   `json:"max_header_size_kb"` // 0 means unlimited.
+	MaxBodySizeKb           int64 `json:"max_body_size_kb"`   // 0 means unlimited.
 
-	AsynqConfig AsynqConfig `json:"asynq_config" mapstructure:"asynq_config"`
+	AsynqConfig AsynqConfig `json:"asynq_config"`
 
-	RedisAddress  string `json:"redis_address" mapstructure:"redis_address"`
-	RedisPassword string `json:"redis_password" mapstructure:"redis_password"`
-	RedisDB       int    `json:"redis_db" mapstructure:"redis_db"`
-	Cache         Cache  `json:"cache" mapstructure:"cache"`
+	RedisAddress  string `json:"redis_address"`
+	RedisPassword string `json:"redis_password"`
+	RedisDB       int    `json:"redis_db"`
+	Cache         Cache  `json:"cache"`
 }
 
 func (c *Config) validate() error {

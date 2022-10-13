@@ -1,21 +1,9 @@
 package model
 
 import (
-	"context"
-
 	"github.com/kamva/gutil"
 	"space.org/space/internal/input"
 )
-
-type PlanetStore interface {
-	Get(ctx context.Context, id string) (*Planet, error)
-	GetByCode(ctx context.Context, code string) (*Planet, error)
-	Create(ctx context.Context, m *Planet) error
-	Update(ctx context.Context, m *Planet) error
-	Delete(ctx context.Context, m *Planet) error
-	Count(ctx context.Context, query string) (int, error)
-	Query(ctx context.Context, query string, offset, limit uint64) ([]*Planet, error)
-}
 
 type Planet struct {
 	Base `json:",inline"`

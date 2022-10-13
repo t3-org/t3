@@ -13,7 +13,6 @@ import (
 	"space.org/space/internal/app"
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/provider"
 	"space.org/space/internal/registry/services"
 )
 
@@ -32,7 +31,7 @@ type WithCtxHandler func(ctx context.Context, o *cmdOpts, cmd *cobra.Command, ar
 func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		r := sr.New()
-		err := registry.ProvideServices(r, provider.Providers(registry.BaseServices()))
+		err := registry.ProvideByNames(r, registry.BaseServices()...)
 		if err != nil {
 			return tracer.Trace(err)
 		}

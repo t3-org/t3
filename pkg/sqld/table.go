@@ -77,5 +77,9 @@ func (t *Table) Count(ctx context.Context) sq.SelectBuilder {
 }
 
 func (t *Table) Delete(ctx context.Context, id any) (sql.Result, error) {
-	return t.builder(ctx).Delete(t.name).Where(idEq(id)).ExecContext(ctx)
+	return t.DeleteBuilder(ctx).Where(idEq(id)).ExecContext(ctx)
+}
+
+func (t *Table) DeleteBuilder(ctx context.Context) sq.DeleteBuilder {
+	return t.builder(ctx).Delete(t.name)
 }

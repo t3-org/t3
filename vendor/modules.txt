@@ -27,8 +27,6 @@ github.com/contribsys/faktory_worker_go
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a
-## explicit
 # github.com/fatih/color v1.10.0
 ## explicit; go 1.13
 github.com/fatih/color
@@ -54,19 +52,12 @@ github.com/go-redis/redis/v7/internal/util
 # github.com/go-sql-driver/mysql v1.6.0
 ## explicit; go 1.10
 github.com/go-sql-driver/mysql
-# github.com/go-stack/stack v1.8.0
-## explicit
-# github.com/gogo/googleapis v1.4.0
-## explicit; go 1.12
-# github.com/gogo/protobuf v1.3.1
-## explicit
-# github.com/gogo/status v1.1.0
-## explicit; go 1.12
 # github.com/golang-jwt/jwt v3.2.2+incompatible
 ## explicit
 github.com/golang-jwt/jwt
 # github.com/golang/mock v1.6.0
 ## explicit; go 1.11
+github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/proto
@@ -74,8 +65,6 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/golang/snappy v0.0.2
-## explicit
 # github.com/gomodule/redigo v1.8.8
 ## explicit; go 1.16
 github.com/gomodule/redigo/redis
@@ -116,15 +105,13 @@ github.com/hibiken/asynq/internal/rdb
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
-# github.com/jinzhu/inflection v1.0.0
-## explicit
 # github.com/josharian/intern v1.0.0
 ## explicit; go 1.5
 github.com/josharian/intern
 # github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
 ## explicit; go 1.13
 github.com/kamva/gutil
-# github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5
+# github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5 => /Users/Mehran/projects/kamva/hexa/hexa
 ## explicit; go 1.18
 github.com/kamva/hexa
 github.com/kamva/hexa/hexatranslator
@@ -135,8 +122,6 @@ github.com/kamva/hexa/lg
 github.com/kamva/hexa/pagination
 github.com/kamva/hexa/probe
 github.com/kamva/hexa/sr
-# github.com/kamva/hexa-arranger v0.0.0-20220821205736-ff39a38747c2
-## explicit; go 1.18
 # github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
 ## explicit; go 1.17
 github.com/kamva/hexa-cache
@@ -144,8 +129,6 @@ github.com/kamva/hexa-cache
 ## explicit; go 1.18
 github.com/kamva/hexa-echo
 github.com/kamva/hexa-echo/hechodoc
-# github.com/kamva/hexa-event v0.0.0-20220821210927-91e71015f439
-## explicit; go 1.18
 # github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb
 ## explicit; go 1.18
 github.com/kamva/hexa-job
@@ -155,16 +138,14 @@ github.com/kamva/hexa-job/robfig
 # github.com/kamva/hexa-rpc v0.0.0-20220821211625-8658f817132b
 ## explicit; go 1.18
 github.com/kamva/hexa-rpc
-# github.com/kamva/hexa-tuner v0.1.1-0.20220907214358-717d733a4040
+# github.com/kamva/hexa-tuner v0.1.1-0.20220912214214-3b85dd3c6dc8
 ## explicit; go 1.18
 github.com/kamva/hexa-tuner
-# github.com/kamva/mgm/v3 v3.4.0
-## explicit; go 1.14
 # github.com/kamva/tracer v0.0.0-20201115122932-ea39052d56cd
 ## explicit; go 1.13
 github.com/kamva/tracer
-# github.com/klauspost/compress v1.15.0
-## explicit; go 1.15
+# github.com/kr/text v0.2.0
+## explicit
 # github.com/labstack/echo/v4 v4.7.2
 ## explicit; go 1.17
 github.com/labstack/echo/v4
@@ -222,10 +203,8 @@ github.com/mitchellh/mapstructure
 github.com/nicksnyder/go-i18n/v2/i18n
 github.com/nicksnyder/go-i18n/v2/internal
 github.com/nicksnyder/go-i18n/v2/internal/plural
-# github.com/opentracing/opentracing-go v1.2.0
-## explicit; go 1.14
-# github.com/pborman/uuid v1.2.1
-## explicit
+# github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
+## explicit; go 1.12
 # github.com/pelletier/go-toml v1.7.0
 ## explicit; go 1.12
 github.com/pelletier/go-toml
@@ -256,11 +235,12 @@ github.com/prometheus/common/model
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
 github.com/prometheus/procfs/internal/util
-# github.com/robfig/cron v1.2.0
-## explicit
 # github.com/robfig/cron/v3 v3.0.1
 ## explicit; go 1.12
 github.com/robfig/cron/v3
+# github.com/sethvargo/go-envconfig v0.8.2
+## explicit; go 1.17
+github.com/sethvargo/go-envconfig
 # github.com/sethvargo/go-limiter v0.7.2
 ## explicit; go 1.14
 github.com/sethvargo/go-limiter
@@ -287,8 +267,6 @@ github.com/spf13/pflag
 # github.com/spf13/viper v1.7.1
 ## explicit; go 1.12
 github.com/spf13/viper
-# github.com/stretchr/objx v0.4.0
-## explicit; go 1.12
 # github.com/stretchr/testify v1.8.0
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
@@ -299,8 +277,6 @@ github.com/subosito/gotenv
 # github.com/tinylib/msgp v1.1.6
 ## explicit; go 1.14
 github.com/tinylib/msgp/msgp
-# github.com/uber-go/tally v3.3.17+incompatible
-## explicit
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
@@ -316,16 +292,6 @@ github.com/vmihailenco/msgpack/v5/msgpcode
 github.com/vmihailenco/tagparser/v2
 github.com/vmihailenco/tagparser/v2/internal
 github.com/vmihailenco/tagparser/v2/internal/parser
-# github.com/xdg-go/pbkdf2 v1.0.0
-## explicit; go 1.9
-# github.com/xdg-go/scram v1.0.2
-## explicit; go 1.11
-# github.com/xdg-go/stringprep v1.0.2
-## explicit; go 1.11
-# github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d
-## explicit
-# go.mongodb.org/mongo-driver v1.7.0
-## explicit; go 1.10
 # go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.27.0
 ## explicit; go 1.15
 go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc
@@ -388,13 +354,11 @@ go.opentelemetry.io/otel/sdk/metric/selector/simple
 # go.opentelemetry.io/otel/trace v1.2.0
 ## explicit; go 1.15
 go.opentelemetry.io/otel/trace
-# go.temporal.io/api v1.2.0
-## explicit; go 1.15
-# go.temporal.io/sdk v1.2.0
-## explicit; go 1.15
 # go.uber.org/atomic v1.7.0
 ## explicit; go 1.13
 go.uber.org/atomic
+# go.uber.org/goleak v1.0.0
+## explicit; go 1.13
 # go.uber.org/multierr v1.6.0
 ## explicit; go 1.12
 go.uber.org/multierr
@@ -410,6 +374,8 @@ go.uber.org/zap/zapcore
 ## explicit; go 1.17
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
+# golang.org/x/lint v0.0.0-20200302205851-738671d3881b
+## explicit; go 1.11
 # golang.org/x/mod v0.5.1
 ## explicit; go 1.17
 golang.org/x/mod/internal/lazyregexp
@@ -425,8 +391,6 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
-## explicit
 # golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9
 ## explicit; go 1.17
 golang.org/x/sys/execabs
@@ -556,6 +520,8 @@ google.golang.org/protobuf/types/known/durationpb
 google.golang.org/protobuf/types/known/fieldmaskpb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/known/wrapperspb
+# gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
+## explicit
 # gopkg.in/ini.v1 v1.57.0
 ## explicit
 gopkg.in/ini.v1
@@ -567,3 +533,4 @@ gopkg.in/yaml.v2
 gopkg.in/yaml.v3
 # honnef.co/go/tools v0.1.3
 ## explicit; go 1.14
+# github.com/kamva/hexa => /Users/Mehran/projects/kamva/hexa/hexa

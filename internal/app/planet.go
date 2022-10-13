@@ -19,15 +19,15 @@ func (a *appCore) GetPlanetByCode(ctx context.Context, code string) (*dto.Planet
 }
 
 func (a *appCore) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error) {
-	var planet *model.Planet
+	var planet model.Planet
 	if err := planet.Create(in); err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	if err := a.store.Planet().Create(ctx, planet); err != nil {
+	if err := a.store.Planet().Create(ctx, &planet); err != nil {
 		return nil, tracer.Trace(err)
 	}
-	return planet, nil
+	return &planet, nil
 }
 
 func (a *appCore) UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error) {

@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 	"space.org/space/internal/app"
 	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/provider"
 	"space.org/space/internal/registry/services"
 )
 
@@ -29,7 +28,7 @@ func init() {
 
 func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
-	if err := registry.Provide(o.Registry, provider.HttpServerProvider); err != nil {
+	if err := registry.ProvideByName(o.Registry, registry.ServiceNameHttpServer); err != nil {
 		return tracer.Trace(err)
 	}
 

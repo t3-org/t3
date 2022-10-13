@@ -37,6 +37,7 @@ func (a *tracingLayer) LivenessStatus(ctx context.Context) hexa.LivenessStatus {
 
 	return r1
 }
+
 func (a *tracingLayer) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus {
 	if ctx == nil {
 		return a.next.ReadinessStatus(ctx)
@@ -51,6 +52,7 @@ func (a *tracingLayer) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus
 
 	return r1
 }
+
 func (a *tracingLayer) HealthStatus(ctx context.Context) hexa.HealthStatus {
 	if ctx == nil {
 		return a.next.HealthStatus(ctx)
@@ -65,6 +67,7 @@ func (a *tracingLayer) HealthStatus(ctx context.Context) hexa.HealthStatus {
 
 	return r1
 }
+
 func (a *tracingLayer) GetPlanet(ctx context.Context, id string) (*dto.Planet, error) {
 	if ctx == nil {
 		return a.next.GetPlanet(ctx, id)

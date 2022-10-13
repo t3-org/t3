@@ -5,12 +5,13 @@ import (
 	"testing"
 	"time"
 
+	_ "space.org/space/internal/registry/provider"
+
 	"github.com/kamva/gutil"
 	huner "github.com/kamva/hexa-tuner"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/provider"
 	"space.org/space/internal/testbox"
 )
 
@@ -30,7 +31,7 @@ func TestMain(t *testing.M) {
 func testMain(t *testing.M) (exitcode int, err error) {
 	names := append(registry.MinimalServices(), registry.TestHelperServices()...)
 	names = append(names, registry.ServiceNameStore) // Add store.
-	tbox := testbox.New(provider.Providers(names))
+	tbox := testbox.New(registry.Providers(names...))
 	testbox.SetGlobal(tbox)
 
 	if err = tbox.Setup(); err != nil {

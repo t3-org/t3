@@ -1,3 +1,4 @@
+//go:generate mockgen -source=app_iface.go -destination=mock/app_gen.go -package=mockapp
 package app
 
 import (

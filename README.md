@@ -140,3 +140,12 @@ http://{probe_server_address}/live
 // Readiness
 http://{probe_server_address}/ready
 ```
+
+### Notes about tests
+
+- Right now we are using `defer testbox.Global().TeardownIfPanic()` per each test to make sure we'll clean up
+  everything in situation that our test panic. Unfortunately we can not use `t.Cleanup()` function to do that, because
+  when it panics, `t.Failed()` doens't returns `true` in the cleanup function,
+  [but it's rolled forward to go1.20](https://github.com/golang/go/issues/49929), in go 1.20 update it please. please
+  note `t.Failed()` returns `true` in all situations that our test is failed, not just a panic. so check that this is 
+  what we want or not (or it would be great if Go add `Cleanup` to the `testing.M`).

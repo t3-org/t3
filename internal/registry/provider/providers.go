@@ -51,38 +51,28 @@ import (
 	"space.org/space/pkg/hredis"
 )
 
-var providers = map[string]registry.Provider{
-	registry.ServiceNameConfig:         ConfigProvider,
-	registry.ServiceNameTempDB:         TmpDBProvider,
-	registry.ServiceNameLogger:         LoggerProvider,
-	registry.ServiceNameTranslator:     TranslatorProvider,
-	registry.ServiceNameProbeServer:    ProbeServerProvider,
-	registry.ServiceNameHealthReporter: HealthReporterProvider,
-	registry.ServiceNameTracerProvider: TracerProvider,
-	registry.ServiceNameMeterProvider:  MeterProvider,
-	registry.ServiceNameOpenTelemetry:  OpenTelemetryProvider,
-	registry.ServiceNameRedis:          RedisProvider,
-	registry.ServiceNameCacheProvider:  CacheProvider,
-	registry.ServiceNameHttpServer:     HttpServerProvider,
-	registry.ServiceNameJobs:           JobsProvider,
-	registry.ServiceNameWorker:         WorkerProvider,
-	registry.ServiceNameCron:           CronProvider,
-	registry.ServiceNameStore:          StoreProvider,
-	registry.ServiceNameApp:            AppProvider,
-}
+func init() {
+	registry.AddProvider(registry.ServiceNameConfig, registry.ServiceNameConfig, ConfigProvider)
+	registry.AddProvider(registry.ServiceNameTempDB, registry.ServiceNameTempDB, TmpDBProvider)
+	registry.AddProvider(registry.ServiceNameLogger, registry.ServiceNameLogger, LoggerProvider)
+	registry.AddProvider(registry.ServiceNameTranslator, registry.ServiceNameTranslator, TranslatorProvider)
+	registry.AddProvider(registry.ServiceNameProbeServer, registry.ServiceNameProbeServer, ProbeServerProvider)
+	registry.AddProvider(registry.ServiceNameHealthReporter, registry.ServiceNameHealthReporter, HealthReporterProvider)
+	registry.AddProvider(registry.ServiceNameTracerProvider, registry.ServiceNameTracerProvider, TracerProvider)
+	registry.AddProvider(registry.ServiceNamePrometheus, registry.ServiceNamePrometheus, PrometheusProvider)
+	registry.AddProvider(registry.ServiceNameMeterProvider, registry.ServiceNameMeterProvider, MeterProvider)
+	registry.AddProvider(registry.ServiceNameOpenTelemetry, registry.ServiceNameOpenTelemetry, OpenTelemetryProvider)
+	registry.AddProvider(registry.ServiceNameRedis, registry.ServiceNameRedis, RedisProvider)
+	registry.AddProvider(registry.ServiceNameCacheProvider, registry.ServiceNameCacheProvider, CacheProvider)
+	registry.AddProvider(registry.ServiceNameHttpServer, registry.ServiceNameHttpServer, HttpServerProvider)
+	registry.AddProvider(registry.ServiceNameJobs, registry.ServiceNameJobs, JobsProvider)
+	registry.AddProvider(registry.ServiceNameWorker, registry.ServiceNameWorker, WorkerProvider)
+	registry.AddProvider(registry.ServiceNameCron, registry.ServiceNameCron, CronProvider)
+	registry.AddProvider(registry.ServiceNameStore, registry.ServiceNameStore, StoreProvider)
+	registry.AddProvider(registry.ServiceNameApp, registry.ServiceNameApp, AppProvider)
 
-// Providers returns provides with the specified names in the provided array.
-func Providers(names []string) map[string]registry.Provider {
-	m := make(map[string]registry.Provider)
-	for _, name := range names {
-		p, ok := providers[name]
-		if !ok {
-			hlog.Error("can not find provider, ignoring it.", hlog.String("name", name))
-			continue
-		}
-		m[name] = p
-	}
-	return m
+	registry.AddProvider(registry.ProviderNameMockStore, registry.ServiceNameStore, MockStoreProvider)
+	registry.AddProvider(registry.ProviderNameMockApp, registry.ServiceNameApp, MockAppProvider)
 }
 
 func ConfigProvider(r hexa.ServiceRegistry) error {
@@ -187,8 +177,7 @@ func TracerProvider(r hexa.ServiceRegistry) error {
 	r.Register(registry.ServiceNameTracerProvider, htel.NewTracerProvider(tp))
 	return nil
 }
-
-func MeterProvider(r hexa.ServiceRegistry) error {
+func PrometheusProvider(r hexa.ServiceRegistry) error {
 	cfg := conf(r)
 
 	mcfg := cfg.OpenTelemetry.Metric
@@ -219,11 +208,16 @@ func MeterProvider(r hexa.ServiceRegistry) error {
 	}
 
 	// Register probe handler
-	probeserver := r.Service(registry.ServiceNameProbeServer).(probe.Server)
-	probeserver.Register("prometheus_metrics", "/prometheus/metrics", exporter.ServeHTTP, "Prometheus metrics")
+	probeServer := r.Service(registry.ServiceNameProbeServer).(probe.Server)
+	probeServer.Register("prometheus_metrics", "/prometheus/metrics", exporter.ServeHTTP, "Prometheus metrics")
 
 	// Register prometheus exporter as another service to just keep it:
 	r.Register(registry.ServiceNamePrometheus, exporter)
+	return nil
+}
+
+func MeterProvider(r hexa.ServiceRegistry) error {
+	exporter := r.Service(registry.ServiceNamePrometheus).(*prometheus.Exporter)
 	r.Register(registry.ServiceNameMeterProvider, exporter.MeterProvider())
 	return nil
 }

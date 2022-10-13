@@ -10,6 +10,7 @@ import (
 	"github.com/kamva/gutil"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
 
@@ -89,10 +90,14 @@ func ConfigFilePaths(o ConfigFilePathsOptions, onlyEnvDependant bool) []string {
 	return existedFiles
 }
 
+// ViperDecoderTagName sets the tag name on a viper decoder.
+func ViperDecoderTagName(name string) viper.DecoderConfigOption {
+	return func(cfg *mapstructure.DecoderConfig) { cfg.TagName = name }
+}
+
 // NewViperConfig returns new instance of the viper
 func NewViperConfig(envPrefix string, files []string) (*viper.Viper, error) {
 	v := viper.New()
-
 	if len(files) == 0 {
 		return nil, tracer.Trace(errors.New("at least one config files should be exists"))
 	}

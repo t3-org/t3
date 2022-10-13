@@ -1,10 +1,14 @@
 package provider
 
 import (
+	"github.com/golang/mock/gomock"
 	"github.com/kamva/gutil"
 	"github.com/kamva/hexa"
 	"github.com/kamva/tracer"
+	mockapp "space.org/space/internal/app/mock"
 	"space.org/space/internal/config"
+	"space.org/space/internal/model"
+	mockmodel "space.org/space/internal/model/mock"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/store/sqlstore"
 )
@@ -28,5 +32,19 @@ func TmpDBProvider(r hexa.ServiceRegistry) error {
 	}
 
 	r.Register(registry.ServiceNameTempDB, tempdb)
+	return nil
+}
+
+func MockStoreProvider(r hexa.ServiceRegistry) error {
+	s := mockmodel.NewStore(r.Service(registry.ServiceNameTestReporter).(gomock.TestReporter))
+	r.Register(registry.ServiceNameStore, s)
+	model.SetStore(s) // Set global DB store on the model package
+
+	return nil
+}
+
+func MockAppProvider(r hexa.ServiceRegistry) error {
+	ctl := gomock.NewController(r.Service(registry.ServiceNameTestReporter).(gomock.TestReporter))
+	r.Register(registry.ServiceNameApp, mockapp.NewMockApp(ctl))
 	return nil
 }
