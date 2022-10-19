@@ -13,5 +13,6 @@ func runProbeServer(r hexa.ServiceRegistry, ps probe.Server, reporter hexa.Healt
 		}
 	}
 
-	return tracer.Trace(ps.Run())
+	_, err := ps.Run()
+	return tracer.Trace(err)
 }

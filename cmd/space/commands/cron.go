@@ -37,5 +37,9 @@ func runCron(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	}
 
 	app.Banner("Space cron jobs")
-	return tracer.Trace(s.CronJobs().Run())
+	done, err := s.CronJobs().Run()
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	return tracer.Trace(<-done)
 }

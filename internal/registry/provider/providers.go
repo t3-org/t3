@@ -421,7 +421,7 @@ func tuneEcho(cfg *config.Config, r hexa.ServiceRegistry) *echo.Echo {
 	//e.Use(middleware.CSRFWithConfig(cfg.CSRFConfig()))
 
 	// Set user in each request context.
-	//e.Use(hecho.CurrentUserBySub(a.UserFinder()))
+	e.Use(hecho.CurrentUserBySub(nil)) // Set user as guest for all requests.
 
 	// HexaContext set hexa context on each request.
 	e.Use(hecho.HexaContext(s.Logger(), s.Translator()))

@@ -2,6 +2,7 @@ package hecho
 
 import (
 	"context"
+	"net"
 
 	"github.com/kamva/hexa"
 	"github.com/kamva/tracer"
@@ -34,8 +35,19 @@ func (s *EchoService) HealthStatus(ctx context.Context) hexa.HealthStatus {
 	}
 }
 
-func (s *EchoService) Run() error {
-	return tracer.Trace(s.Start(s.Address))
+func (s *EchoService) Run() (<-chan error, error) {
+	l, err := net.Listen("tcp", s.Address)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	s.Echo.Listener = l
+	done := make(chan error, 1)
+	go func() {
+		done <- s.Start("")
+		close(done)
+	}()
+	return done, nil
 }
 
 func (s *EchoService) Shutdown(ctx context.Context) error {

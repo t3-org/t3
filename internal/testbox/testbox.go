@@ -46,6 +46,15 @@ func (t *TestBox) Setup() error {
 		return tracer.Trace(err)
 	}
 
+	// Run all runnable services.
+	for _, d := range t.r.Descriptors() {
+		if runnable, ok := d.Instance.(hexa.Runnable); ok {
+			if _, err := runnable.Run(); err != nil {
+				hlog.Error("error on service", hlog.String("service", d.Name), hlog.ErrStack(err))
+			}
+		}
+	}
+
 	go sr.ShutdownBySignals(t.r, shutdownTimeout) //nolint
 	return nil
 }

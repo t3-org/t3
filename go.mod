@@ -10,17 +10,16 @@ require (
 	github.com/gomodule/redigo v1.8.8
 	github.com/hibiken/asynq v0.18.4
 	github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
-	github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5
+	github.com/kamva/hexa v0.1.1-0.20221019121629-cb5bec3b954b
 	github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
-	github.com/kamva/hexa-echo v0.1.1-0.20220909103021-ac8838308f71
-	github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb
+	github.com/kamva/hexa-echo v0.1.1-0.20221015212418-e3ea3020053a
+	github.com/kamva/hexa-job v0.0.0-20221015215638-fb0bf029e960
 	github.com/kamva/hexa-tuner v0.1.1-0.20220912214214-3b85dd3c6dc8
 	github.com/kamva/tracer v0.0.0-20201115122932-ea39052d56cd
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lib/pq v1.10.0
 	github.com/mattermost/morph v1.0.4
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/sethvargo/go-envconfig v0.8.2
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.8.0
@@ -51,6 +50,7 @@ require (
 	github.com/go-redis/redis/v7 v7.4.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/sessions v1.2.1 // indirect
@@ -58,7 +58,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/kamva/hexa-rpc v0.0.0-20220821211625-8658f817132b // indirect
+	github.com/kamva/hexa-rpc v0.0.0-20221019082145-ee3e755d7d42 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
@@ -114,5 +114,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.1.3 // indirect
 )
-
-replace github.com/kamva/hexa => /Users/Mehran/projects/kamva/hexa/hexa

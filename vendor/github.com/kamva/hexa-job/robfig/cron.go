@@ -27,9 +27,14 @@ func (c *cronJob) Register(spec string, cJob *hjob.CronJob, handler hjob.CronJob
 	return tracer.Trace(err)
 }
 
-func (c *cronJob) Run() error {
-	c.cron.Run()
-	return nil
+func (c *cronJob) Run() (<-chan error, error) {
+	done := make(chan error)
+	go func() {
+		c.cron.Run()
+		close(done)
+	}()
+
+	return done, nil
 }
 
 func (c *cronJob) Shutdown(_ context.Context) error {

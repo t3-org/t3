@@ -20,7 +20,7 @@ type worker struct {
 	mux         *asynq.ServeMux
 	p           hexa.ContextPropagator
 	transformer Transformer
-	closeCh     chan struct{}
+	closeCh     chan error
 }
 
 func NewJobs(cli *asynq.Client, p hexa.ContextPropagator, t Transformer) hjob.Jobs {
@@ -37,7 +37,7 @@ func NewWorker(s *asynq.Server, p hexa.ContextPropagator, t Transformer) hjob.Wo
 		mux:         asynq.NewServeMux(),
 		p:           p,
 		transformer: t,
-		closeCh:     make(chan struct{}),
+		closeCh:     make(chan error),
 	}
 }
 
@@ -79,7 +79,7 @@ func (w *worker) Register(name string, handlerFunc hjob.JobHandlerFunc) error {
 	return nil
 }
 
-func (w *worker) Run() error {
+func (w *worker) Run() (<-chan error, error) {
 	// Currently we can not use the server's Run method,
 	// because the server in the `Run` method listen to
 	// signals to shutdown the server, but without any
@@ -94,11 +94,10 @@ func (w *worker) Run() error {
 
 	//return tracer.Trace(w.s.Run(w.mux))
 	if err := w.s.Start(w.mux); err != nil {
-		return tracer.Trace(err)
+		return nil, tracer.Trace(err)
 	}
 
-	<-w.closeCh
-	return nil
+	return w.closeCh, nil
 }
 
 func (w *worker) Shutdown(ctx context.Context) error {

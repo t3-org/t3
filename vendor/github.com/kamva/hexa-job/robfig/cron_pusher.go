@@ -44,9 +44,13 @@ func (c *cronJobPusher) Register(spec string, cJob *hjob.CronJob, handler hjob.C
 	return c.registerJobHandler(cJob.Name, handler)
 }
 
-func (c *cronJobPusher) Run() error {
-	c.cron.Run()
-	return nil
+func (c *cronJobPusher) Run() (<-chan error, error) {
+	done := make(chan error)
+	go func() {
+		c.cron.Run()
+		close(done)
+	}()
+	return done, nil
 }
 
 func (c *cronJobPusher) Shutdown(_ context.Context) error {

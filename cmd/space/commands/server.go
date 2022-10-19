@@ -38,5 +38,9 @@ func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 
 	// Start server
 	app.Banner("Space")
-	return tracer.Trace(s.HttpServer().Run())
+	done, err := s.HttpServer().Run()
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	return tracer.Trace(<-done)
 }

@@ -13,8 +13,8 @@ import (
 )
 
 func TestAppCore_CreatePlanet(t *testing.T) {
-	_, s, a := setup(t)
 	defer testbox.Global().TeardownIfPanic()
+	_, s, a := setup(t)
 	now := time.Now().UnixMilli()
 
 	_, _ = s, a

@@ -13,7 +13,7 @@ func (api *API) registerPlanetRoutes() {
 	planets := api.API.Group("/planets")
 
 	planets.GET("/code/:code", res.GetByCode).Name = "planets::getByCode"
-	hecho.ResourceAPI(planets, res, "planets", api.Auth)
+	hecho.ResourceAPI(planets, res, "planets")
 }
 
 type planetResource struct {

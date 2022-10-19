@@ -25,6 +25,8 @@ type Store interface {
 	// DBLayer returns the database store layer.
 	DBLayer() Store
 
+	TruncateAllTables(ctx context.Context) error
+
 	// System
 	// @subStore
 	System() SystemStore

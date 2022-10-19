@@ -68,6 +68,8 @@ github.com/golang/protobuf/ptypes/timestamp
 # github.com/gomodule/redigo v1.8.8
 ## explicit; go 1.16
 github.com/gomodule/redigo/redis
+# github.com/google/go-cmp v0.5.8
+## explicit; go 1.13
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
@@ -111,13 +113,14 @@ github.com/josharian/intern
 # github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
 ## explicit; go 1.13
 github.com/kamva/gutil
-# github.com/kamva/hexa v0.1.1-0.20220909101955-08a024cf54b5 => /Users/Mehran/projects/kamva/hexa/hexa
+# github.com/kamva/hexa v0.1.1-0.20221019121629-cb5bec3b954b
 ## explicit; go 1.18
 github.com/kamva/hexa
 github.com/kamva/hexa/hexatranslator
 github.com/kamva/hexa/hlog
 github.com/kamva/hexa/hlog/logdriver
 github.com/kamva/hexa/htel
+github.com/kamva/hexa/hurl
 github.com/kamva/hexa/lg
 github.com/kamva/hexa/pagination
 github.com/kamva/hexa/probe
@@ -125,17 +128,17 @@ github.com/kamva/hexa/sr
 # github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
 ## explicit; go 1.17
 github.com/kamva/hexa-cache
-# github.com/kamva/hexa-echo v0.1.1-0.20220909103021-ac8838308f71
+# github.com/kamva/hexa-echo v0.1.1-0.20221015212418-e3ea3020053a
 ## explicit; go 1.18
 github.com/kamva/hexa-echo
 github.com/kamva/hexa-echo/hechodoc
-# github.com/kamva/hexa-job v0.0.0-20220821211217-d73ed1a5d4cb
+# github.com/kamva/hexa-job v0.0.0-20221015215638-fb0bf029e960
 ## explicit; go 1.18
 github.com/kamva/hexa-job
 github.com/kamva/hexa-job/faktory
 github.com/kamva/hexa-job/hsynq
 github.com/kamva/hexa-job/robfig
-# github.com/kamva/hexa-rpc v0.0.0-20220821211625-8658f817132b
+# github.com/kamva/hexa-rpc v0.0.0-20221019082145-ee3e755d7d42
 ## explicit; go 1.18
 github.com/kamva/hexa-rpc
 # github.com/kamva/hexa-tuner v0.1.1-0.20220912214214-3b85dd3c6dc8
@@ -238,9 +241,6 @@ github.com/prometheus/procfs/internal/util
 # github.com/robfig/cron/v3 v3.0.1
 ## explicit; go 1.12
 github.com/robfig/cron/v3
-# github.com/sethvargo/go-envconfig v0.8.2
-## explicit; go 1.17
-github.com/sethvargo/go-envconfig
 # github.com/sethvargo/go-limiter v0.7.2
 ## explicit; go 1.14
 github.com/sethvargo/go-limiter
@@ -533,4 +533,3 @@ gopkg.in/yaml.v2
 gopkg.in/yaml.v3
 # honnef.co/go/tools v0.1.3
 ## explicit; go 1.14
-# github.com/kamva/hexa => /Users/Mehran/projects/kamva/hexa/hexa

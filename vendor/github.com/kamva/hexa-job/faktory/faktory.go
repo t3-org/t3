@@ -80,11 +80,15 @@ func (w *worker) Register(name string, h hjob.JobHandlerFunc) error {
 	return nil
 }
 
-func (w *worker) Run() error {
+func (w *worker) Run() (<-chan error, error) {
 	// Run method does not return.
-	w.w.Run()
+	done := make(chan error)
+	go func() {
+		done <- w.w.Run()
+		close(done)
+	}()
 
-	return nil
+	return done, nil
 }
 
 // NewFaktoryJobsDriver returns new instance of Jobs driver for the faktory

@@ -24,8 +24,13 @@ func NewHexaService(h hexa.Health, l net.Listener, s *grpc.Server) hexa.Service 
 	}
 }
 
-func (s *HexaService) Run() error {
-	return tracer.Trace(s.Server.Serve(s.Listener))
+func (s *HexaService) Run() (<-chan error, error) {
+	done := make(chan error, 1)
+	go func() {
+		done <- tracer.Trace(s.Server.Serve(s.Listener))
+		close(done)
+	}()
+	return done, nil
 }
 
 func (s *HexaService) Shutdown(ctx context.Context) error {

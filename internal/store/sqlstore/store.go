@@ -58,6 +58,48 @@ type sqlStore struct {
 	builder sq.StatementBuilderType
 }
 
+func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
+	if s.o.Driver == DriverNamePostgres {
+		_, err := s.db.ExecContext(ctx, fmt.Sprintf(`DO
+			$func$
+			BEGIN
+			   EXECUTE
+			   (SELECT 'TRUNCATE TABLE ' || string_agg(oid::regclass::text, ', ') || ' CASCADE'
+			    FROM   pg_class
+			    WHERE  relkind = 'r'  -- only tables
+			    AND    relnamespace = 'public'::regnamespace
+				AND NOT relname = '%s' -- skip migrations table
+			   );
+			END
+			$func$;`, s.o.MigrationsTable()))
+		if err != nil {
+			return tracer.Trace(err)
+		}
+	} else { // MySQL
+		rows, err := s.db.QueryContext(ctx, `show tables`)
+		if err != nil {
+			return tracer.Trace(err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var table string
+			if err := rows.Scan(&table); err != nil {
+				return tracer.Trace(err)
+			}
+
+			if table != "db_migrations" {
+				if _, err := s.db.ExecContext(ctx, `TRUNCATE TABLE `+table); err != nil {
+					return tracer.Trace(err)
+				}
+			}
+		}
+		if err := rows.Err(); err != nil {
+			return tracer.Trace(err)
+		}
+	}
+	return nil
+}
+
 func (s *sqlStore) QueryBuilder(_ context.Context) sq.StatementBuilderType {
 	// we should check if a squirrel.BaseRunner exists in the context, use it, otherwise
 	// use DB(so we can embed transactions in the context).

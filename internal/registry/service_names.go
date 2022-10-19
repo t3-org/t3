@@ -57,12 +57,14 @@ func bootPriority() []string {
 		ServiceNameOpenTelemetry,
 		ServiceNameRedis,
 		ServiceNameCacheProvider,
+
+		ServiceNameStore,
+		ServiceNameApp,
+
 		ServiceNameHttpServer,
 		ServiceNameJobs,
 		ServiceNameWorker,
 		ServiceNameCron,
-		ServiceNameStore,
-		ServiceNameApp,
 	}
 }
 
