@@ -5,6 +5,9 @@ run:
     - lab
 
 linters-settings:
+  errcheck:
+    exclude-functions:
+      - github.com/kamva/hexa/hurl.Drain
   gofmt:
     rewrite-rules:
       - pattern: 'interface{}'

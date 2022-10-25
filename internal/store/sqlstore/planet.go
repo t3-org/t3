@@ -25,7 +25,7 @@ func newPlanetStore(store SqlStore) model.PlanetStore {
 	}
 }
 
-func (s *planetStore) Get(ctx context.Context, id string) (*model.Planet, error) {
+func (s *planetStore) Get(ctx context.Context, id int64) (*model.Planet, error) {
 	var planet model.Planet
 	if err := s.tbl.FindByID(ctx, id, planetFields(&planet)); err != nil {
 		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrPlanetNotFound))

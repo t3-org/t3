@@ -7,6 +7,14 @@ import (
 )
 
 //--------------------------------
+// Base Errors
+//--------------------------------
+
+var (
+	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "space.invalid_id_value")
+)
+
+//--------------------------------
 // Planet errors
 //--------------------------------
 

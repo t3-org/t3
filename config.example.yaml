@@ -2,6 +2,17 @@ app_name: "Space"
 instance_name: "single_local"
 environment: development
 debug: true
+log_stack:
+  - printer
+log_level: debug
+sentry_environment: development
+translate_files:
+  - hexa.en
+  - en
+  - hexa.fa
+  - fa
+fallback_languages:
+  - en
 port: 4000
 db:
   driver: postgres
@@ -21,17 +32,7 @@ open_telemetry:
   metric:
     enabled: true
 
-log_stack:
-  - printer
-sentry_environment: development
-translate_files:
-  - hexa.en
-  - en
-  - hexa.fa
-  - fa
-fallback_languages:
-  - en
-log_level: debug
+
 echo_log_level: info
 allow_origins:
   - "*"

@@ -65,7 +65,7 @@ func (a *tracingLayer) HealthStatus(ctx context.Context) hexa.HealthStatus {
 
 	return r1
 }
-func (a *tracingLayer) GetPlanet(ctx context.Context, id string) (*dto.Planet, error) {
+func (a *tracingLayer) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
 	if ctx == nil {
 		return a.next.GetPlanet(ctx, id)
 	}
@@ -125,7 +125,7 @@ func (a *tracingLayer) CreatePlanet(ctx context.Context, in input.CreatePlanet) 
 
 	return r1, r2
 }
-func (a *tracingLayer) UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error) {
+func (a *tracingLayer) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
 	if ctx == nil {
 		return a.next.UpdatePlanet(ctx, id, in)
 	}
@@ -145,7 +145,7 @@ func (a *tracingLayer) UpdatePlanet(ctx context.Context, id string, in input.Upd
 
 	return r1, r2
 }
-func (a *tracingLayer) DeletePlanet(ctx context.Context, id string) error {
+func (a *tracingLayer) DeletePlanet(ctx context.Context, id int64) error {
 	if ctx == nil {
 		return a.next.DeletePlanet(ctx, id)
 	}

@@ -24,18 +24,25 @@ type Config struct {
 	// Test contains test config which we don't need to provide it in non-test environments.
 	Test *Test `json:"test"`
 
-	AppName      string `json:"app_name"`
-	InstanceName string `json:"instance_name"`
-
-	// Environment is just for log, tracing,... you could set it to
-	// something like prod, dev, local,...
-	Environment string `json:"environment"`
+	AppName      string  `json:"app_name"`
+	InstanceName string  `json:"instance_name"`
+	MachineID    *uint16 `json:"machine_id"` // Optional. use to generate ID values.
 
 	//--------------------------------
 	// General Configs
 	//--------------------------------
 
-	Debug              bool          `json:"debug"`
+	// Environment is just for log, tracing,... you could set it to
+	// something like prod, dev, local,...
+	Environment       string   `json:"environment"`
+	Debug             bool     `json:"debug"`
+	LogStack          []string `json:"log_stack"`
+	LogLevel          string   `json:"log_level"`
+	SentryDSN         string   `json:"sentry_dsn"`
+	SentryEnvironment string   `json:"sentry_environment"`
+	TranslateFiles    []string `json:"translate_files"`
+	FallbackLanguages []string `json:"fallback_languages"`
+
 	ListeningIP        string        `json:"listening_ip"`
 	Port               int           `json:"port"`
 	DB                 DB            `json:"db"`
@@ -45,13 +52,7 @@ type Config struct {
 	AssetsBasePath    string `json:"assets_base_path"`
 	ResourcesBasePath string `json:"resources_base_path"`
 
-	LogStack          []string `json:"log_stack"`
-	SentryDSN         string   `json:"sentry_dsn"`
-	SentryEnvironment string   `json:"sentry_environment"`
-	TranslateFiles    []string `json:"translate_files"`
-	FallbackLanguages []string `json:"fallback_languages"`
-	LogLevel          string   `json:"log_level"`
-	GRPCLogVerbosity  int      `json:"grpc_log_verbosity"`
+	GRPCLogVerbosity int `json:"grpc_log_verbosity"`
 
 	//--------------------------------
 	// HTTP server configs

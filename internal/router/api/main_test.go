@@ -32,7 +32,11 @@ func TestMain(t *testing.M) {
 func testMain(t *testing.M) (exitcode int, err error) {
 	names := append(registry.BaseServices(), registry.ServiceNameHttpServer)
 	names = append(names, registry.TestHelperServices()...)
-	tbox := testbox.New(registry.Providers(names...))
+	providers, err := registry.Providers(names...)
+	if err != nil {
+		return 0, tracer.Trace(err)
+	}
+	tbox := testbox.New(providers)
 	testbox.SetGlobal(tbox)
 
 	if err = tbox.Setup(); err != nil {

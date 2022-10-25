@@ -21,6 +21,7 @@ require (
 	github.com/mattermost/morph v1.0.4
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
+	github.com/sony/sonyflake v1.1.0
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.8.0
 	go.opentelemetry.io/otel v1.2.0

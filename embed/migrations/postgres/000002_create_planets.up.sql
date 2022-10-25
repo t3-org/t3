@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS planets
 (
-    id         VARCHAR(255) primary key,
+    id         bigint primary key,
     name       varchar(255) unique,
     code       VARCHAR(255),
     updated_at bigint,

@@ -33,6 +33,7 @@ func client(t *testing.T) *hurl.Client {
 func TestPlanetResource_GetByCode(t *testing.T) {
 	setup(t)
 	defer testbox.Global().TeardownIfPanic()
+
 	cli := client(t)
 	r, err := cli.PostJSON("planets", &input.CreatePlanet{
 		Name: "ABC",

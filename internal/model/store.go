@@ -45,7 +45,7 @@ type SystemStore interface {
 }
 
 type PlanetStore interface {
-	Get(ctx context.Context, id string) (*Planet, error)
+	Get(ctx context.Context, id int64) (*Planet, error)
 	GetByCode(ctx context.Context, code string) (*Planet, error)
 	Create(ctx context.Context, m *Planet) error
 	Update(ctx context.Context, m *Planet) error

@@ -28,10 +28,10 @@ type Health interface {
 var _ hexa.Health = Health(nil) // Assertion
 
 type PlanetService interface {
-	GetPlanet(ctx context.Context, id string) (*dto.Planet, error)
+	GetPlanet(ctx context.Context, id int64) (*dto.Planet, error)
 	GetPlanetByCode(ctx context.Context, code string) (*dto.Planet, error)
 	CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error)
-	UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error)
-	DeletePlanet(ctx context.Context, id string) error
+	UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error)
+	DeletePlanet(ctx context.Context, id int64) error
 	QueryPlanets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error)
 }

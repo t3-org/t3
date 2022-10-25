@@ -8,6 +8,7 @@ import "github.com/kamva/gutil"
 // - the service that we run in the cmd function(e.g., grpc server, event listener or workflow worker)
 const (
 	ServiceNameConfig         = "config"
+	ServiceNameIDGenerator    = "id_generator"
 	ServiceNameLogger         = "logger"
 	ServiceNameTranslator     = "translator"
 	ServiceNameProbeServer    = "probe_server"
@@ -46,6 +47,7 @@ const (
 func bootPriority() []string {
 	return []string{
 		ServiceNameConfig,
+		ServiceNameIDGenerator,
 		ServiceNameTempDB,
 		ServiceNameLogger,
 		ServiceNameTranslator,
@@ -71,6 +73,7 @@ func bootPriority() []string {
 func BaseServices(exclude ...string) []string {
 	l := []string{
 		ServiceNameConfig,
+		ServiceNameIDGenerator,
 		ServiceNameLogger,
 		ServiceNameTranslator,
 		ServiceNameProbeServer,
@@ -100,6 +103,7 @@ func TestHelperServices() []string {
 func MinimalServices() []string {
 	return []string{
 		ServiceNameConfig,
+		ServiceNameIDGenerator,
 		ServiceNameLogger,
 	}
 }

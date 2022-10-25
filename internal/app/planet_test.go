@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"space.org/space/internal/input"
 	"space.org/space/internal/model"
-	"space.org/space/internal/model/mock"
+	mockmodel "space.org/space/internal/model/mock"
 	"space.org/space/internal/testbox"
 )
 

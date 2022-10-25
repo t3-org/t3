@@ -1,19 +1,18 @@
 package model
 
 import (
-	"github.com/kamva/gutil"
 	"space.org/space/internal/input"
 )
 
 type Planet struct {
 	Base `json:",inline"`
-	ID   string `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 	Code string `json:"code"` // unique
 }
 
 func (s *Planet) Create(in input.CreatePlanet) error {
-	s.ID = gutil.UUID()
+	s.ID = genId()
 	s.Name = in.Name
 	s.Code = in.Code
 

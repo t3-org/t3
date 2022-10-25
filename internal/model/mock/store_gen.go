@@ -281,7 +281,7 @@ func (mr *MockPlanetStoreMockRecorder) Delete(ctx, m interface{}) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockPlanetStore) Get(ctx context.Context, id string) (*model.Planet, error) {
+func (m *MockPlanetStore) Get(ctx context.Context, id int64) (*model.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, id)
 	ret0, _ := ret[0].(*model.Planet)

@@ -63,7 +63,7 @@ type tracingLayerPlanetStore struct {
 	next model.PlanetStore
 }
 
-func (s *tracingLayerPlanetStore) Get(ctx context.Context, id string) (*model.Planet, error) {
+func (s *tracingLayerPlanetStore) Get(ctx context.Context, id int64) (*model.Planet, error) {
 	if ctx == nil {
 		return s.next.Get(ctx, id)
 	}

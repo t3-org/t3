@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/kamva/gutil"
@@ -29,19 +30,18 @@ func AddProvider(providerName string, serviceName string, p Provider) {
 // Providers returns provides.
 // The return param is map[serviceName]Provider.
 // names is list of provider names.
-func Providers(names ...string) map[string]Provider {
+func Providers(names ...string) (map[string]Provider, error) {
 	plistLock.Lock()
 	defer plistLock.Unlock()
 	m := make(map[string]Provider)
 	for _, name := range names {
 		svcName, ok := providerToServiceMap[name]
 		if !ok {
-			hlog.Error("can not find provider, ignoring it.", hlog.String("name", name))
-			continue
+			return nil, fmt.Errorf("can not find provider with name: %s", name)
 		}
 		m[svcName] = providers[name]
 	}
-	return m
+	return m, nil
 }
 
 func ProviderByName(name string) Provider {
@@ -78,7 +78,11 @@ func ProvideByName(r hexa.ServiceRegistry, name string) error {
 
 // ProvideByNames provides services using their corresponding provider name.
 func ProvideByNames(r hexa.ServiceRegistry, names ...string) error {
-	return ProvideByProviders(r, Providers(names...))
+	providers, err := Providers(names...)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	return ProvideByProviders(r, providers)
 }
 
 func mapKeys(providers map[string]Provider) []string {

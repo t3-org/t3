@@ -248,6 +248,9 @@ github.com/sethvargo/go-limiter/httplimit
 # github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
 ## explicit; go 1.13
 github.com/simukti/sqldb-logger
+# github.com/sony/sonyflake v1.1.0
+## explicit; go 1.13
+github.com/sony/sonyflake
 # github.com/spf13/afero v1.1.2
 ## explicit
 github.com/spf13/afero

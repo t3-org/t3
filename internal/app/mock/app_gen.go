@@ -2,7 +2,7 @@
 // Source: app_iface.go
 
 // Package mockapp is a generated GoMock package.
-package mock
+package mockapp
 
 import (
 	context "context"

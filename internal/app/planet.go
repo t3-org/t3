@@ -10,7 +10,7 @@ import (
 	"space.org/space/internal/model"
 )
 
-func (a *appCore) GetPlanet(ctx context.Context, id string) (*dto.Planet, error) {
+func (a *appCore) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
 	return a.store.Planet().Get(ctx, id)
 }
 
@@ -30,7 +30,7 @@ func (a *appCore) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto
 	return &planet, nil
 }
 
-func (a *appCore) UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error) {
+func (a *appCore) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
 	planet, err := a.store.Planet().Get(ctx, id)
 	if err != nil {
 		return nil, tracer.Trace(err)
@@ -45,7 +45,7 @@ func (a *appCore) UpdatePlanet(ctx context.Context, id string, in input.UpdatePl
 	return planet, nil
 }
 
-func (a *appCore) DeletePlanet(ctx context.Context, id string) error {
+func (a *appCore) DeletePlanet(ctx context.Context, id int64) error {
 	planet, err := a.store.Planet().Get(ctx, id)
 	if err != nil {
 		return tracer.Trace(err)

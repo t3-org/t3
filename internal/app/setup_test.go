@@ -8,7 +8,7 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/sr"
 	"github.com/stretchr/testify/require"
-	"space.org/space/internal/model/mock"
+	mockmodel "space.org/space/internal/model/mock"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/testbox"
 )

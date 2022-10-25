@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -23,6 +24,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/robfig/cron/v3"
+	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/prometheus"
@@ -53,6 +55,7 @@ import (
 
 func init() {
 	registry.AddProvider(registry.ServiceNameConfig, registry.ServiceNameConfig, ConfigProvider)
+	registry.AddProvider(registry.ServiceNameIDGenerator, registry.ServiceNameIDGenerator, IDGeneratorProvider)
 	registry.AddProvider(registry.ServiceNameTempDB, registry.ServiceNameTempDB, TmpDBProvider)
 	registry.AddProvider(registry.ServiceNameLogger, registry.ServiceNameLogger, LoggerProvider)
 	registry.AddProvider(registry.ServiceNameTranslator, registry.ServiceNameTranslator, TranslatorProvider)
@@ -84,6 +87,27 @@ func ConfigProvider(r hexa.ServiceRegistry) error {
 
 	config.SetDefaultConfig(cfg)
 	r.Register(registry.ServiceNameConfig, cfg)
+	return nil
+}
+
+func IDGeneratorProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+
+	var settings sonyflake.Settings
+	if cfg.MachineID != nil {
+		settings.MachineID = func() (uint16, error) {
+			return *cfg.MachineID, nil
+		}
+	}
+
+	sf := sonyflake.NewSonyflake(settings)
+
+	if sf == nil {
+		return tracer.Trace(errors.New("can not create sonyflake"))
+	}
+
+	r.Register(registry.ServiceNameIDGenerator, sf)
+	model.SetIDGenerator(sf)
 	return nil
 }
 
