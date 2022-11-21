@@ -12,7 +12,9 @@ import (
 )
 
 func main() {
-	if err := commands.Run(); err != nil {
-		os.Exit(1)
-	}
+    if err := commands.Run(); err != nil {
+        os.Exit(1)
+    }
 }
+
+

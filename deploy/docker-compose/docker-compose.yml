@@ -35,5 +35,13 @@ services:
       - 9411:9411
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+  db:
+    image: postgres:15.1
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_USER: root
+      POSTGRES_DB: space
+    ports:
+      - "5432:5432"
 volumes:
   prom_data:

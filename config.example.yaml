@@ -16,7 +16,7 @@ fallback_languages:
 port: 4000
 db:
   driver: postgres
-  data_source: postgres://root:12345@localhost/space?sslmode=disable&connect_timeout=10&binary_parameters=yes
+  dsn: postgres://root:12345@localhost/space?sslmode=disable&connect_timeout=10&binary_parameters=yes
   max_open_conns: 300 # unlimited.
   max_idle_conns: 20
   conn_max_idle_time_milliseconds: 300000
