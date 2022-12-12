@@ -8,10 +8,7 @@ import (
 	"space.org/space/internal/input"
 )
 
-func (api *API) registerPlanetRoutes() {
-	res := newPlanet(api.App)
-	planets := api.API.Group("/planets")
-
+func (api *API) registerPlanetRoutes(planets *echo.Group, res *planetResource) {
 	planets.GET("/code/:code", res.GetByCode).Name = "planets::getByCode"
 	hecho.ResourceAPI(planets, res, "planets")
 }
@@ -19,10 +16,6 @@ func (api *API) registerPlanetRoutes() {
 type planetResource struct {
 	Resource
 	app app.App
-}
-
-func newPlanet(a app.App) *planetResource {
-	return &planetResource{app: a}
 }
 
 func (r *planetResource) GetByCode(c echo.Context) error {

@@ -466,14 +466,7 @@ func HttpServerProvider(r hexa.ServiceRegistry) error {
 	e := tuneEcho(cfg, r)
 
 	// Register Routes
-	(&api.API{
-		Echo:  e,
-		API:   e.Group("api/v1"),
-		App:   a,
-		Guest: hecho.GuestMiddleware(),
-		Auth:  hecho.AuthMiddleware(),
-		Debug: hecho.DebugMiddleware(e),
-	}).RegisterRoutes()
+	api.New(e, a, api.NewMiddlewares(e)).RegisterRoutes()
 
 	echoService := &hecho.EchoService{Echo: e, Address: cfg.ListeningAddress()}
 	r.Register(registry.ServiceNameHttpServer, echoService)

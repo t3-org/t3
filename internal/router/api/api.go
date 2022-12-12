@@ -6,15 +6,24 @@ import (
 )
 
 type API struct {
-	Echo  *echo.Echo
-	API   *echo.Group // /api/v1
-	App   app.App
-	Guest echo.MiddlewareFunc
-	Auth  echo.MiddlewareFunc
-	Debug echo.MiddlewareFunc
+	echo        *echo.Echo
+	app         app.App
+	middlewares *Middlewares
+	v1          *echo.Group
+}
+
+func New(e *echo.Echo, app app.App, m *Middlewares) *API {
+	return &API{
+		echo:        e,
+		app:         app,
+		middlewares: m,
+	}
 }
 
 func (api *API) RegisterRoutes() {
-	api.registerLabRoutes()
-	api.registerPlanetRoutes()
+	api.v1 = api.echo.Group("/api/v1")
+	v1 := api.v1.Group
+
+	api.registerLabRoutes(v1("/lab"), &labResource{app: api.app, e: api.echo})
+	api.registerPlanetRoutes(v1("/plants"), &planetResource{app: api.app})
 }

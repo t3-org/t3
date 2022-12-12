@@ -8,11 +8,8 @@ import (
 	"space.org/space/internal/app"
 )
 
-func (api *API) registerLabRoutes() {
-	res := &labResource{app: api.App, e: api.Echo}
-	lab := api.API.Group("/lab")
-
-	lab.GET("/routes", res.Routes, api.Debug).Name = "lab::routes"
+func (api *API) registerLabRoutes(lab *echo.Group, res *labResource) {
+	lab.GET("/routes", res.Routes, api.middlewares.Debug).Name = "lab::routes"
 	lab.GET("/ping", res.Pong).Name = "lab::ping"
 }
 
