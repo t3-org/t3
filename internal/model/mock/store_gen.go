@@ -11,6 +11,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	hexa "github.com/kamva/hexa"
 	model "space.org/space/internal/model"
+	sqld "space.org/space/pkg/sqld"
 )
 
 // MockStore is a mock of Store interface.
@@ -146,6 +147,20 @@ func (m *MockStore) TruncateAllTables(ctx context.Context) error {
 func (mr *MockStoreMockRecorder) TruncateAllTables(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TruncateAllTables", reflect.TypeOf((*MockStore)(nil).TruncateAllTables), ctx)
+}
+
+// Tx mocks base method.
+func (m *MockStore) Tx() *sqld.TxWrapper {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Tx")
+	ret0, _ := ret[0].(*sqld.TxWrapper)
+	return ret0
+}
+
+// Tx indicates an expected call of Tx.
+func (mr *MockStoreMockRecorder) Tx() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Tx", reflect.TypeOf((*MockStore)(nil).Tx))
 }
 
 // MockSystemStore is a mock of SystemStore interface.

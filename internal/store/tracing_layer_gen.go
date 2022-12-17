@@ -11,6 +11,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	apperr "space.org/space/internal/error"
 	"space.org/space/internal/model"
+	"space.org/space/pkg/sqld"
 )
 
 type tracingLayerStore struct {
@@ -21,6 +22,9 @@ type tracingLayerStore struct {
 
 func (s *tracingLayerStore) DBLayer() model.Store {
 	return s.next.DBLayer()
+}
+func (s *tracingLayerStore) Tx() *sqld.TxWrapper {
+	return s.next.Tx()
 }
 func (s *tracingLayerStore) TruncateAllTables(ctx context.Context) error {
 	return s.next.TruncateAllTables(ctx)

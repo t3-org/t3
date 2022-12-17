@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/kamva/hexa"
+	"space.org/space/pkg/sqld"
 )
 
 //nolint:unused
@@ -24,6 +25,8 @@ type Store interface {
 
 	// DBLayer returns the database store layer.
 	DBLayer() Store
+
+	Tx() *sqld.TxWrapper
 
 	TruncateAllTables(ctx context.Context) error
 

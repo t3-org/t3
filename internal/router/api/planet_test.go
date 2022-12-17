@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net"
+	"net/http"
 	"testing"
 
 	"github.com/kamva/hexa/hurl"
@@ -40,6 +41,7 @@ func TestPlanetResource_GetByCode(t *testing.T) {
 		Code: "abc",
 	})
 	require.NoError(t, err)
+	require.Equal(t, r.StatusCode, http.StatusOK)
 	defer hurl.Drain(r)
 
 	var planet dto.Planet

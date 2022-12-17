@@ -30,5 +30,8 @@ docs/dev/private/
 coverage.txt
 coverage.html
 
-TODOs.md
-version
+TODO.md
+
+# At build time we put the last commit value(which could be last tag) hash
+# into .version file to set it on the app at compile time in our Dockerfile.
+.version

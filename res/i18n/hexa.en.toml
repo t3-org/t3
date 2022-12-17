@@ -5,7 +5,7 @@
 other = "occured internal error (:"
 
 [err_invalid_id]
-other = "ID value is invalid"
+other = "Id value is invalid"
 
 
 ####################

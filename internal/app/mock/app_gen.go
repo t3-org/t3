@@ -54,7 +54,7 @@ func (mr *MockAppMockRecorder) CreatePlanet(ctx, in interface{}) *gomock.Call {
 }
 
 // DeletePlanet mocks base method.
-func (m *MockApp) DeletePlanet(ctx context.Context, id string) error {
+func (m *MockApp) DeletePlanet(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeletePlanet", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -68,7 +68,7 @@ func (mr *MockAppMockRecorder) DeletePlanet(ctx, id interface{}) *gomock.Call {
 }
 
 // GetPlanet mocks base method.
-func (m *MockApp) GetPlanet(ctx context.Context, id string) (*dto.Planet, error) {
+func (m *MockApp) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanet", ctx, id)
 	ret0, _ := ret[0].(*dto.Planet)
@@ -169,7 +169,7 @@ func (mr *MockAppMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockApp) UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error) {
+func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdatePlanet", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Planet)
@@ -301,7 +301,7 @@ func (mr *MockPlanetServiceMockRecorder) CreatePlanet(ctx, in interface{}) *gomo
 }
 
 // DeletePlanet mocks base method.
-func (m *MockPlanetService) DeletePlanet(ctx context.Context, id string) error {
+func (m *MockPlanetService) DeletePlanet(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeletePlanet", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -315,7 +315,7 @@ func (mr *MockPlanetServiceMockRecorder) DeletePlanet(ctx, id interface{}) *gomo
 }
 
 // GetPlanet mocks base method.
-func (m *MockPlanetService) GetPlanet(ctx context.Context, id string) (*dto.Planet, error) {
+func (m *MockPlanetService) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanet", ctx, id)
 	ret0, _ := ret[0].(*dto.Planet)
@@ -360,7 +360,7 @@ func (mr *MockPlanetServiceMockRecorder) QueryPlanets(ctx, query, page, perPage 
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id string, in input.UpdatePlanet) (*dto.Planet, error) {
+func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdatePlanet", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Planet)

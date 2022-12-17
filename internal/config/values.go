@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	// AppName is the name of the app to load its config...
+	// AppName is the name of the app to load its configurations.
 	AppName = "space"
-	// FileName is name of the config file
+	// FileName is name of the configuration file
 	FileName = "config"
-	// FileExtension is extension of the config file.
+	// FileExtension is extension of the configuration file.
 	FileExtension = "yaml"
 )
 

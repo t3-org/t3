@@ -21,6 +21,7 @@ import (
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
 	"space.org/space/pkg/hlogadapter"
+	"space.org/space/pkg/sqld"
 )
 
 const (
@@ -39,6 +40,7 @@ type SqlStore interface {
 	model.Store
 
 	DB() *sql.DB
+	Runner(ctx context.Context) sqld.Runner
 	QueryBuilder(ctx context.Context) sq.StatementBuilderType
 }
 
@@ -52,15 +54,24 @@ type sqlStoresList struct {
 type sqlStore struct {
 	hexa.Health
 
-	o       config.DB
-	stores  sqlStoresList
-	db      *sql.DB
-	builder sq.StatementBuilderType
+	o         config.DB
+	txWrapper *sqld.TxWrapper
+	stores    sqlStoresList
+	db        *sql.DB
+	builder   sq.StatementBuilderType
+}
+
+func (s *sqlStore) DBLayer() model.Store {
+	return s
+}
+
+func (s *sqlStore) Tx() *sqld.TxWrapper {
+	return s.txWrapper
 }
 
 func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
 	if s.o.Driver == DriverNamePostgres {
-		_, err := s.db.ExecContext(ctx, fmt.Sprintf(`DO
+		_, err := s.Runner(ctx).ExecContext(ctx, fmt.Sprintf(`DO
 			$func$
 			BEGIN
 			   EXECUTE
@@ -76,7 +87,7 @@ func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
 			return tracer.Trace(err)
 		}
 	} else { // MySQL
-		rows, err := s.db.QueryContext(ctx, `show tables`)
+		rows, err := s.Runner(ctx).QueryContext(ctx, `show tables`)
 		if err != nil {
 			return tracer.Trace(err)
 		}
@@ -88,7 +99,7 @@ func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
 			}
 
 			if table != "db_migrations" {
-				if _, err := s.db.ExecContext(ctx, `TRUNCATE TABLE `+table); err != nil {
+				if _, err := s.Runner(ctx).ExecContext(ctx, `TRUNCATE TABLE `+table); err != nil {
 					return tracer.Trace(err)
 				}
 			}
@@ -100,18 +111,21 @@ func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
 	return nil
 }
 
-func (s *sqlStore) QueryBuilder(_ context.Context) sq.StatementBuilderType {
-	// we should check if a squirrel.BaseRunner exists in the context, use it, otherwise
-	// use DB(so we can embed transactions in the context).
-	return s.builder.RunWith(s.db)
+func (s *sqlStore) QueryBuilder(ctx context.Context) sq.StatementBuilderType {
+	return s.builder.RunWith(s.Runner(ctx))
+}
+
+// Runner returns a runner to execute or query on DB.
+func (s *sqlStore) Runner(ctx context.Context) sqld.Runner {
+	if tx := sqld.TxFromCtx(ctx); tx != nil { // Check if there's a transaction
+		return tx
+	}
+
+	return s.db
 }
 
 func (s *sqlStore) DB() *sql.DB {
 	return s.db
-}
-
-func (s *sqlStore) DBLayer() model.Store {
-	return s
 }
 
 func (s *sqlStore) migrate() error {
@@ -204,10 +218,11 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 
 	// Create the Store.
 	s := &sqlStore{
-		Health:  health,
-		o:       o,
-		db:      db,
-		builder: builder,
+		Health:    health,
+		o:         o,
+		txWrapper: sqld.NewTxWrapper(db),
+		db:        db,
+		builder:   builder,
 	}
 
 	if err := s.migrate(); err != nil {
@@ -218,7 +233,7 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 		system: newSystemStore(s),
 		planet: newPlanetStore(s),
 
-		// place your other Store initializations here.
+		// place your other stores here.
 	}
 
 	return s, nil

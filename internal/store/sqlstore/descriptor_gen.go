@@ -7,14 +7,14 @@ import (
 )
 
 var (
-	planetColumns = []string{"id", "name", "code", "created_at", "updated_at"}
 	systemColumns = []string{"name", "value", "created_at", "updated_at"}
+	planetColumns = []string{"id", "name", "code", "created_at", "updated_at"}
 )
-
-func planetFields(m *model.Planet) []any {
-	return []interface{}{&m.ID, &m.Name, &m.Code, &m.CreatedAt, &m.UpdatedAt}
-}
 
 func systemFields(m *model.System) []any {
 	return []interface{}{&m.Name, &m.Value, &m.CreatedAt, &m.UpdatedAt}
+}
+
+func planetFields(m *model.Planet) []any {
+	return []interface{}{&m.ID, &m.Name, &m.Code, &m.CreatedAt, &m.UpdatedAt}
 }
