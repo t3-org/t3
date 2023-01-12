@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/gomodule/redigo/redis"
 	"github.com/kamva/hexa"
 	hcache "github.com/kamva/hexa-cache"
 	hecho "github.com/kamva/hexa-echo"
@@ -10,7 +11,6 @@ import (
 	"github.com/kamva/hexa/probe"
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
-	"space.org/space/pkg/hredis"
 )
 
 // Services is a simple facade that provides services using
@@ -24,7 +24,7 @@ type Services interface {
 	HealthReporter() hexa.HealthReporter
 	Jobs() hjob.Jobs
 	OpenTelemetry() htel.OpenTelemetry
-	Redis() *hredis.Service
+	Redis() *redis.Pool
 	CacheProvider() hcache.Provider
 	CronJobs() hjob.CronJobs
 	HttpServer() *hecho.EchoService
@@ -70,8 +70,8 @@ func (s *services) OpenTelemetry() htel.OpenTelemetry {
 	return srv
 }
 
-func (s *services) Redis() *hredis.Service {
-	srv, _ := s.r.Service(registry.ServiceNameRedis).(*hredis.Service)
+func (s *services) Redis() *redis.Pool {
+	srv, _ := s.r.Service(registry.ServiceNameRedis).(*redis.Pool)
 	return srv
 }
 

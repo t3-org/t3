@@ -60,7 +60,7 @@ func (t *TestBox) Setup() error {
 }
 
 func (t *TestBox) Teardown() error {
-	return registry.Shutdown(t.r, shutdownTimeout)
+	return sr.ShutdownWithTimeout(t.r, shutdownTimeout)
 }
 
 func (t *TestBox) TeardownIfPanic() {

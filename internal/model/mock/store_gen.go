@@ -150,17 +150,17 @@ func (mr *MockStoreMockRecorder) TruncateAllTables(ctx interface{}) *gomock.Call
 }
 
 // Tx mocks base method.
-func (m *MockStore) Tx() *sqld.TxWrapper {
+func (m *MockStore) Txs() *sqld.Txs {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Tx")
-	ret0, _ := ret[0].(*sqld.TxWrapper)
+	ret := m.ctrl.Call(m, "Txs")
+	ret0, _ := ret[0].(*sqld.Txs)
 	return ret0
 }
 
 // Tx indicates an expected call of Tx.
 func (mr *MockStoreMockRecorder) Tx() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Tx", reflect.TypeOf((*MockStore)(nil).Tx))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Txs", reflect.TypeOf((*MockStore)(nil).Txs))
 }
 
 // MockSystemStore is a mock of SystemStore interface.

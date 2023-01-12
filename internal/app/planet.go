@@ -18,7 +18,7 @@ func (a *appCore) GetPlanetByCode(ctx context.Context, code string) (*dto.Planet
 	return a.store.Planet().GetByCode(ctx, code)
 }
 
-func (a *appCore) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error) {
+func (a *appCore) CreatePlanet(ctx context.Context, in *input.CreatePlanet) (*dto.Planet, error) {
 	var planet model.Planet
 	if err := planet.Create(in); err != nil {
 		return nil, tracer.Trace(err)
@@ -30,7 +30,7 @@ func (a *appCore) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto
 	return &planet, nil
 }
 
-func (a *appCore) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
+func (a *appCore) UpdatePlanet(ctx context.Context, id int64, in *input.UpdatePlanet) (*dto.Planet, error) {
 	planet, err := a.store.Planet().Get(ctx, id)
 	if err != nil {
 		return nil, tracer.Trace(err)
@@ -55,6 +55,7 @@ func (a *appCore) DeletePlanet(ctx context.Context, id int64) error {
 }
 
 //nolint:revive
+// TODO: Return ([]*model.Planet,*pagination.Pages,error) as return result.
 func (a *appCore) QueryPlanets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error) {
 	// TODO: implement me
 	panic("implement me")

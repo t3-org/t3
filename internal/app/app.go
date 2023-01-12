@@ -1,10 +1,13 @@
 package app
 
 import (
+
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/htel"
 	"github.com/kamva/tracer"
+
 	"space.org/space/internal/config"
+	"fmt"
 	"space.org/space/internal/model"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/services"
@@ -18,6 +21,7 @@ type appCore struct {
 
 // New returns new instance of the App
 func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
+	fmt.Print("adf")
 	s := services.New(r)
 	return &appCore{
 		cfg:   s.Config(),

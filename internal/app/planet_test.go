@@ -31,7 +31,7 @@ func TestAppCore_CreatePlanet(t *testing.T) {
 		},
 	)
 
-	p, err := a.CreatePlanet(context.Background(), in)
+	p, err := a.CreatePlanet(context.Background(), &in)
 	require.NoError(t, err)
 	require.Equal(t, p, res)
 	require.NotEmpty(t, p.ID)

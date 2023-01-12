@@ -11,7 +11,7 @@ type Planet struct {
 	Code string `json:"code"` // unique
 }
 
-func (m *Planet) Create(in input.CreatePlanet) error {
+func (m *Planet) Create(in *input.CreatePlanet) error {
 	m.ID = genId()
 	m.Name = in.Name
 	m.Code = in.Code
@@ -20,7 +20,7 @@ func (m *Planet) Create(in input.CreatePlanet) error {
 	return nil
 }
 
-func (m *Planet) Update(in input.UpdatePlanet) error {
+func (m *Planet) Update(in *input.UpdatePlanet) error {
 	m.Name = in.Name
 	m.Code = in.Code
 

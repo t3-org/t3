@@ -8,8 +8,8 @@ import (
 
 func runProbeServer(r hexa.ServiceRegistry, ps probe.Server, reporter hexa.HealthReporter) error {
 	for _, d := range r.Descriptors() {
-		if health, ok := d.Instance.(hexa.Health); ok {
-			reporter.AddToChecks(health)
+		if d.Health != nil {
+			reporter.AddToChecks(d.Health)
 		}
 	}
 

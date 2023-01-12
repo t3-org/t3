@@ -171,8 +171,12 @@ func newDescriptor(structPkg string, s *lg.Struct) *ModelDescriptor {
 			continue
 		}
 
-		col, ok := lg.Lookup(field.Tag, "sql", "json")
-		if ok && (col == "" || col == "-") { // skip for existed tag with empty or dash
+		col, _ := lg.Lookup(field.Tag, "sql", "json")
+		if idx := strings.Index(col, ","); idx != -1 { // Remove extra data from json tags. e.g., ",omitempty"
+			col = col[0:idx]
+		}
+
+		if col == "" || col == "-" { // skip for existed tag with empty or dash
 			continue
 		}
 

@@ -35,7 +35,7 @@ func (s *systemStore) GetByName(ctx context.Context, name string) (*model.System
 }
 
 func (s *systemStore) Save(ctx context.Context, system *model.System) error {
-	_, err := s.tbl.Upsert(ctx, systemFields(system), sqld.OnConflictSET("name"))
+	_, err := s.tbl.Upsert(ctx, systemFields(system), sqld.OnConflictSet("name"))
 	return tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrSystemPropertyNotFound))
 }
 

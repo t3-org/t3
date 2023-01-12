@@ -13,7 +13,7 @@ const countField = "count(*) as count"
 
 const OnConflictIDSET = "On Conflict (id) DO UPDATE SET"
 
-func OnConflictSET(field string) string {
+func OnConflictSet(field string) string {
 	return fmt.Sprintf("On Conflict (%s) DO UPDATE SET", field)
 }
 

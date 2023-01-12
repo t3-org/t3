@@ -17,7 +17,7 @@ func TestPlanetStore_Get(t *testing.T) {
 	ctx := context.Background()
 
 	var p model.Planet
-	require.NoError(t, p.Create(input.CreatePlanet{
+	require.NoError(t, p.Create(&input.CreatePlanet{
 		Name: "name-abc",
 		Code: "code-abc",
 	}))
@@ -26,7 +26,7 @@ func TestPlanetStore_Get(t *testing.T) {
 	defer func() { require.NoError(t, s.Planet().Delete(ctx, &p)) }()
 
 	var p2 model.Planet
-	require.NoError(t, p2.Create(input.CreatePlanet{
+	require.NoError(t, p2.Create(&input.CreatePlanet{
 		Name: "name-abc2",
 		Code: "code-abc2",
 	}))
@@ -50,7 +50,7 @@ func TestPlanetStore_Create(t *testing.T) {
 	ctx := context.Background()
 
 	var p model.Planet
-	require.NoError(t, p.Create(input.CreatePlanet{
+	require.NoError(t, p.Create(&input.CreatePlanet{
 		Name: "name-abc",
 		Code: "code-abc",
 	}))
@@ -63,7 +63,7 @@ func TestPlanetStore_Create(t *testing.T) {
 	require.Equal(t, 1, count)
 
 	var p2 model.Planet
-	require.NoError(t, p2.Create(input.CreatePlanet{
+	require.NoError(t, p2.Create(&input.CreatePlanet{
 		Name: "name-abc2",
 		Code: "code-abc2",
 	}))

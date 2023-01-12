@@ -12,7 +12,7 @@ import (
 
 type Provider func(r hexa.ServiceRegistry) error
 
-var providerToServiceMap = make(map[string]string)
+var providerToServiceMap = make(map[string]string) // map[providerName]serviceName.
 var providers = make(map[string]Provider)
 var plistLock sync.Mutex
 
@@ -29,7 +29,7 @@ func AddProvider(providerName string, serviceName string, p Provider) {
 
 // Providers returns provides.
 // The return param is map[serviceName]Provider.
-// names is list of provider names.
+// names is list of providers name.
 func Providers(names ...string) (map[string]Provider, error) {
 	plistLock.Lock()
 	defer plistLock.Unlock()

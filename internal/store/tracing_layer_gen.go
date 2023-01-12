@@ -23,8 +23,8 @@ type tracingLayerStore struct {
 func (s *tracingLayerStore) DBLayer() model.Store {
 	return s.next.DBLayer()
 }
-func (s *tracingLayerStore) Tx() *sqld.TxWrapper {
-	return s.next.Tx()
+func (s *tracingLayerStore) Txs() *sqld.Txs {
+	return s.next.Txs()
 }
 func (s *tracingLayerStore) TruncateAllTables(ctx context.Context) error {
 	return s.next.TruncateAllTables(ctx)

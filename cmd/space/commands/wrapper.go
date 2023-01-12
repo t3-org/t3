@@ -41,8 +41,8 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 		}
 
 		timeout := time.Second * 30
-		go sr.ShutdownBySignals(r, timeout) //nolint
-		defer registry.Shutdown(r, timeout) //nolint
+		go sr.ShutdownBySignals(r, timeout)      //nolint
+		defer sr.ShutdownWithTimeout(r, timeout) //nolint
 
 		return cmdF(&cmdOpts{
 			Registry: r,

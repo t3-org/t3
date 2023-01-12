@@ -26,7 +26,7 @@ type Store interface {
 	// DBLayer returns the database store layer.
 	DBLayer() Store
 
-	Tx() *sqld.TxWrapper
+	Txs() *sqld.Txs
 
 	TruncateAllTables(ctx context.Context) error
 

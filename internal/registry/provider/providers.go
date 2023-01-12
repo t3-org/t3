@@ -50,7 +50,6 @@ import (
 	"space.org/space/internal/store"
 	cachestore "space.org/space/internal/store/cache"
 	"space.org/space/internal/store/sqlstore"
-	"space.org/space/pkg/hredis"
 )
 
 func init() {
@@ -255,6 +254,7 @@ func OpenTelemetryProvider(r hexa.ServiceRegistry) error {
 
 func RedisProvider(r hexa.ServiceRegistry) error {
 	cfg := conf(r)
+	l := r.Service(registry.ServiceNameLogger).(hlog.Logger)
 
 	dial := func() (redis.Conn, error) {
 		c, err := redis.Dial("tcp", cfg.RedisAddress)
@@ -284,16 +284,23 @@ func RedisProvider(r hexa.ServiceRegistry) error {
 		return err
 	}
 
-	red := &hredis.Service{
-		Pool: &redis.Pool{
-			Dial:         dial,
-			TestOnBorrow: testOnBorrow,
-			MaxIdle:      5,
-			IdleTimeout:  time.Second * 120,
-		},
+	pool := &redis.Pool{
+		Dial:         dial,
+		TestOnBorrow: testOnBorrow,
+		MaxIdle:      5,
+		IdleTimeout:  time.Second * 120,
 	}
 
-	r.Register(registry.ServiceNameRedis, red)
+	ping := func(_ context.Context) error {
+		_, err := pool.Get().Do("PING")
+		return tracer.Trace(err)
+	}
+
+	r.RegisterByDescriptor(&hexa.Descriptor{
+		Name:     registry.ServiceNameRedis,
+		Instance: pool,
+		Health:   hexa.NewPingHealth(l, registry.ServiceNameRedis, ping, nil),
+	})
 	return nil
 }
 
@@ -303,10 +310,10 @@ func CacheProvider(r hexa.ServiceRegistry) error {
 		return nil
 	}
 
-	red := r.Service(registry.ServiceNameRedis).(*hredis.Service)
+	pool := r.Service(registry.ServiceNameRedis).(*redis.Pool)
 	hcache.NewRedisCacheProvider(&hcache.RedisOptions{
 		Prefix:      cfg.Cache.Redis.Prefix,
-		Pool:        red.Pool,
+		Pool:        pool,
 		Marshaler:   hcache.GobMarshal,
 		Unmarshaler: hcache.GobUnmarshal,
 		DefaultTTL:  cfg.Cache.Redis.TTL(),

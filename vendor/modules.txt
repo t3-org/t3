@@ -113,7 +113,7 @@ github.com/josharian/intern
 # github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
 ## explicit; go 1.13
 github.com/kamva/gutil
-# github.com/kamva/hexa v0.1.1-0.20221019121629-cb5bec3b954b
+# github.com/kamva/hexa v0.1.1-0.20230112153630-cd27f17870f0
 ## explicit; go 1.18
 github.com/kamva/hexa
 github.com/kamva/hexa/hexatranslator

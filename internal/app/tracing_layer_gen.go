@@ -105,7 +105,7 @@ func (a *tracingLayer) GetPlanetByCode(ctx context.Context, code string) (*dto.P
 
 	return r1, r2
 }
-func (a *tracingLayer) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error) {
+func (a *tracingLayer) CreatePlanet(ctx context.Context, in *input.CreatePlanet) (*dto.Planet, error) {
 	if ctx == nil {
 		return a.next.CreatePlanet(ctx, in)
 	}
@@ -125,7 +125,7 @@ func (a *tracingLayer) CreatePlanet(ctx context.Context, in input.CreatePlanet) 
 
 	return r1, r2
 }
-func (a *tracingLayer) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
+func (a *tracingLayer) UpdatePlanet(ctx context.Context, id int64, in *input.UpdatePlanet) (*dto.Planet, error) {
 	if ctx == nil {
 		return a.next.UpdatePlanet(ctx, id, in)
 	}

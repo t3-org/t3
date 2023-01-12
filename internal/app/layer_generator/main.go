@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path"
 	"strings"
@@ -17,47 +17,33 @@ const (
 	LayerNameTracing = "tracing"
 )
 
-var modulePath string
 var here = gutil.SourcePath()
+var modPath = path.Join(gutil.SourcePath(), "../../../go.mod")
+var modulePath = modfile.ModulePath(gutil.Must(os.ReadFile(modPath)).([]byte))
+var layers = map[string]func() error{
+	//LayerNameTx:      generateTxLayer,
+	LayerNameTracing: generateTracingLayer,
+}
 
 func main() {
-	modSrc, err := gutil.ReadAll(path.Join(gutil.SourcePath(), "..", "..", "..", "go.mod"))
-	if err != nil {
-		fmt.Println(tracer.StackAsString(tracer.Trace(err)))
-		os.Exit(1)
-	}
-	modulePath = modfile.ModulePath(modSrc)
-
-	layers := []string{LayerNameTx, LayerNameTracing}
-
+	layerNames := []string{LayerNameTx, LayerNameTracing}
 	if len(os.Args) > 1 {
-		layers = strings.Split(os.Args[1], ",")
+		layerNames = strings.Split(os.Args[1], ",")
 	}
 
-	// trim list
-	for _, v := range layers {
-		l := strings.TrimPrefix(strings.TrimSuffix(v, " "), " ")
-		switch l {
-		case LayerNameTx:
-			//generateTxLayer()
-		case LayerNameTracing:
-			if err := generateTracingLayer(); err != nil {
-				fmt.Println(tracer.StackAsString(tracer.Trace(err)))
-				os.Exit(1)
-			}
-		}
+	if err := lg.RunLayerFns(layers, layerNames...); err != nil {
+		log.Fatal(tracer.Trace(err))
 	}
 }
 
-//func generateTxLayer() {
+//func generateTxLayer() error { // TODO: generate tx layer from both interface and the app instance.
 //	tmpl := path.Join(gutil.SourcePath(), "tx_layer_mongo.tmpl")
 //	src := path.Join(gutil.SourcePath(), "..", "app_iface.go")
 //	output := path.Join(gutil.SourcePath(), "..", "tx_layer_mongo_gen.go")
 //
 //	metadata, err := lg.ExtractInterfaceMetadata(src, "App")
 //	if err != nil {
-//		fmt.Println(tracer.StackAsString(tracer.Trace(err)))
-//		os.Exit(1)
+//		return tracer.Trace(err)
 //	}
 //
 //	data := &lg.TemplateData{
@@ -66,10 +52,7 @@ func main() {
 //		Interface: metadata,
 //	}
 //
-//	if err := lg.GenerateLayer(tmpl, lg.Funcs(), output, data, true); err != nil {
-//		fmt.Println(tracer.StackAsString(tracer.Trace(err)))
-//		os.Exit(1)
-//	}
+//	return tracer.Trace(lg.GenerateLayer(tmpl, lg.Funcs(), output, data, true))
 //}
 
 func generateTracingLayer() error {
@@ -94,5 +77,5 @@ func generateTracingLayer() error {
 		Interface: app,
 	}
 
-	return lg.GenerateLayer(tmpl, lg.Funcs(), output, data, true)
+	return tracer.Trace(lg.GenerateLayer(tmpl, lg.Funcs(), output, data, true))
 }

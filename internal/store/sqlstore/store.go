@@ -54,19 +54,20 @@ type sqlStoresList struct {
 type sqlStore struct {
 	hexa.Health
 
-	o         config.DB
-	txWrapper *sqld.TxWrapper
-	stores    sqlStoresList
-	db        *sql.DB
-	builder   sq.StatementBuilderType
+	o       config.DB
+	txs     *sqld.Txs
+	stores  sqlStoresList
+	db      *sql.DB
+	builder sq.StatementBuilderType
 }
 
 func (s *sqlStore) DBLayer() model.Store {
+	s.db.Stats()
 	return s
 }
 
-func (s *sqlStore) Tx() *sqld.TxWrapper {
-	return s.txWrapper
+func (s *sqlStore) Txs() *sqld.Txs {
+	return s.txs
 }
 
 func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
@@ -218,11 +219,11 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 
 	// Create the Store.
 	s := &sqlStore{
-		Health:    health,
-		o:         o,
-		txWrapper: sqld.NewTxWrapper(db),
-		db:        db,
-		builder:   builder,
+		Health:  health,
+		o:       o,
+		txs:     sqld.NewTxs(db),
+		db:      db,
+		builder: builder,
 	}
 
 	if err := s.migrate(); err != nil {

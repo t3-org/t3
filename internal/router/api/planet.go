@@ -33,7 +33,7 @@ func (r *planetResource) Create(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
-	dto, err := r.app.CreatePlanet(c.Request().Context(), in)
+	dto, err := r.app.CreatePlanet(c.Request().Context(), &in)
 	if err != nil {
 		return tracer.Trace(err)
 	}
@@ -47,7 +47,7 @@ func (r *planetResource) Update(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
-	dto, err := r.app.UpdatePlanet(c.Request().Context(), r.ID(c), in)
+	dto, err := r.app.UpdatePlanet(c.Request().Context(), r.ID(c), &in)
 	if err != nil {
 		return tracer.Trace(err)
 	}
