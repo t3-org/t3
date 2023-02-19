@@ -210,7 +210,7 @@ type planetsPutResponseWrapper struct {
 type planetsQueryParamsWrapper struct {
 	// in:body
 	Body struct {
-		input.P
+		Query string `json:"query"`
 	}
 }
 

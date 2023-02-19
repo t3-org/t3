@@ -73,7 +73,13 @@
             "name": "Body",
             "in": "body",
             "schema": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "x-go-name": "Query"
+                }
+              }
             }
           }
         ],
