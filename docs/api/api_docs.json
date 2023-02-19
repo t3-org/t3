@@ -1,0 +1,427 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Space API docs",
+    "version": "0.1.0"
+  },
+  "host": "space.app",
+  "paths": {
+    "/api/v1/lab/ping": {
+      "get": {
+        "tags": [
+          "lab"
+        ],
+        "operationId": "labPingParams",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/labPingSuccessResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/lab/routes": {
+      "get": {
+        "tags": [
+          "lab"
+        ],
+        "summary": "Returns routes.",
+        "operationId": "labRoutesParams",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/labRoutesSuccessResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/planets": {
+      "get": {
+        "tags": [
+          "planets"
+        ],
+        "summary": "Query planets.",
+        "operationId": "planetsQueryParams",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/planetsQuerySuccessResponse"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "planets"
+        ],
+        "summary": "Create a planet.",
+        "operationId": "planetsCreateParams",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "x-go-name": "Code"
+                },
+                "name": {
+                  "type": "string",
+                  "x-go-name": "Name"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/planetsCreateSuccessResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/planets/code/{code}": {
+      "get": {
+        "tags": [
+          "planets"
+        ],
+        "summary": "Get a planet by code.",
+        "operationId": "planetsGetByCodeParams",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Code",
+            "name": "code",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/planetsGetByCodeSuccessResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/planets/{id}": {
+      "put": {
+        "tags": [
+          "planets"
+        ],
+        "summary": "Update a planet.",
+        "operationId": "planetsPutParams",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "x-go-name": "Code"
+                },
+                "name": {
+                  "type": "string",
+                  "x-go-name": "Name"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/planetsPutSuccessResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "planets"
+        ],
+        "summary": "Delete a planet.",
+        "operationId": "planetsDeleteParams",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/planetsDeleteSuccessResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Planet": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-go-name": "Code"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "updated_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        }
+      },
+      "x-go-package": "space.org/space/internal/model"
+    },
+    "Route": {
+      "type": "object",
+      "title": "Route contains a handler and information for matching against requests.",
+      "properties": {
+        "method": {
+          "type": "string",
+          "x-go-name": "Method"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "path": {
+          "type": "string",
+          "x-go-name": "Path"
+        }
+      },
+      "x-go-package": "github.com/labstack/echo/v4"
+    }
+  },
+  "responses": {
+    "labPingSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          }
+        }
+      }
+    },
+    "labRoutesSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "routes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Route"
+                },
+                "x-go-name": "Routes"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "planetsCreateSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "$ref": "#/definitions/Planet"
+          }
+        }
+      }
+    },
+    "planetsDeleteSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          }
+        }
+      }
+    },
+    "planetsGetByCodeSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "$ref": "#/definitions/Planet"
+          }
+        }
+      }
+    },
+    "planetsPutSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "$ref": "#/definitions/Planet"
+          }
+        }
+      }
+    },
+    "planetsQuerySuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Planet"
+                },
+                "x-go-name": "Items"
+              },
+              "page": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "Page"
+              },
+              "page_count": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "PageCount"
+              },
+              "per_page": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "PerPage"
+              },
+              "total_count": {
+                "type": "integer",
+                "format": "int64",
+                "x-go-name": "TotalCount"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
