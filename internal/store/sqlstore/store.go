@@ -46,7 +46,7 @@ type SqlStore interface {
 
 type sqlStoresList struct {
 	system model.SystemStore
-	planet model.PlanetStore
+	ticket model.TicketStore
 
 	// Place your stores here.
 }
@@ -197,8 +197,8 @@ func (s *sqlStore) System() model.SystemStore {
 	return s.stores.system
 }
 
-func (s *sqlStore) Planet() model.PlanetStore {
-	return s.stores.planet
+func (s *sqlStore) Ticket() model.TicketStore {
+	return s.stores.ticket
 }
 
 func (s *sqlStore) Shutdown(_ context.Context) error {
@@ -232,7 +232,7 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 
 	s.stores = sqlStoresList{
 		system: newSystemStore(s),
-		planet: newPlanetStore(s),
+		ticket: newTicketStore(s),
 
 		// place your other stores here.
 	}

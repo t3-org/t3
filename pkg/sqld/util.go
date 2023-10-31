@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/kamva/tracer"
@@ -13,8 +14,12 @@ const countField = "count(*) as count"
 
 const OnConflictIDSET = "On Conflict (id) DO UPDATE SET"
 
-func OnConflictSet(field string) string {
-	return fmt.Sprintf("On Conflict (%s) DO UPDATE SET", field)
+func OnConflictSet(fields ...string) string {
+	return fmt.Sprintf("On Conflict (%s) DO UPDATE SET", strings.Join(fields, ","))
+}
+
+func OnConflictDoNothing(fields ...string) string {
+	return fmt.Sprintf("On Conflict (%s) DO NOTHING", strings.Join(fields, ","))
 }
 
 func ReplaceNotFound(err, notFoundErr error) error {

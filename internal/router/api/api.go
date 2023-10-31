@@ -25,5 +25,5 @@ func (api *API) RegisterRoutes() {
 	v1 := api.v1.Group
 
 	api.registerLabRoutes(v1("/lab"), &labResource{app: api.app, e: api.echo})
-	api.registerPlanetRoutes(v1("/planets"), &planetResource{app: api.app})
+	api.registerTicketRoutes(v1("/tickets"), &ticketResource{app: api.app})
 }

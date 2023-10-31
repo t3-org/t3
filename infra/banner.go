@@ -5,7 +5,7 @@ var banner = `
 └─┐├─┘├─┤│  ├┤ 
 └─┘┴  ┴ ┴└─┘└─┘%s
 %s
-Space Bench lab.
+Itrack server
 %s
 ____________________________________O/_______
                                     O\

@@ -11,15 +11,15 @@ import (
 //--------------------------------
 
 var (
-	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "space.invalid_id_value")
+	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "itrack.invalid_id_value")
 )
 
 //--------------------------------
-// Planet errors
+// Ticket errors
 //--------------------------------
 
 var (
-	ErrPlanetNotFound = hexa.NewError(http.StatusNotFound, "space.planet.not_found_error")
+	ErrTicketNotFound = hexa.NewError(http.StatusNotFound, "itrack.ticket.not_found_error")
 )
 
 //--------------------------------
@@ -27,7 +27,7 @@ var (
 //--------------------------------
 
 var (
-	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "space.system.property_not_found")
+	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "itrack.system.property_not_found")
 )
 
 //--------------------------------
@@ -35,5 +35,5 @@ var (
 //--------------------------------
 
 var (
-	ErrTooManyRequests = hexa.NewError(http.StatusTooManyRequests, "space.gateway.too_many_requests")
+	ErrTooManyRequests = hexa.NewError(http.StatusTooManyRequests, "itrack.gateway.too_many_requests")
 )

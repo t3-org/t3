@@ -11,18 +11,18 @@ import (
 //--------------------------------
 
 var (
-	RespSuccessGetRoutes = hexa.NewReply(http.StatusOK, "space.lab.success_get_routes")
+	RespSuccessGetRoutes = hexa.NewReply(http.StatusOK, "itrack.lab.get_routes.ok")
 	RespSuccessPong      = hexa.NewReply(http.StatusOK, "pong")
 )
 
 //--------------------------------
-// Planet replies
+// Ticket replies
 //--------------------------------
 
 var (
-	RespSuccessGetPlanet    = hexa.NewReply(http.StatusOK, "space.planet.created")
-	RespSuccessCreatePlanet = hexa.NewReply(http.StatusOK, "space.planet.created")
-	RespSuccessUpdatePlanet = hexa.NewReply(http.StatusOK, "space.planet.updated")
-	RespSuccessDeletePlanet = hexa.NewReply(http.StatusOK, "space.planet.deleted")
-	RespSuccessQueryPlanet  = hexa.NewReply(http.StatusOK, "space.planet.success_query")
+	RespSuccessGetTicket    = hexa.NewReply(http.StatusOK, "itrack.ticket.get.ok")
+	RespSuccessCreateTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.create.ok")
+	RespSuccessUpdateTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.update.ok")
+	RespSuccessDeleteTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.delete.ok")
+	RespSuccessQueryTicket  = hexa.NewReply(http.StatusOK, "itrack.ticket.query.ok")
 )

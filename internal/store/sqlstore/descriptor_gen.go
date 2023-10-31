@@ -7,14 +7,19 @@ import (
 )
 
 var (
-	systemColumns = []string{"name", "value", "created_at", "updated_at"}
-	planetColumns = []string{"id", "name", "code", "created_at", "updated_at"}
+	systemColumns    = []string{"name", "value", "created_at", "updated_at"}
+	ticketColumns    = []string{"id", "fingerprint", "is_firing", "started_at", "ended_at", "is_spam", "level", "description", "seen_at", "created_at", "updated_at"}
+	ticketTagColumns = []string{"ticket_id", "term"}
 )
 
 func systemFields(m *model.System) []any {
 	return []interface{}{&m.Name, &m.Value, &m.CreatedAt, &m.UpdatedAt}
 }
 
-func planetFields(m *model.Planet) []any {
-	return []interface{}{&m.ID, &m.Name, &m.Code, &m.CreatedAt, &m.UpdatedAt}
+func ticketFields(m *model.Ticket) []any {
+	return []interface{}{&m.ID, &m.Fingerprint, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
+}
+
+func ticketTagFields(m *model.TicketTag) []any {
+	return []interface{}{&m.TicketID, &m.Term}
 }

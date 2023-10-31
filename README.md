@@ -89,16 +89,7 @@ import (
 __Notes for developers__
 
 - To sync your packages with the `vendor` dir run `go mod vendor` command.
-- To generate public/private keys run following commands:
 
-```bash
-ssh-keygen -f barkat_key -t rsa -b 4096 -m pem
-# To get pem format for your public key:
-ssh-keygen -f barkat_key.pub -e -m pem > barkat_key.pub.pem 
-```
-
-- generated public/private keys in the `secret.yaml` file in the `deloy/dev/secret.yaml` path is just a sample, genrate
-  new key pairs for your production please.
 
 ### How to enable jaeger in local env
 

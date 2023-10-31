@@ -39,10 +39,10 @@ func (m *MockApp) EXPECT() *MockAppMockRecorder {
 }
 
 // CreatePlanet mocks base method.
-func (m *MockApp) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error) {
+func (m *MockApp) CreatePlanet(ctx context.Context, in input.CreateTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePlanet", ctx, in)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret := m.ctrl.Call(m, "CreateTicket", ctx, in)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,7 +50,7 @@ func (m *MockApp) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto
 // CreatePlanet indicates an expected call of CreatePlanet.
 func (mr *MockAppMockRecorder) CreatePlanet(ctx, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePlanet", reflect.TypeOf((*MockApp)(nil).CreatePlanet), ctx, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicket", reflect.TypeOf((*MockApp)(nil).CreatePlanet), ctx, in)
 }
 
 // DeletePlanet mocks base method.
@@ -68,10 +68,10 @@ func (mr *MockAppMockRecorder) DeletePlanet(ctx, id interface{}) *gomock.Call {
 }
 
 // GetPlanet mocks base method.
-func (m *MockApp) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
+func (m *MockApp) GetPlanet(ctx context.Context, id int64) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanet", ctx, id)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -83,10 +83,10 @@ func (mr *MockAppMockRecorder) GetPlanet(ctx, id interface{}) *gomock.Call {
 }
 
 // GetPlanetByCode mocks base method.
-func (m *MockApp) GetPlanetByCode(ctx context.Context, code string) (*dto.Planet, error) {
+func (m *MockApp) GetPlanetByCode(ctx context.Context, code string) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanetByCode", ctx, code)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -169,10 +169,10 @@ func (mr *MockAppMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
+func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.UpdateTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdatePlanet", ctx, id, in)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -180,7 +180,7 @@ func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePla
 // UpdatePlanet indicates an expected call of UpdatePlanet.
 func (mr *MockAppMockRecorder) UpdatePlanet(ctx, id, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlanet", reflect.TypeOf((*MockApp)(nil).UpdatePlanet), ctx, id, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicket", reflect.TypeOf((*MockApp)(nil).UpdatePlanet), ctx, id, in)
 }
 
 // MockHealth is a mock of Health interface.
@@ -286,10 +286,10 @@ func (m *MockPlanetService) EXPECT() *MockPlanetServiceMockRecorder {
 }
 
 // CreatePlanet mocks base method.
-func (m *MockPlanetService) CreatePlanet(ctx context.Context, in input.CreatePlanet) (*dto.Planet, error) {
+func (m *MockPlanetService) CreatePlanet(ctx context.Context, in input.CreateTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePlanet", ctx, in)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret := m.ctrl.Call(m, "CreateTicket", ctx, in)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -297,7 +297,7 @@ func (m *MockPlanetService) CreatePlanet(ctx context.Context, in input.CreatePla
 // CreatePlanet indicates an expected call of CreatePlanet.
 func (mr *MockPlanetServiceMockRecorder) CreatePlanet(ctx, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePlanet", reflect.TypeOf((*MockPlanetService)(nil).CreatePlanet), ctx, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicket", reflect.TypeOf((*MockPlanetService)(nil).CreatePlanet), ctx, in)
 }
 
 // DeletePlanet mocks base method.
@@ -315,10 +315,10 @@ func (mr *MockPlanetServiceMockRecorder) DeletePlanet(ctx, id interface{}) *gomo
 }
 
 // GetPlanet mocks base method.
-func (m *MockPlanetService) GetPlanet(ctx context.Context, id int64) (*dto.Planet, error) {
+func (m *MockPlanetService) GetPlanet(ctx context.Context, id int64) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanet", ctx, id)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -330,10 +330,10 @@ func (mr *MockPlanetServiceMockRecorder) GetPlanet(ctx, id interface{}) *gomock.
 }
 
 // GetPlanetByCode mocks base method.
-func (m *MockPlanetService) GetPlanetByCode(ctx context.Context, code string) (*dto.Planet, error) {
+func (m *MockPlanetService) GetPlanetByCode(ctx context.Context, code string) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPlanetByCode", ctx, code)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -360,10 +360,10 @@ func (mr *MockPlanetServiceMockRecorder) QueryPlanets(ctx, query, page, perPage 
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input.UpdatePlanet) (*dto.Planet, error) {
+func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input.UpdateTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdatePlanet", ctx, id, in)
-	ret0, _ := ret[0].(*dto.Planet)
+	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
+	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -371,5 +371,5 @@ func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input
 // UpdatePlanet indicates an expected call of UpdatePlanet.
 func (mr *MockPlanetServiceMockRecorder) UpdatePlanet(ctx, id, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePlanet", reflect.TypeOf((*MockPlanetService)(nil).UpdatePlanet), ctx, id, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicket", reflect.TypeOf((*MockPlanetService)(nil).UpdatePlanet), ctx, id, in)
 }

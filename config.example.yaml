@@ -1,4 +1,4 @@
-app_name: "Space"
+app_name: "Itrack"
 instance_name: "single_local"
 environment: development
 debug: true
@@ -16,7 +16,7 @@ fallback_languages:
 port: 4000
 db:
   driver: postgres
-  dsn: postgres://root:12345@localhost/space?sslmode=disable&connect_timeout=10&binary_parameters=yes
+  dsn: postgres://root:12345@localhost/itrack?sslmode=disable&connect_timeout=10&binary_parameters=yes
   max_open_conns: 300 # unlimited.
   max_idle_conns: 20
   conn_max_idle_time_milliseconds: 300000
@@ -36,6 +36,7 @@ open_telemetry:
 echo_log_level: info
 allow_origins:
   - "*"
+
 auth_token_cookie:
   name: auth_token
   max_age: 2000
@@ -52,9 +53,3 @@ csrf_cookie:
   same_site: none
 
 redis_address: "127.0.0.1:6379"
-
-cache:
-  enabled: true
-  redis:
-    prefix: sc_ #sc = space cache
-    default_ttl_seconds: 1800

@@ -8,12 +8,9 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/hibiken/asynq"
-	"github.com/kamva/gutil"
 	"github.com/kamva/hexa"
-	hcache "github.com/kamva/hexa-cache"
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/kamva/hexa-job/hsynq"
-	hexarobfig "github.com/kamva/hexa-job/robfig"
 	huner "github.com/kamva/hexa-tuner"
 	"github.com/kamva/hexa/hexatranslator"
 	"github.com/kamva/hexa/hlog"
@@ -23,7 +20,6 @@ import (
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/robfig/cron/v3"
 	"github.com/sony/sonyflake"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
@@ -45,10 +41,8 @@ import (
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/services"
 	"space.org/space/internal/router/api"
-	"space.org/space/internal/router/crons"
 	"space.org/space/internal/router/jobs"
 	"space.org/space/internal/store"
-	cachestore "space.org/space/internal/store/cache"
 	"space.org/space/internal/store/sqlstore"
 )
 
@@ -65,11 +59,9 @@ func init() {
 	registry.AddProvider(registry.ServiceNameMeterProvider, registry.ServiceNameMeterProvider, MeterProvider)
 	registry.AddProvider(registry.ServiceNameOpenTelemetry, registry.ServiceNameOpenTelemetry, OpenTelemetryProvider)
 	registry.AddProvider(registry.ServiceNameRedis, registry.ServiceNameRedis, RedisProvider)
-	registry.AddProvider(registry.ServiceNameCacheProvider, registry.ServiceNameCacheProvider, CacheProvider)
 	registry.AddProvider(registry.ServiceNameHttpServer, registry.ServiceNameHttpServer, HttpServerProvider)
 	registry.AddProvider(registry.ServiceNameJobs, registry.ServiceNameJobs, JobsProvider)
 	registry.AddProvider(registry.ServiceNameWorker, registry.ServiceNameWorker, WorkerProvider)
-	registry.AddProvider(registry.ServiceNameCron, registry.ServiceNameCron, CronProvider)
 	registry.AddProvider(registry.ServiceNameStore, registry.ServiceNameStore, StoreProvider)
 	registry.AddProvider(registry.ServiceNameApp, registry.ServiceNameApp, AppProvider)
 
@@ -156,9 +148,9 @@ func JobsProvider(r hexa.ServiceRegistry) error {
 	t := r.Service(registry.ServiceNameTranslator).(hexa.Translator)
 
 	propagator := hexa.NewContextPropagator(l, t)
-	jobs := hsynq.NewJobs(asynq.NewClient(cfg.AsynqConfig.RedisOpts()), propagator, hsynq.NewJsonTransformer())
+	jobsInstance := hsynq.NewJobs(asynq.NewClient(cfg.AsynqConfig.RedisOpts()), propagator, hsynq.NewJsonTransformer())
 
-	r.Register(registry.ServiceNameJobs, jobs)
+	r.Register(registry.ServiceNameJobs, jobsInstance)
 	return nil
 }
 
@@ -240,6 +232,9 @@ func PrometheusProvider(r hexa.ServiceRegistry) error {
 }
 
 func MeterProvider(r hexa.ServiceRegistry) error {
+	if !conf(r).OpenTelemetry.Metric.Enabled { // if it's disabled, ignore it.
+		return nil
+	}
 	exporter := r.Service(registry.ServiceNamePrometheus).(*prometheus.Exporter)
 	r.Register(registry.ServiceNameMeterProvider, exporter.MeterProvider())
 	return nil
@@ -304,23 +299,6 @@ func RedisProvider(r hexa.ServiceRegistry) error {
 	return nil
 }
 
-func CacheProvider(r hexa.ServiceRegistry) error {
-	cfg := conf(r)
-	if cfg.Cache.Enabled {
-		return nil
-	}
-
-	pool := r.Service(registry.ServiceNameRedis).(*redis.Pool)
-	hcache.NewRedisCacheProvider(&hcache.RedisOptions{
-		Prefix:      cfg.Cache.Redis.Prefix,
-		Pool:        pool,
-		Marshaler:   hcache.GobMarshal,
-		Unmarshaler: hcache.GobUnmarshal,
-		DefaultTTL:  cfg.Cache.Redis.TTL(),
-	})
-	return nil
-}
-
 func StoreProvider(r hexa.ServiceRegistry) error {
 	cfg := conf(r)
 	svcs := services.New(r)
@@ -330,10 +308,6 @@ func StoreProvider(r hexa.ServiceRegistry) error {
 	if err != nil {
 		hlog.Error("error", hlog.ErrStack(tracer.Trace(err)), hlog.Err(err))
 		return tracer.Trace(err)
-	}
-
-	if svcs.CacheProvider() != nil { // Add the cache layer.
-		s = cachestore.New(r, s)
 	}
 
 	if cfg.OpenTelemetry.Tracing.TraceDB {
@@ -358,37 +332,6 @@ func AppProvider(r hexa.ServiceRegistry) error {
 	}
 
 	r.Register(registry.ServiceNameApp, a)
-	return nil
-}
-
-func CronProvider(r hexa.ServiceRegistry) error {
-	cfg := conf(r)
-
-	s := services.New(r)
-	a := r.Service(registry.ServiceNameApp).(app.App)
-
-	u, err := hexa.NewGuest().SetMeta(hexa.UserMetaKeyName, "cron_job")
-	if err != nil {
-		return tracer.Trace(err)
-	}
-
-	ctxGen := func(c context.Context) context.Context {
-		return hexa.NewContext(c, hexa.ContextParams{
-			Locale:         "en",
-			User:           u,
-			CorrelationId:  gutil.UUID(),
-			BaseLogger:     s.Logger(),
-			BaseTranslator: s.Translator(),
-		})
-	}
-
-	cronJobs := hexarobfig.New(ctxGen, cron.New())
-
-	if err := crons.RegisterCronJobs(cronJobs, r, cfg, a); err != nil {
-		return tracer.Trace(err)
-	}
-
-	r.Register(registry.ServiceNameCron, cronJobs)
 	return nil
 }
 

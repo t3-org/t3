@@ -3,7 +3,6 @@ package services
 import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/kamva/hexa"
-	hcache "github.com/kamva/hexa-cache"
 	hecho "github.com/kamva/hexa-echo"
 	hjob "github.com/kamva/hexa-job"
 	"github.com/kamva/hexa/hlog"
@@ -25,7 +24,6 @@ type Services interface {
 	Jobs() hjob.Jobs
 	OpenTelemetry() htel.OpenTelemetry
 	Redis() *redis.Pool
-	CacheProvider() hcache.Provider
 	CronJobs() hjob.CronJobs
 	HttpServer() *hecho.EchoService
 	Worker() hjob.Worker
@@ -72,11 +70,6 @@ func (s *services) OpenTelemetry() htel.OpenTelemetry {
 
 func (s *services) Redis() *redis.Pool {
 	srv, _ := s.r.Service(registry.ServiceNameRedis).(*redis.Pool)
-	return srv
-}
-
-func (s *services) CacheProvider() hcache.Provider {
-	srv, _ := s.r.Service(registry.ServiceNameCacheProvider).(hcache.Provider)
 	return srv
 }
 

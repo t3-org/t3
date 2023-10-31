@@ -7,15 +7,19 @@ github.com/BurntSushi/toml/internal
 # github.com/Masterminds/squirrel v1.5.3
 ## explicit; go 1.14
 github.com/Masterminds/squirrel
-# github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
-## explicit; go 1.12
-github.com/asaskevich/govalidator
 # github.com/beorn7/perks v1.0.1
 ## explicit; go 1.11
 github.com/beorn7/perks/quantile
 # github.com/cespare/xxhash/v2 v2.1.2
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
+# github.com/chzyer/logex v1.1.10
+## explicit
+# github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
+## explicit
+github.com/chzyer/readline
+# github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1
+## explicit
 # github.com/contribsys/faktory v1.6.1
 ## explicit; go 1.17
 github.com/contribsys/faktory/client
@@ -39,7 +43,6 @@ github.com/getsentry/sentry-go
 # github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 ## explicit; go 1.13
 github.com/go-ozzo/ozzo-validation/v4
-github.com/go-ozzo/ozzo-validation/v4/is
 # github.com/go-redis/redis/v7 v7.4.0
 ## explicit; go 1.11
 github.com/go-redis/redis/v7
@@ -68,8 +71,6 @@ github.com/golang/protobuf/ptypes/timestamp
 # github.com/gomodule/redigo v1.8.8
 ## explicit; go 1.16
 github.com/gomodule/redigo/redis
-# github.com/google/go-cmp v0.5.8
-## explicit; go 1.13
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
@@ -125,9 +126,6 @@ github.com/kamva/hexa/lg
 github.com/kamva/hexa/pagination
 github.com/kamva/hexa/probe
 github.com/kamva/hexa/sr
-# github.com/kamva/hexa-cache v0.0.0-20220305043001-a94dbd10b086
-## explicit; go 1.17
-github.com/kamva/hexa-cache
 # github.com/kamva/hexa-echo v0.1.1-0.20221015212418-e3ea3020053a
 ## explicit; go 1.18
 github.com/kamva/hexa-echo
@@ -137,7 +135,6 @@ github.com/kamva/hexa-echo/hechodoc
 github.com/kamva/hexa-job
 github.com/kamva/hexa-job/faktory
 github.com/kamva/hexa-job/hsynq
-github.com/kamva/hexa-job/robfig
 # github.com/kamva/hexa-rpc v0.0.0-20221019082145-ee3e755d7d42
 ## explicit; go 1.18
 github.com/kamva/hexa-rpc
@@ -165,7 +162,7 @@ github.com/lann/builder
 # github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
 ## explicit
 github.com/lann/ps
-# github.com/lib/pq v1.10.0
+# github.com/lib/pq v1.10.9
 ## explicit; go 1.13
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -189,12 +186,15 @@ github.com/mattermost/morph/models
 github.com/mattermost/morph/sources
 github.com/mattermost/morph/sources/embedded
 github.com/mattermost/morph/sources/file
-# github.com/mattn/go-colorable v0.1.11
+# github.com/mattn/go-colorable v0.1.12
 ## explicit; go 1.13
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.14
 ## explicit; go 1.12
 github.com/mattn/go-isatty
+# github.com/mattn/go-sqlite3 v1.14.17
+## explicit; go 1.16
+github.com/mattn/go-sqlite3
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 ## explicit
 github.com/matttproud/golang_protobuf_extensions/pbutil
@@ -211,9 +211,6 @@ github.com/nicksnyder/go-i18n/v2/internal/plural
 # github.com/pelletier/go-toml v1.7.0
 ## explicit; go 1.12
 github.com/pelletier/go-toml
-# github.com/philhofer/fwd v1.1.1
-## explicit
-github.com/philhofer/fwd
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
@@ -241,6 +238,11 @@ github.com/prometheus/procfs/internal/util
 # github.com/robfig/cron/v3 v3.0.1
 ## explicit; go 1.12
 github.com/robfig/cron/v3
+# github.com/rs/zerolog v1.30.0
+## explicit; go 1.15
+github.com/rs/zerolog
+github.com/rs/zerolog/internal/cbor
+github.com/rs/zerolog/internal/json
 # github.com/sethvargo/go-limiter v0.7.2
 ## explicit; go 1.14
 github.com/sethvargo/go-limiter
@@ -270,31 +272,40 @@ github.com/spf13/pflag
 # github.com/spf13/viper v1.7.1
 ## explicit; go 1.12
 github.com/spf13/viper
-# github.com/stretchr/testify v1.8.0
-## explicit; go 1.13
+# github.com/stretchr/testify v1.8.4
+## explicit; go 1.20
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
 # github.com/subosito/gotenv v1.2.0
 ## explicit
 github.com/subosito/gotenv
-# github.com/tinylib/msgp v1.1.6
+# github.com/tidwall/gjson v1.16.0
+## explicit; go 1.12
+github.com/tidwall/gjson
+# github.com/tidwall/match v1.1.1
+## explicit; go 1.15
+github.com/tidwall/match
+# github.com/tidwall/pretty v1.2.0
+## explicit; go 1.16
+github.com/tidwall/pretty
+# github.com/tidwall/sjson v1.2.5
 ## explicit; go 1.14
-github.com/tinylib/msgp/msgp
+github.com/tidwall/sjson
 # github.com/valyala/bytebufferpool v1.0.0
 ## explicit
 github.com/valyala/bytebufferpool
 # github.com/valyala/fasttemplate v1.2.1
 ## explicit; go 1.12
 github.com/valyala/fasttemplate
-# github.com/vmihailenco/msgpack/v5 v5.3.5
-## explicit; go 1.11
-github.com/vmihailenco/msgpack/v5
-github.com/vmihailenco/msgpack/v5/msgpcode
-# github.com/vmihailenco/tagparser/v2 v2.0.0
-## explicit; go 1.15
-github.com/vmihailenco/tagparser/v2
-github.com/vmihailenco/tagparser/v2/internal
-github.com/vmihailenco/tagparser/v2/internal/parser
+# go.mau.fi/util v0.1.0
+## explicit; go 1.20
+go.mau.fi/util/base58
+go.mau.fi/util/dbutil
+go.mau.fi/util/exerrors
+go.mau.fi/util/exgjson
+go.mau.fi/util/jsontime
+go.mau.fi/util/random
+go.mau.fi/util/retryafter
 # go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.27.0
 ## explicit; go 1.15
 go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc
@@ -373,20 +384,27 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20220214200702-86341886e292
+# golang.org/x/crypto v0.13.0
 ## explicit; go 1.17
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
+golang.org/x/crypto/hkdf
+golang.org/x/crypto/pbkdf2
+# golang.org/x/exp v0.0.0-20230905200255-921286631fa9
+## explicit; go 1.20
+golang.org/x/exp/maps
 # golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 ## explicit; go 1.11
-# golang.org/x/mod v0.5.1
+# golang.org/x/mod v0.12.0
 ## explicit; go 1.17
 golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20220225172249-27dd8689420f
+# golang.org/x/net v0.15.0
 ## explicit; go 1.17
+golang.org/x/net/html
+golang.org/x/net/html/atom
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/h2c
@@ -394,14 +412,14 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9
+# golang.org/x/sys v0.12.0
 ## explicit; go 1.17
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/windows/registry
-# golang.org/x/text v0.3.7
+# golang.org/x/text v0.13.0
 ## explicit; go 1.17
 golang.org/x/text/cases
 golang.org/x/text/internal
@@ -416,23 +434,20 @@ golang.org/x/text/unicode/norm
 # golang.org/x/time v0.0.0-20201208040808-7e3f01d25324
 ## explicit
 golang.org/x/time/rate
-# golang.org/x/tools v0.1.5
-## explicit; go 1.17
+# golang.org/x/tools v0.13.0
+## explicit; go 1.18
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/imports
 golang.org/x/tools/internal/event
 golang.org/x/tools/internal/event/core
 golang.org/x/tools/internal/event/keys
 golang.org/x/tools/internal/event/label
+golang.org/x/tools/internal/event/tag
 golang.org/x/tools/internal/fastwalk
 golang.org/x/tools/internal/gocommand
 golang.org/x/tools/internal/gopathwalk
 golang.org/x/tools/internal/imports
 golang.org/x/tools/internal/typeparams
-# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
-## explicit; go 1.11
-golang.org/x/xerrors
-golang.org/x/xerrors/internal
 # google.golang.org/appengine v1.6.6
 ## explicit; go 1.11
 # google.golang.org/genproto v0.0.0-20201103154000-415bd0cd5df6
@@ -536,3 +551,23 @@ gopkg.in/yaml.v2
 gopkg.in/yaml.v3
 # honnef.co/go/tools v0.1.3
 ## explicit; go 1.14
+# maunium.net/go/maulogger/v2 v2.4.1
+## explicit; go 1.19
+maunium.net/go/maulogger/v2
+maunium.net/go/maulogger/v2/maulogadapt
+# maunium.net/go/mautrix v0.16.1
+## explicit; go 1.20
+maunium.net/go/mautrix
+maunium.net/go/mautrix/crypto
+maunium.net/go/mautrix/crypto/attachment
+maunium.net/go/mautrix/crypto/canonicaljson
+maunium.net/go/mautrix/crypto/cryptohelper
+maunium.net/go/mautrix/crypto/olm
+maunium.net/go/mautrix/crypto/sql_store_upgrade
+maunium.net/go/mautrix/crypto/ssss
+maunium.net/go/mautrix/crypto/utils
+maunium.net/go/mautrix/event
+maunium.net/go/mautrix/id
+maunium.net/go/mautrix/pushrules
+maunium.net/go/mautrix/pushrules/glob
+maunium.net/go/mautrix/sqlstatestore

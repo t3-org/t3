@@ -94,17 +94,17 @@ func (mr *MockStoreMockRecorder) LivenessStatus(ctx interface{}) *gomock.Call {
 }
 
 // Planet mocks base method.
-func (m *MockStore) Planet() model.PlanetStore {
+func (m *MockStore) Ticket() model.TicketStore {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Planet")
-	ret0, _ := ret[0].(model.PlanetStore)
+	ret := m.ctrl.Call(m, "Ticket")
+	ret0, _ := ret[0].(model.TicketStore)
 	return ret0
 }
 
 // Planet indicates an expected call of Planet.
 func (mr *MockStoreMockRecorder) Planet() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Planet", reflect.TypeOf((*MockStore)(nil).Planet))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ticket", reflect.TypeOf((*MockStore)(nil).Ticket))
 }
 
 // ReadinessStatus mocks base method.
@@ -229,7 +229,7 @@ func (mr *MockSystemStoreMockRecorder) Save(ctx, system interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockSystemStore)(nil).Save), ctx, system)
 }
 
-// MockPlanetStore is a mock of PlanetStore interface.
+// MockPlanetStore is a mock of TicketStore interface.
 type MockPlanetStore struct {
 	ctrl     *gomock.Controller
 	recorder *MockPlanetStoreMockRecorder
@@ -268,7 +268,7 @@ func (mr *MockPlanetStoreMockRecorder) Count(ctx, query interface{}) *gomock.Cal
 }
 
 // Create mocks base method.
-func (m_2 *MockPlanetStore) Create(ctx context.Context, m *model.Planet) error {
+func (m_2 *MockPlanetStore) Create(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
 	ret := m_2.ctrl.Call(m_2, "Create", ctx, m)
 	ret0, _ := ret[0].(error)
@@ -282,7 +282,7 @@ func (mr *MockPlanetStoreMockRecorder) Create(ctx, m interface{}) *gomock.Call {
 }
 
 // Delete mocks base method.
-func (m_2 *MockPlanetStore) Delete(ctx context.Context, m *model.Planet) error {
+func (m_2 *MockPlanetStore) Delete(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
 	ret := m_2.ctrl.Call(m_2, "Delete", ctx, m)
 	ret0, _ := ret[0].(error)
@@ -296,10 +296,10 @@ func (mr *MockPlanetStoreMockRecorder) Delete(ctx, m interface{}) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockPlanetStore) Get(ctx context.Context, id int64) (*model.Planet, error) {
+func (m *MockPlanetStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, id)
-	ret0, _ := ret[0].(*model.Planet)
+	ret0, _ := ret[0].(*model.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -311,10 +311,10 @@ func (mr *MockPlanetStoreMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 }
 
 // GetByCode mocks base method.
-func (m *MockPlanetStore) GetByCode(ctx context.Context, code string) (*model.Planet, error) {
+func (m *MockPlanetStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByCode", ctx, code)
-	ret0, _ := ret[0].(*model.Planet)
+	ret0, _ := ret[0].(*model.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -326,10 +326,10 @@ func (mr *MockPlanetStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.
 }
 
 // Query mocks base method.
-func (m *MockPlanetStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Planet, error) {
+func (m *MockPlanetStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Query", ctx, query, offset, limit)
-	ret0, _ := ret[0].([]*model.Planet)
+	ret0, _ := ret[0].([]*model.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -341,9 +341,9 @@ func (mr *MockPlanetStoreMockRecorder) Query(ctx, query, offset, limit interface
 }
 
 // Update mocks base method.
-func (m_2 *MockPlanetStore) Update(ctx context.Context, m *model.Planet) error {
+func (m_2 *MockPlanetStore) Update(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "Update", ctx, m)
+	ret := m_2.ctrl.Call(m_2, "Patch", ctx, m)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -351,7 +351,7 @@ func (m_2 *MockPlanetStore) Update(ctx context.Context, m *model.Planet) error {
 // Update indicates an expected call of Update.
 func (mr *MockPlanetStoreMockRecorder) Update(ctx, m interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockPlanetStore)(nil).Update), ctx, m)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockPlanetStore)(nil).Update), ctx, m)
 }
 
 // MockHealth is a mock of Health interface.

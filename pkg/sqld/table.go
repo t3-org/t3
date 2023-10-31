@@ -51,7 +51,7 @@ func (t *Table) CreateMany(ctx context.Context, dest ...[]any) (sql.Result, erro
 	for _, d := range dest {
 		b.Values(d...)
 	}
-
+	
 	return b.ExecContext(ctx)
 }
 

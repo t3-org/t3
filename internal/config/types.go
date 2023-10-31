@@ -1,10 +1,8 @@
 package config
 
 import (
-	"crypto/rsa"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -12,9 +10,7 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/hibiken/asynq"
-	"github.com/kamva/gutil"
 	"github.com/kamva/hexa"
-	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	sqldblogger "github.com/simukti/sqldb-logger"
 )
@@ -212,62 +208,6 @@ type OpenTelemetry struct {
 	Metric  Metric  `json:"metric"`
 }
 
-type OAuthServer struct {
-	// token issuer url. e.g., https://air.app
-	Iss        string `json:"iss"`
-	ForceHttps bool   `json:"force_https"`
-
-	// key to use in AES cipher. it must be 32 byte.
-	EncryptionKey string `json:"encryption_key"`
-	// Private RSA key in PKCS#1 ASN.1 DER format.
-	PrivateKeyPath string `json:"private_key_path"`
-	// public RSA key in PKCS#1 ASN.1 DER format.
-	PublicKeyPath string `json:"public_key_path"`
-	// The OIDC key id(for now we have just one key, this field keeps the key's id).
-	Kid string `json:"kid"`
-
-	// in seconds format.
-	IDTokenExpiresIn int64 `json:"id_token_expires_in"`
-
-	AuthorizationCodeLength int `json:"authorization_code_length"`
-	ClientSecretLength      int `json:"client_secret_length"`
-
-	// Server configs:
-	ErrRedirectUri string `json:"err_redirect_uri"`
-
-	LoginUrl               string `json:"login_url"`
-	LoginCallbackParameter string `json:"login_callback_parameter"`
-	AccessTokenLength      int    `json:"access_token_length"`
-	RefreshTokenLength     int    `json:"refresh_token_length"`
-}
-
-func (c OAuthServer) PrivateKey() (*rsa.PrivateKey, error) {
-	pemBytes, err := ioutil.ReadFile(c.PrivateKeyPath)
-	if err != nil {
-		hlog.Error("No RSA private key found", hlog.Err(tracer.Trace(err)))
-		return nil, tracer.Trace(err)
-	}
-	return gutil.ParseRSAPrivateKey(pemBytes, gutil.KeyFormatPKCS1)
-}
-
-func (c OAuthServer) PublicKey() (*rsa.PublicKey, error) {
-	pemBytes, err := ioutil.ReadFile(c.PublicKeyPath)
-	if err != nil {
-		hlog.Error("No RSA public key found", hlog.Err(tracer.Trace(err)))
-		return nil, tracer.Trace(err)
-	}
-	return gutil.ParseRSAPublicKey(pemBytes, gutil.KeyFormatPKCS1)
-}
-
-func (c OAuthServer) IDTokenExpiresInDuration() time.Duration {
-	return time.Second * time.Duration(c.IDTokenExpiresIn)
-}
-
-type OAuthClient struct {
-	ClientId     string `json:"client_id"`
-	ClientSecret string `json:"client_secret"`
-}
-
 type Cookie struct {
 	Name     string `json:"name"`
 	MaxAge   int    `json:"max_age"`
@@ -350,20 +290,4 @@ func (c AsynqConfig) Queues() map[string]int {
 	return map[string]int{
 		"default": 1,
 	}
-}
-
-type Cache struct {
-	Enabled bool `json:"enabled"`
-	// Currently we just support redis as cache driver, but if later
-	// added more drivers, we will add the driver option as well.
-	Redis RedisCache `json:"redis"`
-}
-
-type RedisCache struct {
-	Prefix            string `json:"prefix"`
-	DefaultTTLSeconds int64  `json:"default_ttl_seconds"`
-}
-
-func (c RedisCache) TTL() time.Duration {
-	return time.Duration(c.DefaultTTLSeconds) * time.Second
 }

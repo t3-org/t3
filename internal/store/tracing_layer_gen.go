@@ -16,8 +16,8 @@ import (
 
 type tracingLayerStore struct {
 	next        model.Store
-	PlanetStore model.PlanetStore
 	SystemStore model.SystemStore
+	TicketStore model.TicketStore
 }
 
 func (s *tracingLayerStore) DBLayer() model.Store {
@@ -32,8 +32,8 @@ func (s *tracingLayerStore) TruncateAllTables(ctx context.Context) error {
 func (s *tracingLayerStore) System() model.SystemStore {
 	return s.SystemStore
 }
-func (s *tracingLayerStore) Planet() model.PlanetStore {
-	return s.PlanetStore
+func (s *tracingLayerStore) Ticket() model.TicketStore {
+	return s.TicketStore
 }
 func (s *tracingLayerStore) HealthIdentifier() string {
 	return s.next.HealthIdentifier()
@@ -53,153 +53,14 @@ func NewTracingLayerStore(instrumentationPostfix string, tp trace.TracerProvider
 
 	return &tracingLayerStore{
 		next:        next,
-		PlanetStore: &tracingLayerPlanetStore{t: tp.Tracer(pkgPath), next: next.Planet()},
 		SystemStore: &tracingLayerSystemStore{t: tp.Tracer(pkgPath), next: next.System()},
+		TicketStore: &tracingLayerTicketStore{t: tp.Tracer(pkgPath), next: next.Ticket()},
 	}
 }
 
 //--------------------------------
 // Define subStores
 //--------------------------------
-
-type tracingLayerPlanetStore struct {
-	t    trace.Tracer
-	next model.PlanetStore
-}
-
-func (s *tracingLayerPlanetStore) Get(ctx context.Context, id int64) (*model.Planet, error) {
-	if ctx == nil {
-		return s.next.Get(ctx, id)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Get")
-	defer span.End()
-
-	r1, r2 := s.next.Get(ctx, id)
-
-	if apperr.IsInternalErr(r2) {
-		span.RecordError(r2)
-		span.SetStatus(codes.Error, r2.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1, r2
-}
-func (s *tracingLayerPlanetStore) GetByCode(ctx context.Context, code string) (*model.Planet, error) {
-	if ctx == nil {
-		return s.next.GetByCode(ctx, code)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.GetByCode")
-	defer span.End()
-
-	r1, r2 := s.next.GetByCode(ctx, code)
-
-	if apperr.IsInternalErr(r2) {
-		span.RecordError(r2)
-		span.SetStatus(codes.Error, r2.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1, r2
-}
-func (s *tracingLayerPlanetStore) Create(ctx context.Context, m *model.Planet) error {
-	if ctx == nil {
-		return s.next.Create(ctx, m)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Create")
-	defer span.End()
-
-	r1 := s.next.Create(ctx, m)
-
-	if apperr.IsInternalErr(r1) {
-		span.RecordError(r1)
-		span.SetStatus(codes.Error, r1.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1
-}
-func (s *tracingLayerPlanetStore) Update(ctx context.Context, m *model.Planet) error {
-	if ctx == nil {
-		return s.next.Update(ctx, m)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Update")
-	defer span.End()
-
-	r1 := s.next.Update(ctx, m)
-
-	if apperr.IsInternalErr(r1) {
-		span.RecordError(r1)
-		span.SetStatus(codes.Error, r1.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1
-}
-func (s *tracingLayerPlanetStore) Delete(ctx context.Context, m *model.Planet) error {
-	if ctx == nil {
-		return s.next.Delete(ctx, m)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Delete")
-	defer span.End()
-
-	r1 := s.next.Delete(ctx, m)
-
-	if apperr.IsInternalErr(r1) {
-		span.RecordError(r1)
-		span.SetStatus(codes.Error, r1.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1
-}
-func (s *tracingLayerPlanetStore) Count(ctx context.Context, query string) (int, error) {
-	if ctx == nil {
-		return s.next.Count(ctx, query)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Count")
-	defer span.End()
-
-	r1, r2 := s.next.Count(ctx, query)
-
-	if apperr.IsInternalErr(r2) {
-		span.RecordError(r2)
-		span.SetStatus(codes.Error, r2.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1, r2
-}
-func (s *tracingLayerPlanetStore) Query(ctx context.Context, query string, offset uint64, limit uint64) ([]*model.Planet, error) {
-	if ctx == nil {
-		return s.next.Query(ctx, query, offset, limit)
-	}
-
-	ctx, span := s.t.Start(ctx, "PlanetStore.Query")
-	defer span.End()
-
-	r1, r2 := s.next.Query(ctx, query, offset, limit)
-
-	if apperr.IsInternalErr(r2) {
-		span.RecordError(r2)
-		span.SetStatus(codes.Error, r2.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1, r2
-}
 
 type tracingLayerSystemStore struct {
 	t    trace.Tracer
@@ -262,4 +123,143 @@ func (s *tracingLayerSystemStore) Delete(ctx context.Context, name string) error
 	}
 
 	return r1
+}
+
+type tracingLayerTicketStore struct {
+	t    trace.Tracer
+	next model.TicketStore
+}
+
+func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
+	if ctx == nil {
+		return s.next.Get(ctx, id)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Get")
+	defer span.End()
+
+	r1, r2 := s.next.Get(ctx, id)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+func (s *tracingLayerTicketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
+	if ctx == nil {
+		return s.next.GetByCode(ctx, code)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.GetByCode")
+	defer span.End()
+
+	r1, r2 := s.next.GetByCode(ctx, code)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+func (s *tracingLayerTicketStore) Create(ctx context.Context, m *model.Ticket) error {
+	if ctx == nil {
+		return s.next.Create(ctx, m)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Create")
+	defer span.End()
+
+	r1 := s.next.Create(ctx, m)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}
+func (s *tracingLayerTicketStore) Update(ctx context.Context, m *model.Ticket) error {
+	if ctx == nil {
+		return s.next.Update(ctx, m)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Update")
+	defer span.End()
+
+	r1 := s.next.Update(ctx, m)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}
+func (s *tracingLayerTicketStore) Delete(ctx context.Context, m *model.Ticket) error {
+	if ctx == nil {
+		return s.next.Delete(ctx, m)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Delete")
+	defer span.End()
+
+	r1 := s.next.Delete(ctx, m)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}
+func (s *tracingLayerTicketStore) Count(ctx context.Context, query string) (int, error) {
+	if ctx == nil {
+		return s.next.Count(ctx, query)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Count")
+	defer span.End()
+
+	r1, r2 := s.next.Count(ctx, query)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+func (s *tracingLayerTicketStore) Query(ctx context.Context, query string, offset uint64, limit uint64) ([]*model.Ticket, error) {
+	if ctx == nil {
+		return s.next.Query(ctx, query, offset, limit)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.Query")
+	defer span.End()
+
+	r1, r2 := s.next.Query(ctx, query, offset, limit)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
 }

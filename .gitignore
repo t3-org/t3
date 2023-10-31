@@ -21,8 +21,9 @@ http-client.private.env.json
 .changed_apps
 
 # Private documents.
-docs/api/private/
-docs/dev/private/
+docs/api/pv/
+docs/dev/pv/
+docs/pv
 # Compiled test files
 *.test
 

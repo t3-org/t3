@@ -13,7 +13,7 @@ import (
 // App is core of the project
 type App interface {
 	Health
-	PlanetService
+	TicketService
 }
 
 type Health interface {
@@ -27,11 +27,10 @@ type Health interface {
 
 var _ hexa.Health = Health(nil) // Assertion
 
-type PlanetService interface {
-	GetPlanet(ctx context.Context, id int64) (*dto.Planet, error)
-	GetPlanetByCode(ctx context.Context, code string) (*dto.Planet, error)
-	CreatePlanet(ctx context.Context, in *input.CreatePlanet) (*dto.Planet, error)
-	UpdatePlanet(ctx context.Context, id int64, in *input.UpdatePlanet) (*dto.Planet, error)
-	DeletePlanet(ctx context.Context, id int64) error
-	QueryPlanets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error)
+type TicketService interface {
+	GetTicket(ctx context.Context, id int64) (*dto.Ticket, error)
+	CreateTicket(ctx context.Context, in *input.CreateTicket) (*dto.Ticket, error)
+	PatchTicket(ctx context.Context, id int64, in *input.UpdateTicket) (*dto.Ticket, error)
+	DeleteTicket(ctx context.Context, id int64) error
+	QueryTickets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error)
 }

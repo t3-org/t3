@@ -34,9 +34,9 @@ type Store interface {
 	// @subStore
 	System() SystemStore
 
-	// Planet
+	// Ticket
 	// @subStore
-	Planet() PlanetStore
+	Ticket() TicketStore
 
 	// Place other store providers here.
 }
@@ -47,14 +47,14 @@ type SystemStore interface {
 	Delete(ctx context.Context, name string) error
 }
 
-type PlanetStore interface {
-	Get(ctx context.Context, id int64) (*Planet, error)
-	GetByCode(ctx context.Context, code string) (*Planet, error)
-	Create(ctx context.Context, m *Planet) error
-	Update(ctx context.Context, m *Planet) error
-	Delete(ctx context.Context, m *Planet) error
+type TicketStore interface {
+	Get(ctx context.Context, id int64) (*Ticket, error)
+	GetByCode(ctx context.Context, code string) (*Ticket, error)
+	Create(ctx context.Context, m *Ticket) error
+	Update(ctx context.Context, m *Ticket) error
+	Delete(ctx context.Context, m *Ticket) error
 	Count(ctx context.Context, query string) (int, error)
-	Query(ctx context.Context, query string, offset, limit uint64) ([]*Planet, error)
+	Query(ctx context.Context, query string, offset, limit uint64) ([]*Ticket, error)
 }
 
 type Health interface {

@@ -52,8 +52,6 @@ type Config struct {
 	AssetsBasePath    string `json:"assets_base_path"`
 	ResourcesBasePath string `json:"resources_base_path"`
 
-	GRPCLogVerbosity int `json:"grpc_log_verbosity"`
-
 	//--------------------------------
 	// HTTP server configs
 	//--------------------------------
@@ -80,7 +78,6 @@ type Config struct {
 	RedisAddress  string `json:"redis_address"`
 	RedisPassword string `json:"redis_password"`
 	RedisDB       int    `json:"redis_db"`
-	Cache         Cache  `json:"cache"`
 }
 
 func (c *Config) validate() error {
@@ -107,7 +104,7 @@ func (c *Config) PathToAssets(p string) string {
 	return path.Join(c.ResourcesBasePath, p)
 }
 
-func (c Config) I18nPath() string {
+func (c *Config) I18nPath() string {
 	return c.PathToResource("i18n")
 }
 
@@ -131,13 +128,6 @@ func (c *Config) TranslateOptions() huner.TranslateOpts {
 	return huner.TranslateOpts{
 		Files:         c.TranslateFiles,
 		FallbackLangs: c.FallbackLanguages,
-	}
-}
-
-func (c *Config) GRPCConfigs() huner.GRPCConfigs {
-	return huner.GRPCConfigs{
-		Debug:        c.Debug,
-		LogVerbosity: c.GRPCLogVerbosity,
 	}
 }
 

@@ -1,28 +1,28 @@
 // Package doc.
 //
-// Space API docs
+// # Space API docs
 //
 // Terms Of Service:
 //
-//     Schemes: http, https
-//     Host: space.app
-//     BasePath:
-//     Version: 0.1.0
+//	Schemes: http, https
+//	Host: space.app
+//	BasePath:
+//	Version: 0.1.0
 //
-//     Consumes:
-//     - application/json
+//	Consumes:
+//	- application/json
 //
-//     Produces:
-//     - application/json
+//	Produces:
+//	- application/json
 //
-//     Security:
-//     - bearerAuth:
+//	Security:
+//	- bearerAuth:
 //
-//     SecurityDefinitions:
-//     bearerAuth:
-//          type: apiKey
-//          name: Authorization
-//          in: header
+//	SecurityDefinitions:
+//	bearerAuth:
+//	     type: apiKey
+//	     name: Authorization
+//	     in: header
 //
 // swagger:meta
 package doc
@@ -100,7 +100,7 @@ type labRoutesResponseWrapper struct {
 type planetsCreateParamsWrapper struct {
 	// in:body
 	Body struct {
-		input.CreatePlanet
+		input.CreateTicket
 	}
 }
 
@@ -110,7 +110,7 @@ type planetsCreateResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
-		Data dto.Planet `json:"data"`
+		Data dto.Ticket `json:"data"`
 	}
 }
 
@@ -165,7 +165,7 @@ type planetsGetByCodeResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
-		Data dto.Planet `json:"data"`
+		Data dto.Ticket `json:"data"`
 	}
 }
 
@@ -173,7 +173,7 @@ type planetsGetByCodeResponseWrapper struct {
 
 // route:begin: planets::put
 // swagger:route PUT /api/v1/planets/{id} planets planetsPutParams
-// Update a planet.
+// Patch a planet.
 // responses:
 //   200: planetsPutSuccessResponse
 
@@ -184,7 +184,7 @@ type planetsPutParamsWrapper struct {
 
 	// in:body
 	Body struct {
-		input.UpdatePlanet
+		input.UpdateTicket
 	}
 }
 
@@ -194,7 +194,7 @@ type planetsPutResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
-		Data dto.Planet `json:"data"`
+		Data dto.Ticket `json:"data"`
 	}
 }
 
@@ -222,7 +222,7 @@ type planetsQueryResponseWrapper struct {
 		replyCode
 		Data struct {
 			pagination.Pages
-			Items []*dto.Planet `json:"items"`
+			Items []*dto.Ticket `json:"items"`
 		} `json:"data"`
 	}
 }
