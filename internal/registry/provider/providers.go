@@ -21,6 +21,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sony/sonyflake"
+	"go.mau.fi/util/dbutil"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/prometheus"
@@ -35,6 +36,8 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.opentelemetry.io/otel/trace"
+	"maunium.net/go/mautrix"
+	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"space.org/space/internal/app"
 	"space.org/space/internal/config"
 	"space.org/space/internal/model"
@@ -42,6 +45,8 @@ import (
 	"space.org/space/internal/registry/services"
 	"space.org/space/internal/router/api"
 	"space.org/space/internal/router/jobs"
+	"space.org/space/internal/router/matrix"
+	"space.org/space/internal/service/channel"
 	"space.org/space/internal/store"
 	"space.org/space/internal/store/sqlstore"
 )
@@ -62,6 +67,9 @@ func init() {
 	registry.AddProvider(registry.ServiceNameHttpServer, registry.ServiceNameHttpServer, HttpServerProvider)
 	registry.AddProvider(registry.ServiceNameJobs, registry.ServiceNameJobs, JobsProvider)
 	registry.AddProvider(registry.ServiceNameWorker, registry.ServiceNameWorker, WorkerProvider)
+	registry.AddProvider(registry.ServiceNameMatrix, registry.ServiceNameMatrix, MatrixProvider)
+	registry.AddProvider(registry.ServiceNameChannels, registry.ServiceNameChannels, ChannelsProvider)
+	registry.AddProvider(registry.ServiceNameMatrixBotServer, registry.ServiceNameMatrixBotServer, MatrixBotServerProvider)
 	registry.AddProvider(registry.ServiceNameStore, registry.ServiceNameStore, StoreProvider)
 	registry.AddProvider(registry.ServiceNameApp, registry.ServiceNameApp, AppProvider)
 
@@ -446,5 +454,60 @@ func WorkerProvider(r hexa.ServiceRegistry) error {
 	}
 
 	r.Register(registry.ServiceNameWorker, w)
+	return nil
+}
+
+func MatrixProvider(r hexa.ServiceRegistry) error {
+	cfg := conf(r)
+	mcfg := cfg.Matrix
+
+	s := r.Service(registry.ServiceNameStore).(model.Store)
+	db, err := dbutil.NewWithDB(s.DBLayer().(sqlstore.SqlStore).DB(), cfg.DB.Driver)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	cli, err := mautrix.NewClient(mcfg.HomeServerAddr, "", "")
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	cryptoHelper, err := cryptohelper.NewCryptoHelper(cli, []byte(mcfg.PickleKey), db)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	cryptoHelper.LoginAs = &mautrix.ReqLogin{
+		Type:       mautrix.AuthTypePassword,
+		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierTypeUser, User: mcfg.Username},
+		Password:   mcfg.Password,
+	}
+
+	// If you want to use multiple clients with the same DB, you should set a distinct database account ID for each one.
+	//cryptoHelper.DBAccountID = ""
+	if err := cryptoHelper.Init(); err != nil {
+		return tracer.Trace(err)
+	}
+
+	cli.Crypto = cryptoHelper
+
+	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), "mx"))
+	return nil
+}
+
+func ChannelsProvider(r hexa.ServiceRegistry) error {
+	channels := map[string]channel.Channel{
+		"matrix": r.Service(registry.ServiceNameMatrix).(channel.Channel),
+	}
+	r.Register(registry.ServiceNameChannels, channels)
+	return nil
+}
+
+func MatrixBotServerProvider(r hexa.ServiceRegistry) error {
+	cli := r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel).Client()
+	a := r.Service(registry.ServiceNameApp).(app.App)
+
+	// initialize the event handlers.
+	r.Register(registry.ServiceNameMatrixBotServer, matrix.NewServer(cli, a))
 	return nil
 }

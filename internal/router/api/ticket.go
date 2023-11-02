@@ -32,7 +32,7 @@ func (r *ticketResource) Create(c echo.Context) error {
 }
 
 func (r *ticketResource) Patch(c echo.Context) error {
-	var in input.UpdateTicket
+	var in input.PatchTicket
 	if err := c.Bind(&in); err != nil {
 		return tracer.Trace(err)
 	}

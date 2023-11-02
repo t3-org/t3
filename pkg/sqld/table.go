@@ -51,7 +51,7 @@ func (t *Table) CreateMany(ctx context.Context, dest ...[]any) (sql.Result, erro
 	for _, d := range dest {
 		b.Values(d...)
 	}
-	
+
 	return b.ExecContext(ctx)
 }
 
@@ -62,7 +62,7 @@ func (t *Table) Update(ctx context.Context, id any, dest []any) (sql.Result, err
 func (t *Table) UpdateBuilder(ctx context.Context, dest []any) sq.UpdateBuilder {
 	update := t.builder(ctx).Update(t.name)
 	for i, field := range t.fields {
-		update.Set(field, dest[i])
+		update = update.Set(field, dest[i])
 	}
 
 	return update

@@ -38,7 +38,12 @@ type Store interface {
 	// @subStore
 	Ticket() TicketStore
 
+	// TicketKV
+	// @subStore
+	TicketKV() TicketKVStore
+
 	// Place other store providers here.
+
 }
 
 type SystemStore interface {
@@ -55,6 +60,11 @@ type TicketStore interface {
 	Delete(ctx context.Context, m *Ticket) error
 	Count(ctx context.Context, query string) (int, error)
 	Query(ctx context.Context, query string, offset, limit uint64) ([]*Ticket, error)
+}
+
+type TicketKVStore interface {
+	Set(ctx context.Context, ticketID int64, key string, val string) error
+	Val(ctx context.Context, ticketID int64, key string) (string, error)
 }
 
 type Health interface {

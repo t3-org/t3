@@ -105,7 +105,7 @@ func (a *tracingLayer) CreateTicket(ctx context.Context, in *input.CreateTicket)
 
 	return r1, r2
 }
-func (a *tracingLayer) PatchTicket(ctx context.Context, id int64, in *input.UpdateTicket) (*dto.Ticket, error) {
+func (a *tracingLayer) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
 	if ctx == nil {
 		return a.next.PatchTicket(ctx, id, in)
 	}

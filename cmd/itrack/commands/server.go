@@ -1,11 +1,13 @@
 package commands
 
 import (
+	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
 	"space.org/space/internal/app"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/registry/services"
+	"space.org/space/internal/router/matrix"
 )
 
 var serverCmd = &cobra.Command{
@@ -28,7 +30,13 @@ func init() {
 
 func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	s := services.New(o.Registry)
-	if err := registry.ProvideByName(o.Registry, registry.ServiceNameHttpServer); err != nil {
+	err := registry.ProvideByNames(
+		o.Registry,
+		registry.ServiceNameHttpServer,
+		registry.ServiceNameMatrixBotServer,
+	)
+
+	if err != nil {
 		return tracer.Trace(err)
 	}
 
@@ -38,9 +46,16 @@ func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 
 	// Start server
 	app.Banner("Space")
+
+	mxDone, err := o.Registry.Service(registry.ServiceNameMatrixBotServer).(*matrix.Server).Run()
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
 	done, err := s.HttpServer().Run()
 	if err != nil {
 		return tracer.Trace(err)
 	}
-	return tracer.Trace(<-done)
+
+	return gutil.AnyErr(tracer.Trace(<-mxDone), tracer.Trace(<-done))
 }

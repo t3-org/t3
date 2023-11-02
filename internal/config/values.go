@@ -75,9 +75,10 @@ type Config struct {
 
 	AsynqConfig AsynqConfig `json:"asynq_config"`
 
-	RedisAddress  string `json:"redis_address"`
-	RedisPassword string `json:"redis_password"`
-	RedisDB       int    `json:"redis_db"`
+	RedisAddress  string       `json:"redis_address"`
+	RedisPassword string       `json:"redis_password"`
+	RedisDB       int          `json:"redis_db"`
+	Matrix        MatrixConfig `json:"matrix"`
 }
 
 func (c *Config) validate() error {

@@ -169,7 +169,7 @@ func (mr *MockAppMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.UpdateTicket) (*dto.Ticket, error) {
+func (m *MockApp) UpdatePlanet(ctx context.Context, id int64, in input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Ticket)
@@ -360,7 +360,7 @@ func (mr *MockPlanetServiceMockRecorder) QueryPlanets(ctx, query, page, perPage 
 }
 
 // UpdatePlanet mocks base method.
-func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input.UpdateTicket) (*dto.Ticket, error) {
+func (m *MockPlanetService) UpdatePlanet(ctx context.Context, id int64, in input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Ticket)

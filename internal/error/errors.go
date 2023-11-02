@@ -22,6 +22,14 @@ var (
 	ErrTicketNotFound = hexa.NewError(http.StatusNotFound, "itrack.ticket.not_found_error")
 )
 
+// --------------------------------
+// Ticket KeyValue error
+// --------------------------------
+
+var (
+	ErrTicketKVNotFound = hexa.NewError(http.StatusNotFound, "itrack.ticket_kv.not_found_error")
+)
+
 //--------------------------------
 // System errors
 //--------------------------------

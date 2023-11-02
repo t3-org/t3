@@ -93,20 +93,6 @@ func (mr *MockStoreMockRecorder) LivenessStatus(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LivenessStatus", reflect.TypeOf((*MockStore)(nil).LivenessStatus), ctx)
 }
 
-// Planet mocks base method.
-func (m *MockStore) Ticket() model.TicketStore {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Ticket")
-	ret0, _ := ret[0].(model.TicketStore)
-	return ret0
-}
-
-// Planet indicates an expected call of Planet.
-func (mr *MockStoreMockRecorder) Planet() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ticket", reflect.TypeOf((*MockStore)(nil).Ticket))
-}
-
 // ReadinessStatus mocks base method.
 func (m *MockStore) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus {
 	m.ctrl.T.Helper()
@@ -135,6 +121,34 @@ func (mr *MockStoreMockRecorder) System() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "System", reflect.TypeOf((*MockStore)(nil).System))
 }
 
+// Ticket mocks base method.
+func (m *MockStore) Ticket() model.TicketStore {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Ticket")
+	ret0, _ := ret[0].(model.TicketStore)
+	return ret0
+}
+
+// Ticket indicates an expected call of Ticket.
+func (mr *MockStoreMockRecorder) Ticket() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ticket", reflect.TypeOf((*MockStore)(nil).Ticket))
+}
+
+// TicketKV mocks base method.
+func (m *MockStore) TicketKV() model.TicketKVStore {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TicketKV")
+	ret0, _ := ret[0].(model.TicketKVStore)
+	return ret0
+}
+
+// TicketKV indicates an expected call of TicketKV.
+func (mr *MockStoreMockRecorder) TicketKV() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TicketKV", reflect.TypeOf((*MockStore)(nil).TicketKV))
+}
+
 // TruncateAllTables mocks base method.
 func (m *MockStore) TruncateAllTables(ctx context.Context) error {
 	m.ctrl.T.Helper()
@@ -149,7 +163,7 @@ func (mr *MockStoreMockRecorder) TruncateAllTables(ctx interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TruncateAllTables", reflect.TypeOf((*MockStore)(nil).TruncateAllTables), ctx)
 }
 
-// Tx mocks base method.
+// Txs mocks base method.
 func (m *MockStore) Txs() *sqld.Txs {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Txs")
@@ -157,8 +171,8 @@ func (m *MockStore) Txs() *sqld.Txs {
 	return ret0
 }
 
-// Tx indicates an expected call of Tx.
-func (mr *MockStoreMockRecorder) Tx() *gomock.Call {
+// Txs indicates an expected call of Txs.
+func (mr *MockStoreMockRecorder) Txs() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Txs", reflect.TypeOf((*MockStore)(nil).Txs))
 }
@@ -229,31 +243,31 @@ func (mr *MockSystemStoreMockRecorder) Save(ctx, system interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockSystemStore)(nil).Save), ctx, system)
 }
 
-// MockPlanetStore is a mock of TicketStore interface.
-type MockPlanetStore struct {
+// MockTicketStore is a mock of TicketStore interface.
+type MockTicketStore struct {
 	ctrl     *gomock.Controller
-	recorder *MockPlanetStoreMockRecorder
+	recorder *MockTicketStoreMockRecorder
 }
 
-// MockPlanetStoreMockRecorder is the mock recorder for MockPlanetStore.
-type MockPlanetStoreMockRecorder struct {
-	mock *MockPlanetStore
+// MockTicketStoreMockRecorder is the mock recorder for MockTicketStore.
+type MockTicketStoreMockRecorder struct {
+	mock *MockTicketStore
 }
 
-// NewMockPlanetStore creates a new mock instance.
-func NewMockPlanetStore(ctrl *gomock.Controller) *MockPlanetStore {
-	mock := &MockPlanetStore{ctrl: ctrl}
-	mock.recorder = &MockPlanetStoreMockRecorder{mock}
+// NewMockTicketStore creates a new mock instance.
+func NewMockTicketStore(ctrl *gomock.Controller) *MockTicketStore {
+	mock := &MockTicketStore{ctrl: ctrl}
+	mock.recorder = &MockTicketStoreMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockPlanetStore) EXPECT() *MockPlanetStoreMockRecorder {
+func (m *MockTicketStore) EXPECT() *MockTicketStoreMockRecorder {
 	return m.recorder
 }
 
 // Count mocks base method.
-func (m *MockPlanetStore) Count(ctx context.Context, query string) (int, error) {
+func (m *MockTicketStore) Count(ctx context.Context, query string) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Count", ctx, query)
 	ret0, _ := ret[0].(int)
@@ -262,13 +276,13 @@ func (m *MockPlanetStore) Count(ctx context.Context, query string) (int, error) 
 }
 
 // Count indicates an expected call of Count.
-func (mr *MockPlanetStoreMockRecorder) Count(ctx, query interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Count(ctx, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockPlanetStore)(nil).Count), ctx, query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Count", reflect.TypeOf((*MockTicketStore)(nil).Count), ctx, query)
 }
 
 // Create mocks base method.
-func (m_2 *MockPlanetStore) Create(ctx context.Context, m *model.Ticket) error {
+func (m_2 *MockTicketStore) Create(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
 	ret := m_2.ctrl.Call(m_2, "Create", ctx, m)
 	ret0, _ := ret[0].(error)
@@ -276,13 +290,13 @@ func (m_2 *MockPlanetStore) Create(ctx context.Context, m *model.Ticket) error {
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockPlanetStoreMockRecorder) Create(ctx, m interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Create(ctx, m interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockPlanetStore)(nil).Create), ctx, m)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTicketStore)(nil).Create), ctx, m)
 }
 
 // Delete mocks base method.
-func (m_2 *MockPlanetStore) Delete(ctx context.Context, m *model.Ticket) error {
+func (m_2 *MockTicketStore) Delete(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
 	ret := m_2.ctrl.Call(m_2, "Delete", ctx, m)
 	ret0, _ := ret[0].(error)
@@ -290,13 +304,13 @@ func (m_2 *MockPlanetStore) Delete(ctx context.Context, m *model.Ticket) error {
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockPlanetStoreMockRecorder) Delete(ctx, m interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Delete(ctx, m interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockPlanetStore)(nil).Delete), ctx, m)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTicketStore)(nil).Delete), ctx, m)
 }
 
 // Get mocks base method.
-func (m *MockPlanetStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
+func (m *MockTicketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, id)
 	ret0, _ := ret[0].(*model.Ticket)
@@ -305,13 +319,13 @@ func (m *MockPlanetStore) Get(ctx context.Context, id int64) (*model.Ticket, err
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockPlanetStoreMockRecorder) Get(ctx, id interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockPlanetStore)(nil).Get), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTicketStore)(nil).Get), ctx, id)
 }
 
 // GetByCode mocks base method.
-func (m *MockPlanetStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
+func (m *MockTicketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByCode", ctx, code)
 	ret0, _ := ret[0].(*model.Ticket)
@@ -320,13 +334,13 @@ func (m *MockPlanetStore) GetByCode(ctx context.Context, code string) (*model.Ti
 }
 
 // GetByCode indicates an expected call of GetByCode.
-func (mr *MockPlanetStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCode", reflect.TypeOf((*MockPlanetStore)(nil).GetByCode), ctx, code)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCode", reflect.TypeOf((*MockTicketStore)(nil).GetByCode), ctx, code)
 }
 
 // Query mocks base method.
-func (m *MockPlanetStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
+func (m *MockTicketStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Query", ctx, query, offset, limit)
 	ret0, _ := ret[0].([]*model.Ticket)
@@ -335,23 +349,75 @@ func (m *MockPlanetStore) Query(ctx context.Context, query string, offset, limit
 }
 
 // Query indicates an expected call of Query.
-func (mr *MockPlanetStoreMockRecorder) Query(ctx, query, offset, limit interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Query(ctx, query, offset, limit interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Query", reflect.TypeOf((*MockPlanetStore)(nil).Query), ctx, query, offset, limit)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Query", reflect.TypeOf((*MockTicketStore)(nil).Query), ctx, query, offset, limit)
 }
 
 // Update mocks base method.
-func (m_2 *MockPlanetStore) Update(ctx context.Context, m *model.Ticket) error {
+func (m_2 *MockTicketStore) Update(ctx context.Context, m *model.Ticket) error {
 	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "Patch", ctx, m)
+	ret := m_2.ctrl.Call(m_2, "Update", ctx, m)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockPlanetStoreMockRecorder) Update(ctx, m interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) Update(ctx, m interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Patch", reflect.TypeOf((*MockPlanetStore)(nil).Update), ctx, m)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTicketStore)(nil).Update), ctx, m)
+}
+
+// MockTicketKVStore is a mock of TicketKVStore interface.
+type MockTicketKVStore struct {
+	ctrl     *gomock.Controller
+	recorder *MockTicketKVStoreMockRecorder
+}
+
+// MockTicketKVStoreMockRecorder is the mock recorder for MockTicketKVStore.
+type MockTicketKVStoreMockRecorder struct {
+	mock *MockTicketKVStore
+}
+
+// NewMockTicketKVStore creates a new mock instance.
+func NewMockTicketKVStore(ctrl *gomock.Controller) *MockTicketKVStore {
+	mock := &MockTicketKVStore{ctrl: ctrl}
+	mock.recorder = &MockTicketKVStoreMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockTicketKVStore) EXPECT() *MockTicketKVStoreMockRecorder {
+	return m.recorder
+}
+
+// Set mocks base method.
+func (m *MockTicketKVStore) Set(ctx context.Context, ticketID int64, key, val string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Set", ctx, ticketID, key, val)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Set indicates an expected call of Set.
+func (mr *MockTicketKVStoreMockRecorder) Set(ctx, ticketID, key, val interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockTicketKVStore)(nil).Set), ctx, ticketID, key, val)
+}
+
+// Val mocks base method.
+func (m *MockTicketKVStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Value", ctx, ticketID, key)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Val indicates an expected call of Val.
+func (mr *MockTicketKVStoreMockRecorder) Val(ctx, ticketID, key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Value", reflect.TypeOf((*MockTicketKVStore)(nil).Val), ctx, ticketID, key)
 }
 
 // MockHealth is a mock of Health interface.

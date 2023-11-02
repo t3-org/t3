@@ -10,6 +10,7 @@ import (
 	"github.com/kamva/hexa/probe"
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
+	"space.org/space/internal/service/channel"
 )
 
 // Services is a simple facade that provides services using
@@ -27,6 +28,8 @@ type Services interface {
 	CronJobs() hjob.CronJobs
 	HttpServer() *hecho.EchoService
 	Worker() hjob.Worker
+	Matrix() *channel.MatrixChannel
+	Channels() map[string]channel.Channel
 }
 
 type services struct {
@@ -86,6 +89,14 @@ func (s *services) HttpServer() *hecho.EchoService {
 func (s *services) Worker() hjob.Worker {
 	srv, _ := s.r.Service(registry.ServiceNameWorker).(hjob.Worker)
 	return srv
+}
+
+func (s *services) Matrix() *channel.MatrixChannel {
+	return s.r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel)
+}
+
+func (s *services) Channels() map[string]channel.Channel {
+	return s.r.Service(registry.ServiceNameChannels).(map[string]channel.Channel)
 }
 
 // New returns a Services facade.

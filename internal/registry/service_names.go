@@ -20,10 +20,13 @@ const (
 	ServiceNameRedis          = "redis"
 	//ServiceNameCacheProvider  = "cache_provider"
 
-	ServiceNameHttpServer = "http_server"
-	ServiceNameJobs       = "jobs"
-	ServiceNameWorker     = "worker"
-	ServiceNameCron       = "cron"
+	ServiceNameHttpServer      = "http_server"
+	ServiceNameJobs            = "jobs"
+	ServiceNameWorker          = "worker"
+	ServiceNameCron            = "cron"
+	ServiceNameMatrix          = "matrix"
+	ServiceNameChannels        = "channels"
+	ServiceNameMatrixBotServer = "matrix_bot_server" // listens to the evens.
 
 	// non service-provider's services:
 
@@ -61,12 +64,15 @@ func bootPriority() []string {
 		//ServiceNameCacheProvider,
 
 		ServiceNameStore,
+		ServiceNameMatrix,
+		ServiceNameChannels,
 		ServiceNameApp,
 
 		ServiceNameHttpServer,
 		ServiceNameJobs,
 		ServiceNameWorker,
 		ServiceNameCron,
+		ServiceNameMatrixBotServer,
 	}
 }
 
@@ -85,6 +91,8 @@ func BaseServices(exclude ...string) []string {
 		ServiceNameRedis,
 		//ServiceNameCacheProvider,
 		ServiceNameStore,
+		ServiceNameMatrix,
+		ServiceNameChannels,
 		ServiceNameApp,
 	}
 

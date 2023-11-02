@@ -27,14 +27,23 @@ func (a *appCore) CreateTicket(ctx context.Context, in *input.CreateTicket) (*dt
 	if err := a.store.Ticket().Create(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
+
+	if in.Webhook != nil {
+		if err := a.callTicketWebhook(ctx, in.Webhook, &ticket); err != nil {
+			return nil, err
+		}
+	}
+
 	return &ticket, nil
 }
 
-func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.UpdateTicket) (*dto.Ticket, error) {
+func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
 	ticket, err := a.store.Ticket().Get(ctx, id)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
+
+	isStateChanged := ticket.IsStateChanged(in.IsFiring)
 
 	if err := ticket.Patch(in); err != nil {
 		return nil, tracer.Trace(err)
@@ -42,6 +51,13 @@ func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.UpdateTic
 	if err := a.store.Ticket().Update(ctx, ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
+
+	if in.Webhook != nil && isStateChanged {
+		if err := a.callTicketWebhook(ctx, in.Webhook, ticket); err != nil {
+			return nil, err
+		}
+	}
+
 	return ticket, nil
 }
 

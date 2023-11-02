@@ -15,9 +15,10 @@ import (
 )
 
 type tracingLayerStore struct {
-	next        model.Store
-	SystemStore model.SystemStore
-	TicketStore model.TicketStore
+	next          model.Store
+	SystemStore   model.SystemStore
+	TicketStore   model.TicketStore
+	TicketKVStore model.TicketKVStore
 }
 
 func (s *tracingLayerStore) DBLayer() model.Store {
@@ -34,6 +35,9 @@ func (s *tracingLayerStore) System() model.SystemStore {
 }
 func (s *tracingLayerStore) Ticket() model.TicketStore {
 	return s.TicketStore
+}
+func (s *tracingLayerStore) TicketKV() model.TicketKVStore {
+	return s.TicketKVStore
 }
 func (s *tracingLayerStore) HealthIdentifier() string {
 	return s.next.HealthIdentifier()
@@ -52,9 +56,10 @@ func NewTracingLayerStore(instrumentationPostfix string, tp trace.TracerProvider
 	pkgPath := reflect.TypeOf(tracingLayerStore{}).PkgPath() + "." + instrumentationPostfix
 
 	return &tracingLayerStore{
-		next:        next,
-		SystemStore: &tracingLayerSystemStore{t: tp.Tracer(pkgPath), next: next.System()},
-		TicketStore: &tracingLayerTicketStore{t: tp.Tracer(pkgPath), next: next.Ticket()},
+		next:          next,
+		SystemStore:   &tracingLayerSystemStore{t: tp.Tracer(pkgPath), next: next.System()},
+		TicketStore:   &tracingLayerTicketStore{t: tp.Tracer(pkgPath), next: next.Ticket()},
+		TicketKVStore: &tracingLayerTicketKVStore{t: tp.Tracer(pkgPath), next: next.TicketKV()},
 	}
 }
 
@@ -253,6 +258,50 @@ func (s *tracingLayerTicketStore) Query(ctx context.Context, query string, offse
 	defer span.End()
 
 	r1, r2 := s.next.Query(ctx, query, offset, limit)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+
+type tracingLayerTicketKVStore struct {
+	t    trace.Tracer
+	next model.TicketKVStore
+}
+
+func (s *tracingLayerTicketKVStore) Set(ctx context.Context, ticketID int64, key string, val string) error {
+	if ctx == nil {
+		return s.next.Set(ctx, ticketID, key, val)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketKVStore.Set")
+	defer span.End()
+
+	r1 := s.next.Set(ctx, ticketID, key, val)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}
+func (s *tracingLayerTicketKVStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
+	if ctx == nil {
+		return s.next.Val(ctx, ticketID, key)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketKVStore.Val")
+	defer span.End()
+
+	r1, r2 := s.next.Val(ctx, ticketID, key)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)

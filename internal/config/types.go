@@ -291,3 +291,10 @@ func (c AsynqConfig) Queues() map[string]int {
 		"default": 1,
 	}
 }
+
+type MatrixConfig struct {
+	PickleKey      string `json:"pickle_key"`
+	HomeServerAddr string `json:"home_server_addr"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+}

@@ -42,7 +42,7 @@ func (m *Ticket) Create(in *input.CreateTicket) error {
 	return nil
 }
 
-func (m *Ticket) Patch(in *input.UpdateTicket) error {
+func (m *Ticket) Patch(in *input.PatchTicket) error {
 	if in.Fingerprint != nil {
 		m.Fingerprint = *in.Fingerprint
 	}
@@ -75,4 +75,8 @@ func (m *Ticket) Patch(in *input.UpdateTicket) error {
 
 	m.Touch()
 	return nil
+}
+
+func (m *Ticket) IsStateChanged(isFiring *bool) bool {
+	return isFiring != nil && m.IsFiring != *isFiring
 }

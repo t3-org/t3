@@ -184,7 +184,7 @@ type planetsPutParamsWrapper struct {
 
 	// in:body
 	Body struct {
-		input.UpdateTicket
+		input.PatchTicket
 	}
 }
 

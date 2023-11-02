@@ -45,8 +45,9 @@ type SqlStore interface {
 }
 
 type sqlStoresList struct {
-	system model.SystemStore
-	ticket model.TicketStore
+	system   model.SystemStore
+	ticket   model.TicketStore
+	ticketKV model.TicketKVStore
 
 	// Place your stores here.
 }
@@ -100,7 +101,7 @@ func (s *sqlStore) TruncateAllTables(ctx context.Context) error {
 			}
 
 			if table != "db_migrations" {
-				if _, err := s.Runner(ctx).ExecContext(ctx, `TRUNCATE TABLE `+table); err != nil {
+				if _, err := s.Runner(ctx).ExecContext(ctx, `TRUNCATE TABLE`+table); err != nil {
 					return tracer.Trace(err)
 				}
 			}
@@ -201,6 +202,10 @@ func (s *sqlStore) Ticket() model.TicketStore {
 	return s.stores.ticket
 }
 
+func (s *sqlStore) TicketKV() model.TicketKVStore {
+	return s.stores.ticketKV
+}
+
 func (s *sqlStore) Shutdown(_ context.Context) error {
 	return s.db.Close()
 }
@@ -231,8 +236,9 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 	}
 
 	s.stores = sqlStoresList{
-		system: newSystemStore(s),
-		ticket: newTicketStore(s),
+		system:   newSystemStore(s),
+		ticket:   newTicketStore(s),
+		ticketKV: newTicketKVStore(s),
 
 		// place your other stores here.
 	}
