@@ -293,8 +293,17 @@ func (c AsynqConfig) Queues() map[string]int {
 }
 
 type MatrixConfig struct {
+	// CommandPrefix is the prefix of each command. e.g., "!itrack"
+	CommandPrefix  string `json:"command_prefix"`
+	OKEmoji        string `json:"ok_emoji"` // The emoji we use to set a command as done.
 	PickleKey      string `json:"pickle_key"`
 	HomeServerAddr string `json:"home_server_addr"`
 	Username       string `json:"username"`
 	Password       string `json:"password"`
+}
+
+type UI struct {
+	DashboardUrl  string `json:"dashboard_url"`
+	NewTicketUrl  string `json:"new_ticket_url"`
+	EditTicketURL string `json:"edit_ticket_url"` // use "{id}" in your string to replace it with the ticket it.
 }

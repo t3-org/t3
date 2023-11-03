@@ -68,8 +68,11 @@ func (t *Table) UpdateBuilder(ctx context.Context, dest []any) sq.UpdateBuilder 
 	return update
 }
 
-func (t *Table) Select(ctx context.Context) sq.SelectBuilder {
-	return t.builder(ctx).Select(t.fields...).From(t.name)
+func (t *Table) Select(ctx context.Context, fields ...string) sq.SelectBuilder {
+	if len(fields) == 0 {
+		fields = t.fields
+	}
+	return t.builder(ctx).Select(fields...).From(t.name)
 }
 
 func (t *Table) Count(ctx context.Context) sq.SelectBuilder {

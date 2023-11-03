@@ -79,6 +79,7 @@ type Config struct {
 	RedisPassword string       `json:"redis_password"`
 	RedisDB       int          `json:"redis_db"`
 	Matrix        MatrixConfig `json:"matrix"`
+	UI            UI           `json:"ui"`
 }
 
 func (c *Config) validate() error {

@@ -1,0 +1,55 @@
+{
+  "receiver": "tmp_webhook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "DatasourceError",
+        "datasource_uid": "PBFA97CFB590B2093",
+        "grafana_folder": "my_folder",
+        "label_one": "val_one",
+        "ref_id": "RSS_QUERY",
+        "rulename": "Memory Usage"
+      },
+      "annotations": {
+        "Error": "failed to execute query RSS_QUERY: Post \"http://prometheus:9090/api/v1/query_range\": dial tcp: lookup prometheus on 127.0.0.11:53: no such host",
+        "custom_annotation": "custom value",
+        "summary": "hichi, yechi kharabe"
+      },
+      "startsAt": "2023-09-24T18:54:00Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "http://localhost:3000/alerting/grafana/yeMMX4WSk/view",
+      "fingerprint": "6089b589c29e0374",
+      "silenceURL": "http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DDatasourceError\u0026matcher=datasource_uid%3DPBFA97CFB590B2093\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one\u0026matcher=ref_id%3DRSS_QUERY\u0026matcher=rulename%3DMemory+Usage",
+      "dashboardURL": "http://localhost:3000/d/pMEd7m0Mz",
+      "panelURL": "http://localhost:3000/d/pMEd7m0Mz?viewPanel=9",
+      "valueString": ""
+    }
+  ],
+  "groupLabels": {
+    "alertname": "DatasourceError",
+    "grafana_folder": "my_folder"
+  },
+  "commonLabels": {
+    "alertname": "DatasourceError",
+    "datasource_uid": "PBFA97CFB590B2093",
+    "grafana_folder": "my_folder",
+    "label_one": "val_one",
+    "ref_id": "RSS_QUERY",
+    "rulename": "Memory Usage"
+  },
+  "commonAnnotations": {
+    "Error": "failed to execute query RSS_QUERY: Post \"http://prometheus:9090/api/v1/query_range\": dial tcp: lookup prometheus on 127.0.0.11:53: no such host",
+    "custom_annotation": "custom value",
+    "summary": "hichi, yechi kharabe"
+  },
+  "externalURL": "http://localhost:3000/",
+  "version": "1",
+  "groupKey": "{}/{label_one=\"val_one\"}:{alertname=\"DatasourceError\", grafana_folder=\"my_folder\"}",
+  "truncatedAlerts": 0,
+  "orgId": 1,
+  "title": "[FIRING:1] DatasourceError my_folder (PBFA97CFB590B2093 val_one RSS_QUERY Memory Usage)",
+  "state": "alerting",
+  "message": "**Firing**\n\nValue: [no value]\nLabels:\n - alertname = DatasourceError\n - datasource_uid = PBFA97CFB590B2093\n - grafana_folder = my_folder\n - label_one = val_one\n - ref_id = RSS_QUERY\n - rulename = Memory Usage\nAnnotations:\n - Error = failed to execute query RSS_QUERY: Post \"http://prometheus:9090/api/v1/query_range\": dial tcp: lookup prometheus on 127.0.0.11:53: no such host\n - custom_annotation = custom value\n - summary = hichi, yechi kharabe\nSource: http://localhost:3000/alerting/grafana/yeMMX4WSk/view\nSilence: http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DDatasourceError\u0026matcher=datasource_uid%3DPBFA97CFB590B2093\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one\u0026matcher=ref_id%3DRSS_QUERY\u0026matcher=rulename%3DMemory+Usage\nDashboard: http://localhost:3000/d/pMEd7m0Mz\nPanel: http://localhost:3000/d/pMEd7m0Mz?viewPanel=9\n"
+}

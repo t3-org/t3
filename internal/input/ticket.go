@@ -23,7 +23,9 @@ type CreateTicket struct {
 }
 
 func (i *CreateTicket) Validate() error {
-	return validation.ValidateStruct(&i) // TODO: write validations.
+	return validation.ValidateStruct(&i,
+		validation.Field(&i.Level, validation.In("low", "medium", "high")),
+	) // TODO: write validations.
 
 }
 
@@ -45,7 +47,9 @@ type PatchTicket struct {
 }
 
 func (i *PatchTicket) Validate() error {
-	return validation.ValidateStruct(&i) // TODO: update validations.
+	return validation.ValidateStruct(&i,
+		validation.Field(&i.Level, validation.In("low", "medium", "high")),
+	) // TODO: update validations.
 
 }
 

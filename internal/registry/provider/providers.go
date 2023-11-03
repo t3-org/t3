@@ -491,7 +491,12 @@ func MatrixProvider(r hexa.ServiceRegistry) error {
 
 	cli.Crypto = cryptoHelper
 
-	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), "mx"))
+	chOpts := channel.MatrixChannelOpts{
+		KeyPrefix:     "mx",
+		OkEmoji:       mcfg.OKEmoji,
+		CommandPrefix: mcfg.CommandPrefix,
+	}
+	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), chOpts))
 	return nil
 }
 
@@ -504,10 +509,13 @@ func ChannelsProvider(r hexa.ServiceRegistry) error {
 }
 
 func MatrixBotServerProvider(r hexa.ServiceRegistry) error {
-	cli := r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel).Client()
+	mx := r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel)
 	a := r.Service(registry.ServiceNameApp).(app.App)
 
+	router := matrix.NewRouter(mx.Options().CommandPrefix)
+	matrix.RegisterCommands(conf(r), router, mx, a)
+
 	// initialize the event handlers.
-	r.Register(registry.ServiceNameMatrixBotServer, matrix.NewServer(cli, a))
+	r.Register(registry.ServiceNameMatrixBotServer, matrix.NewServer(mx.Client(), router))
 	return nil
 }

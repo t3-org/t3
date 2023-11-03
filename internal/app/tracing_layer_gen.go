@@ -65,6 +65,46 @@ func (a *tracingLayer) HealthStatus(ctx context.Context) hexa.HealthStatus {
 
 	return r1
 }
+func (a *tracingLayer) EditTicketUrlByKey(ctx context.Context, key string, val string) (string, error) {
+	if ctx == nil {
+		return a.next.EditTicketUrlByKey(ctx, key, val)
+	}
+
+	var span trace.Span
+	ctx, span = a.t.Start(ctx, "EditTicketUrlByKey")
+	defer span.End()
+
+	r1, r2 := a.next.EditTicketUrlByKey(ctx, key, val)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+func (a *tracingLayer) GetTicketByKey(ctx context.Context, key string, val string) (*dto.Ticket, error) {
+	if ctx == nil {
+		return a.next.GetTicketByKey(ctx, key, val)
+	}
+
+	var span trace.Span
+	ctx, span = a.t.Start(ctx, "GetTicketByKey")
+	defer span.End()
+
+	r1, r2 := a.next.GetTicketByKey(ctx, key, val)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
 func (a *tracingLayer) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
 	if ctx == nil {
 		return a.next.GetTicket(ctx, id)
@@ -115,6 +155,26 @@ func (a *tracingLayer) PatchTicket(ctx context.Context, id int64, in *input.Patc
 	defer span.End()
 
 	r1, r2 := a.next.PatchTicket(ctx, id, in)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
+func (a *tracingLayer) PatchTicketByKey(ctx context.Context, key string, val string, in *input.PatchTicket) (*dto.Ticket, error) {
+	if ctx == nil {
+		return a.next.PatchTicketByKey(ctx, key, val, in)
+	}
+
+	var span trace.Span
+	ctx, span = a.t.Start(ctx, "PatchTicketByKey")
+	defer span.End()
+
+	r1, r2 := a.next.PatchTicketByKey(ctx, key, val, in)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)

@@ -1,0 +1,45 @@
+{
+  "receiver": "tmp_webhook",
+  "status": "resolved",
+  "alerts": [
+    {
+      "status": "resolved",
+      "labels": {
+        "alertname": "Memory Usage",
+        "grafana_folder": "my_folder",
+        "label_one": "val_one"
+      },
+      "annotations": {
+        "summary": "hichi, yechi kharabe"
+      },
+      "startsAt": "2023-09-24T17:18:00Z",
+      "endsAt": "2023-09-24T18:18:00Z",
+      "generatorURL": "http://localhost:3000/alerting/grafana/yeMMX4WSk/view",
+      "fingerprint": "3e30172082b00f9a",
+      "silenceURL": "http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DMemory+Usage\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one",
+      "dashboardURL": "http://localhost:3000/d/pMEd7m0Mz",
+      "panelURL": "http://localhost:3000/d/pMEd7m0Mz?viewPanel=9",
+      "valueString": "[ var='B0' metric='Value' labels={} value=7.99674368e+08 ], [ var='B1' metric='cadvisor' labels={name=cadvisor} value=3.8793216e+07 ], [ var='B2' metric='grafana' labels={name=grafana} value=4.8390144e+07 ], [ var='B3' metric='prometheus' labels={name=prometheus} value=1.2537856e+08 ]"
+    }
+  ],
+  "groupLabels": {
+    "alertname": "Memory Usage",
+    "grafana_folder": "my_folder"
+  },
+  "commonLabels": {
+    "alertname": "Memory Usage",
+    "grafana_folder": "my_folder",
+    "label_one": "val_one"
+  },
+  "commonAnnotations": {
+    "summary": "hichi, yechi kharabe"
+  },
+  "externalURL": "http://localhost:3000/",
+  "version": "1",
+  "groupKey": "{}/{label_one=\"val_one\"}:{alertname=\"Memory Usage\", grafana_folder=\"my_folder\"}",
+  "truncatedAlerts": 0,
+  "orgId": 1,
+  "title": "[RESOLVED] Memory Usage my_folder (val_one)",
+  "state": "ok",
+  "message": "**Resolved**\n\nValue: [ var='B0' metric='Value' labels={} value=7.99674368e+08 ], [ var='B1' metric='cadvisor' labels={name=cadvisor} value=3.8793216e+07 ], [ var='B2' metric='grafana' labels={name=grafana} value=4.8390144e+07 ], [ var='B3' metric='prometheus' labels={name=prometheus} value=1.2537856e+08 ]\nLabels:\n - alertname = Memory Usage\n - grafana_folder = my_folder\n - label_one = val_one\nAnnotations:\n - summary = hichi, yechi kharabe\nSource: http://localhost:3000/alerting/grafana/yeMMX4WSk/view\nSilence: http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DMemory+Usage\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one\nDashboard: http://localhost:3000/d/pMEd7m0Mz\nPanel: http://localhost:3000/d/pMEd7m0Mz?viewPanel=9\n"
+}

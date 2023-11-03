@@ -1,0 +1,51 @@
+{
+  "receiver": "tmp_webhook",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "DatasourceNoData",
+        "datasource_uid": "PBFA97CFB590B2093",
+        "grafana_folder": "my_folder",
+        "label_one": "val_one",
+        "ref_id": "A",
+        "rulename": "Memory Usage"
+      },
+      "annotations": {
+        "summary": "hichi, yechi kharabe"
+      },
+      "startsAt": "2023-09-24T18:25:00Z",
+      "endsAt": "0001-01-01T00:00:00Z",
+      "generatorURL": "http://localhost:3000/alerting/grafana/yeMMX4WSk/view",
+      "fingerprint": "2c52d324567b9237",
+      "silenceURL": "http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DDatasourceNoData\u0026matcher=datasource_uid%3DPBFA97CFB590B2093\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one\u0026matcher=ref_id%3DA\u0026matcher=rulename%3DMemory+Usage",
+      "dashboardURL": "http://localhost:3000/d/pMEd7m0Mz",
+      "panelURL": "http://localhost:3000/d/pMEd7m0Mz?viewPanel=9",
+      "valueString": ""
+    }
+  ],
+  "groupLabels": {
+    "alertname": "DatasourceNoData",
+    "grafana_folder": "my_folder"
+  },
+  "commonLabels": {
+    "alertname": "DatasourceNoData",
+    "datasource_uid": "PBFA97CFB590B2093",
+    "grafana_folder": "my_folder",
+    "label_one": "val_one",
+    "ref_id": "A",
+    "rulename": "Memory Usage"
+  },
+  "commonAnnotations": {
+    "summary": "hichi, yechi kharabe"
+  },
+  "externalURL": "http://localhost:3000/",
+  "version": "1",
+  "groupKey": "{}/{label_one=\"val_one\"}:{alertname=\"DatasourceNoData\", grafana_folder=\"my_folder\"}",
+  "truncatedAlerts": 0,
+  "orgId": 1,
+  "title": "[FIRING:1] DatasourceNoData my_folder (PBFA97CFB590B2093 val_one A Memory Usage)",
+  "state": "alerting",
+  "message": "**Firing**\n\nValue: [no value]\nLabels:\n - alertname = DatasourceNoData\n - datasource_uid = PBFA97CFB590B2093\n - grafana_folder = my_folder\n - label_one = val_one\n - ref_id = A\n - rulename = Memory Usage\nAnnotations:\n - summary = hichi, yechi kharabe\nSource: http://localhost:3000/alerting/grafana/yeMMX4WSk/view\nSilence: http://localhost:3000/alerting/silence/new?alertmanager=grafana\u0026matcher=alertname%3DDatasourceNoData\u0026matcher=datasource_uid%3DPBFA97CFB590B2093\u0026matcher=grafana_folder%3Dmy_folder\u0026matcher=label_one%3Dval_one\u0026matcher=ref_id%3DA\u0026matcher=rulename%3DMemory+Usage\nDashboard: http://localhost:3000/d/pMEd7m0Mz\nPanel: http://localhost:3000/d/pMEd7m0Mz?viewPanel=9\n"
+}

@@ -1,3 +1,6 @@
+
+LDFLAGS = -extldflags=-Wl,-ld64
+
 .PHONY: update-repos
 update-repos:
 	go mod tidy
@@ -5,16 +8,16 @@ update-repos:
 
 .PHONY: layers
 layers:
-	go run ./internal/app/layer_generator/main.go tracing
-	go run ./internal/store/layer_generator/main.go
+	go run -ldflags='$(LDFLAGS)' ./internal/app/layer_generator/main.go tracing
+	go run -ldflags='$(LDFLAGS)' ./internal/store/layer_generator/main.go
 
 .PHONY: listen
 listen:
-	go run ./cmd/itrack/main.go server listen
+	go run -ldflags='$(LDFLAGS)' ./cmd/itrack/main.go server listen
 
 .PHONY: extract-api-docs
 extract-api-docs:
-	go run ./cmd/itrack/main.go openapi extract
+	go run -ldflags='$(LDFLAGS)' ./cmd/itrack/main.go openapi extract
 
 .PHONY: build-api-docs
 build-api-docs:

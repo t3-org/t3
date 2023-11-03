@@ -14,17 +14,19 @@ const tableTicket = "tickets"
 const tableTicketTags = "ticket_tags"
 
 type ticketStore struct {
-	s       SqlStore
-	tbl     *sqld.Table
-	tagsTbl *sqld.Table
+	s         SqlStore
+	tbl       *sqld.Table
+	tagsTbl   *sqld.Table
+	valuesTbl *sqld.Table
 }
 
 // newTicketStore returns new instance of the repository
 func newTicketStore(store SqlStore) model.TicketStore {
 	return &ticketStore{
-		s:       store,
-		tbl:     sqld.NewTable(tableTicket, ticketColumns, store.QueryBuilder),
-		tagsTbl: sqld.NewTable(tableTicketTags, ticketTagColumns, store.QueryBuilder),
+		s:         store,
+		tbl:       sqld.NewTable(tableTicket, ticketColumns, store.QueryBuilder),
+		tagsTbl:   sqld.NewTable(tableTicketTags, ticketTagColumns, store.QueryBuilder),
+		valuesTbl: sqld.NewTable(tableTicketValues, ticketKVColumns, store.QueryBuilder),
 	}
 }
 
@@ -33,6 +35,18 @@ func (s *ticketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) 
 	if err := s.tbl.FindByID(ctx, id, ticketFields(&ticket)); err != nil {
 		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
 	}
+	if err := s.fetchTags(ctx, &ticket); err != nil {
+		return nil, tracer.Trace(err)
+	}
+	return &ticket, nil
+}
+
+func (s *ticketStore) GetByTicketKeyVal(ctx context.Context, key, val string) (*model.Ticket, error) {
+	var ticket model.Ticket
+	s.tbl.First(ctx, ticketFields(&ticket),
+		"id in (select ticket_id from ticket_values where key=? and value=?)", key, val,
+	)
+
 	if err := s.fetchTags(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}

@@ -16,17 +16,27 @@ import (
 )
 
 type MatrixChannel struct {
-	cli       *mautrix.Client
-	kvStore   KVStore
-	keyPrefix string // Prefix of the key that we use as the store's keys.
+	o       MatrixChannelOpts
+	cli     *mautrix.Client
+	kvStore KVStore
 }
 
-func NewMatrixChannel(cli *mautrix.Client, kv KVStore, keyPrefix string) Channel {
-	return &MatrixChannel{cli: cli, kvStore: kv, keyPrefix: keyPrefix}
+type MatrixChannelOpts struct {
+	KeyPrefix     string
+	OkEmoji       string
+	CommandPrefix string
 }
 
-func (m *MatrixChannel) key(roomID id.RoomID) string {
-	return fmt.Sprintf("%s:%s", m.keyPrefix, roomID)
+func NewMatrixChannel(cli *mautrix.Client, kv KVStore, o MatrixChannelOpts) Channel {
+	return &MatrixChannel{cli: cli, kvStore: kv, o: o}
+}
+
+func (m *MatrixChannel) Options() MatrixChannelOpts {
+	return m.o
+}
+
+func (m *MatrixChannel) Key(roomID id.RoomID) string {
+	return fmt.Sprintf("%s:%s", m.o.KeyPrefix, roomID)
 }
 
 func (m *MatrixChannel) Client() *mautrix.Client {
@@ -40,12 +50,12 @@ func (m *MatrixChannel) Firing(ctx context.Context, channelID string, t *model.T
 		return tracer.Trace(err)
 	}
 
-	return tracer.Trace(m.kvStore.Set(ctx, t.ID, m.key(roomID), string(res.EventID)))
+	return tracer.Trace(m.kvStore.Set(ctx, t.ID, m.Key(roomID), string(res.EventID)))
 }
 
 func (m *MatrixChannel) Resolved(ctx context.Context, channelID string, t *model.Ticket) error {
 	roomID := id.RoomID(channelID)
-	eventID, err := m.kvStore.Val(ctx, t.ID, m.key(roomID))
+	eventID, err := m.kvStore.Val(ctx, t.ID, m.Key(roomID))
 	if err != nil && !errors.Is(err, apperr.ErrTicketKVNotFound) {
 		return tracer.Trace(err)
 	}
@@ -55,7 +65,7 @@ func (m *MatrixChannel) Resolved(ctx context.Context, channelID string, t *model
 		Body:    fmt.Sprintf("New resolved Ticket: %+v", t),
 	}
 
-	if eventID != "" { // if there's a eventID for the thread of this ticket on this channel.
+	if eventID != "" { // if there's an eventID for the thread of this ticket on this room.
 		content.RelatesTo = &event.RelatesTo{Type: event.RelThread, EventID: id.EventID(eventID)}
 	}
 

@@ -54,6 +54,7 @@ type SystemStore interface {
 
 type TicketStore interface {
 	Get(ctx context.Context, id int64) (*Ticket, error)
+	GetByTicketKeyVal(ctx context.Context, key, val string) (*Ticket, error)
 	GetByCode(ctx context.Context, code string) (*Ticket, error)
 	Create(ctx context.Context, m *Ticket) error
 	Update(ctx context.Context, m *Ticket) error

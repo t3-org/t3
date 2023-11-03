@@ -339,6 +339,21 @@ func (mr *MockTicketStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCode", reflect.TypeOf((*MockTicketStore)(nil).GetByCode), ctx, code)
 }
 
+// GetByTicketKeyVal mocks base method.
+func (m *MockTicketStore) GetByTicketKeyVal(ctx context.Context, key, val string) (*model.Ticket, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetByTicketKeyVal", ctx, key, val)
+	ret0, _ := ret[0].(*model.Ticket)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetByTicketKeyVal indicates an expected call of GetByTicketKeyVal.
+func (mr *MockTicketStoreMockRecorder) GetByTicketKeyVal(ctx, key, val interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByTicketKeyVal", reflect.TypeOf((*MockTicketStore)(nil).GetByTicketKeyVal), ctx, key, val)
+}
+
 // Query mocks base method.
 func (m *MockTicketStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
 	m.ctrl.T.Helper()
@@ -408,7 +423,7 @@ func (mr *MockTicketKVStoreMockRecorder) Set(ctx, ticketID, key, val interface{}
 // Val mocks base method.
 func (m *MockTicketKVStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Value", ctx, ticketID, key)
+	ret := m.ctrl.Call(m, "Val", ctx, ticketID, key)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -417,7 +432,7 @@ func (m *MockTicketKVStore) Val(ctx context.Context, ticketID int64, key string)
 // Val indicates an expected call of Val.
 func (mr *MockTicketKVStoreMockRecorder) Val(ctx, ticketID, key interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Value", reflect.TypeOf((*MockTicketKVStore)(nil).Val), ctx, ticketID, key)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Val", reflect.TypeOf((*MockTicketKVStore)(nil).Val), ctx, ticketID, key)
 }
 
 // MockHealth is a mock of Health interface.

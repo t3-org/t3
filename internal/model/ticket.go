@@ -12,19 +12,19 @@ const (
 )
 
 type Ticket struct {
-	Base        `json:",inline"`
-	ID          int64  `json:"id"`
-	Fingerprint string `json:"fingerprint"`
-	IsFiring    bool   `json:"is_firing"`
-	StartedAt   int64  `json:"started_at"`
-	EndedAt     *int64 `json:"ended_at"`
+	Base        `json:",inline" yaml:",inline"`
+	ID          int64  `json:"id" yaml:"id"`
+	Fingerprint string `json:"fingerprint" yaml:"fingerprint"`
+	IsFiring    bool   `json:"is_firing" yaml:"is_firing"`
+	StartedAt   int64  `json:"started_at" yaml:"started_at"` // unix milliseconds.
+	EndedAt     *int64 `json:"ended_at" yaml:"ended_at"`     // unix milliseconds.
 
-	IsSpam      bool    `json:"is_spam"`
-	Level       *string `json:"level"`
-	Description *string `json:"description"`
-	SeenAt      *int64  `json:"seen_at"`
+	IsSpam      bool    `json:"is_spam" yaml:"is_spam"`
+	Level       *string `json:"level" yaml:"level"`
+	Description *string `json:"description" yaml:"description"`
+	SeenAt      *int64  `json:"seen_at" yaml:"seen_at"` // unix milliseconds.
 
-	Tags []string `sql:"" json:"tags"`
+	Tags []string `sql:"" json:"tags" yaml:"tags"` // Set sql:"" to ignore this code generation scripts for DB.
 }
 
 func (m *Ticket) Create(in *input.CreateTicket) error {
@@ -75,8 +75,4 @@ func (m *Ticket) Patch(in *input.PatchTicket) error {
 
 	m.Touch()
 	return nil
-}
-
-func (m *Ticket) IsStateChanged(isFiring *bool) bool {
-	return isFiring != nil && m.IsFiring != *isFiring
 }

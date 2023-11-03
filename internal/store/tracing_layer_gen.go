@@ -154,6 +154,25 @@ func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Tic
 
 	return r1, r2
 }
+func (s *tracingLayerTicketStore) GetByTicketKeyVal(ctx context.Context, key string, val string) (*model.Ticket, error) {
+	if ctx == nil {
+		return s.next.GetByTicketKeyVal(ctx, key, val)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.GetByTicketKeyVal")
+	defer span.End()
+
+	r1, r2 := s.next.GetByTicketKeyVal(ctx, key, val)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
 func (s *tracingLayerTicketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
 	if ctx == nil {
 		return s.next.GetByCode(ctx, code)

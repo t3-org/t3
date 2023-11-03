@@ -28,9 +28,12 @@ type Health interface {
 var _ hexa.Health = Health(nil) // Assertion
 
 type TicketService interface {
+	EditTicketUrlByKey(ctx context.Context, key, val string) (string, error)
+	GetTicketByKey(ctx context.Context, key, val string) (*dto.Ticket, error)
 	GetTicket(ctx context.Context, id int64) (*dto.Ticket, error)
 	CreateTicket(ctx context.Context, in *input.CreateTicket) (*dto.Ticket, error)
 	PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error)
+	PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error)
 	DeleteTicket(ctx context.Context, id int64) error
 	QueryTickets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error)
 }

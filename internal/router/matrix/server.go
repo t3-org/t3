@@ -13,12 +13,13 @@ import (
 
 type Server struct {
 	cli    *mautrix.Client
+	router *Router
 	app    app.App
 	doneCh chan error
 }
 
-func NewServer(cli *mautrix.Client, app app.App) *Server {
-	return &Server{cli: cli, app: app, doneCh: make(chan error)}
+func NewServer(cli *mautrix.Client, r *Router) *Server {
+	return &Server{cli: cli, router: r, doneCh: make(chan error)}
 }
 
 func (s *Server) Run() (done <-chan error, err error) {
@@ -81,28 +82,11 @@ func (s *Server) registerInviteHandler() {
 func (s *Server) registerMsgHandler() {
 	syncer := s.cli.Syncer.(*mautrix.DefaultSyncer)
 	syncer.OnEventType(event.EventMessage, func(source mautrix.EventSource, evt *event.Event) {
-		body := evt.Content.AsMessage().Body
-		hlog.Info("received new message",
-			hlog.String("sender", evt.Sender.String()),
-			hlog.String("type", evt.Type.String()),
-			hlog.String("id", evt.ID.String()),
-			hlog.String("body", body),
-		)
-
-		relatedTo := evt.Content.AsMessage().GetRelatesTo()
-		if relatedTo.GetThreadParent() != "" && body == "!party" {
-			content := event.MessageEventContent{
-				MsgType:   event.MsgText,
-				Body:      ":))))",
-				RelatesTo: relatedTo,
-			}
-			_, err := s.cli.SendMessageEvent(evt.RoomID, event.EventMessage, &content)
-
-			if err != nil {
-				hlog.Error("can not send message to matrix channel",
-					hlog.String("room_id", string(evt.RoomID)),
-				)
-			}
+		if err := s.router.Route(context.Background(), source, evt); err != nil {
+			hlog.Error("can not handle matrix message",
+				hlog.Err(err),
+				hlog.String("room_id", string(evt.RoomID)),
+			)
 		}
 	})
 }

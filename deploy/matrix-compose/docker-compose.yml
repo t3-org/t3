@@ -1,0 +1,27 @@
+version: '2.3'
+services:
+#  postgres:
+#    image: postgres:14
+#    restart: unless-stopped
+#    volumes:
+#      - ./postgresdata:/var/lib/postgresql/data
+#
+#    # These will be used in homeserver.yaml later on
+#    environment:
+#      - POSTGRES_DB=synapse
+#      - POSTGRES_USER=synapse
+#      - POSTGRES_PASSWORD=STRONGPASSWORD
+#
+  element:
+    image: vectorim/element-web:v1.11.47
+    restart: unless-stopped
+    volumes:
+      - ./element-config.json:/app/config.json
+
+  synapse:
+    image: matrixdotorg/synapse:v1.95.1
+    restart: unless-stopped
+    volumes:
+      - ./synapse:/data
+    ports:
+      - 8008:8008

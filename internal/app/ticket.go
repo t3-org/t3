@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"strconv"
+	"strings"
 
 	"github.com/kamva/hexa/pagination"
 	"github.com/kamva/tracer"
@@ -10,12 +12,21 @@ import (
 	"space.org/space/internal/model"
 )
 
-func (a *appCore) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
-	return a.store.Ticket().Get(ctx, id)
+func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {
+	ticket, err := a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+	if err != nil {
+		return "", tracer.Trace(err)
+	}
+	r := strings.NewReplacer("{id}", strconv.FormatInt(ticket.ID, 10))
+	return r.Replace(a.cfg.UI.EditTicketURL), nil
 }
 
-func (a *appCore) GetTicketByCode(ctx context.Context, code string) (*dto.Ticket, error) {
-	return a.store.Ticket().GetByCode(ctx, code)
+func (a *appCore) GetTicketByKey(ctx context.Context, key, val string) (*dto.Ticket, error) {
+	return a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+}
+
+func (a *appCore) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
+	return a.store.Ticket().Get(ctx, id)
 }
 
 func (a *appCore) CreateTicket(ctx context.Context, in *input.CreateTicket) (*dto.Ticket, error) {
@@ -42,23 +53,32 @@ func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.PatchTick
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
+	return a.patchTicket(ctx, ticket, in)
+}
 
-	isStateChanged := ticket.IsStateChanged(in.IsFiring)
-
-	if err := ticket.Patch(in); err != nil {
+func (a *appCore) PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
+	ticket, err := a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+	if err != nil {
 		return nil, tracer.Trace(err)
 	}
-	if err := a.store.Ticket().Update(ctx, ticket); err != nil {
+	return a.patchTicket(ctx, ticket, in)
+}
+
+func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.PatchTicket) (*dto.Ticket, error) {
+	if err := t.Patch(in); err != nil {
+		return nil, tracer.Trace(err)
+	}
+	if err := a.store.Ticket().Update(ctx, t); err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	if in.Webhook != nil && isStateChanged {
-		if err := a.callTicketWebhook(ctx, in.Webhook, ticket); err != nil {
+	if in.Webhook != nil && in.IsFiring != nil {
+		if err := a.callTicketWebhook(ctx, in.Webhook, t); err != nil {
 			return nil, err
 		}
 	}
 
-	return ticket, nil
+	return t, nil
 }
 
 func (a *appCore) DeleteTicket(ctx context.Context, id int64) error {

@@ -32,7 +32,7 @@ func (s *ticketKVStore) Set(ctx context.Context, ticketID int64, key string, val
 		Key:      key,
 		Value:    val,
 	}
-	_, err := s.tbl.Create(ctx, ticketKVFields(kv))
+	_, err := s.tbl.Upsert(ctx, ticketKVFields(kv), sqld.OnConflictSet("ticket_id", "key"))
 	return tracer.Trace(err)
 }
 
