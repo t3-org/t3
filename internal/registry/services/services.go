@@ -11,6 +11,7 @@ import (
 	"space.org/space/internal/config"
 	"space.org/space/internal/registry"
 	"space.org/space/internal/service/channel"
+	"space.org/space/pkg/md"
 )
 
 // Services is a simple facade that provides services using
@@ -30,6 +31,7 @@ type Services interface {
 	Worker() hjob.Worker
 	Matrix() *channel.MatrixChannel
 	Channels() map[string]channel.Channel
+	Markdown() *md.Markdown
 }
 
 type services struct {
@@ -97,6 +99,10 @@ func (s *services) Matrix() *channel.MatrixChannel {
 
 func (s *services) Channels() map[string]channel.Channel {
 	return s.r.Service(registry.ServiceNameChannels).(map[string]channel.Channel)
+}
+
+func (s *services) Markdown() *md.Markdown {
+	return s.r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
 }
 
 // New returns a Services facade.

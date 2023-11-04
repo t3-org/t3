@@ -7,11 +7,11 @@ import (
 
 	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
-	"gopkg.in/yaml.v2"
 	"space.org/space/internal/app"
 	"space.org/space/internal/config"
 	apperr "space.org/space/internal/error"
 	"space.org/space/internal/input"
+	"space.org/space/internal/registry/services"
 	"space.org/space/internal/service/channel"
 )
 
@@ -20,12 +20,12 @@ func registerTicketCommands(r *Router, res *ticketResource) {
 	r.Register("edit", res.EditTicketLink, "Get a link to the ticket edition form in the UI.")
 	r.Register("ticket", res.GetTicket, "Get the ticket.")
 
-	r.Register("seen", res.SetSeen, "mark ticket as seen. e.g., !!seen {minutes(default: 0)")
-	r.Register("spam", res.SetSpam, "set the spam flag on the ticket. e.g., !!spam, !!spam false, !!spam true(default)")
-	r.Register("resolved", res.SetAsResolved, "set a ticket as resolved. e.g., !!resolved {minutes(default: 0)}")
+	r.Register("seen", res.SetSeen, "mark ticket as seen. e.g., `!!seen {minutes(default: 0)`")
+	r.Register("spam", res.SetSpam, "set the spam flag on the ticket. e.g., `!!spam`, `!!spam false`, `!!spam true(default)`")
+	r.Register("resolved", res.SetAsResolved, "set a ticket as resolved. e.g., `!!resolved {minutes(default: 0)}`")
 	r.Register("firing", res.SetAsFiring, "set a ticket as firing.")
-	r.Register("level", res.SetLevel, "set level of a ticket. e.g., !!level {level: low,medium or high}")
-	r.Register("description", res.SetDescription, "set description on a ticket. It'll remove the previous description content if it's not empty. e.g., !!description {msg}")
+	r.Register("level", res.SetLevel, "set level of a ticket. e.g., `!!level {level: low,medium or high}`")
+	r.Register("description", res.SetDescription, "set description on a ticket. It'll remove the previous description content if it's not empty. e.g., `!!description {msg}`")
 }
 
 type ticketResource struct {
@@ -35,11 +35,11 @@ type ticketResource struct {
 	app app.App
 }
 
-func newTicketResource(cfg *config.Config, ch *channel.MatrixChannel, app app.App) *ticketResource {
+func newTicketResource(s services.Services, app app.App) *ticketResource {
 	return &ticketResource{
-		Resource: &Resource{okEmoji: ch.Options().OkEmoji, cli: ch.Client()},
-		cfg:      cfg,
-		mx:       ch,
+		Resource: NewResource(s),
+		cfg:      s.Config(),
+		mx:       s.Matrix(),
 		app:      app,
 	}
 }
@@ -58,8 +58,8 @@ func (r *ticketResource) patch(ctx context.Context, cmd *Command, in *input.Patc
 	return r.SendOKReaction(cmd.Event)
 }
 
-func (r *ticketResource) NewTicketLink(ctx context.Context, cmd *Command) error {
-	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("New ticket: %s", r.cfg.UI.NewTicketUrl))
+func (r *ticketResource) NewTicketLink(_ context.Context, cmd *Command) error {
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("[Create a new one here](%s)", r.cfg.UI.NewTicketUrl))
 }
 
 func (r *ticketResource) EditTicketLink(ctx context.Context, cmd *Command) error {
@@ -73,7 +73,7 @@ func (r *ticketResource) EditTicketLink(ctx context.Context, cmd *Command) error
 		return tracer.Trace(err)
 	}
 
-	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("Edit ticket: %s", url))
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("[Edit it here](%s)", url))
 }
 
 func (r *ticketResource) GetTicket(ctx context.Context, cmd *Command) error {
@@ -86,12 +86,8 @@ func (r *ticketResource) GetTicket(ctx context.Context, cmd *Command) error {
 	if err != nil {
 		return tracer.Trace(err)
 	}
-	bytes, err := yaml.Marshal(&t)
-	if err != nil {
-		return tracer.Trace(err)
-	}
 
-	return r.SendTextWithSameRelation(cmd.Event, string(bytes))
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("__Ticket__ \n\n %s ", t.Markdown()))
 }
 
 func (r *ticketResource) SetSeen(ctx context.Context, cmd *Command) error {

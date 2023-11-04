@@ -90,7 +90,6 @@ __Notes for developers__
 
 - To sync your packages with the `vendor` dir run `go mod vendor` command.
 
-
 ### How to enable jaeger in local env
 
 - Run jaeger:
@@ -138,5 +137,11 @@ http://{probe_server_address}/ready
   everything in situation that our test panic. Unfortunately we can not use `t.Cleanup()` function to do that, because
   when it panics, `t.Failed()` doens't returns `true` in the cleanup function,
   [but it's rolled forward to go1.20](https://github.com/golang/go/issues/49929), in go 1.20 update it please. please
-  note `t.Failed()` returns `true` in all situations that our test is failed, not just a panic. so check that this is 
+  note `t.Failed()` returns `true` in all situations that our test is failed, not just a panic. so check that this is
   what we want or not (or it would be great if Go add `Cleanup` to the `testing.M`).
+
+### HTTP request samples:
+
+```bash
+xh -v post :4000/api/v1/tickets fingerprint="h" is_firing:=true started_at:=1 level="low" description="a test alert" webhook:='{"channel":"matrix","channel_id":"!sGJfLhjEueOpYkVKdz:matrix.org"}'
+```

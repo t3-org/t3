@@ -4,10 +4,10 @@ go 1.20
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
-	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/mock v1.6.0
+	github.com/gomarkdown/markdown v0.0.0-20230922112808-5421fefb8386
 	github.com/gomodule/redigo v1.8.8
 	github.com/hibiken/asynq v0.18.4
 	github.com/kamva/gutil v0.0.0-20220808193144-6432044fdd0f
@@ -19,12 +19,11 @@ require (
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lib/pq v1.10.9
 	github.com/mattermost/morph v1.0.4
-	github.com/mattn/go-sqlite3 v1.14.17
-	github.com/rs/zerolog v1.30.0
 	github.com/simukti/sqldb-logger v0.0.0-20220521163925-faf2f2be0eb6
 	github.com/sony/sonyflake v1.1.0
 	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.8.4
+	go.mau.fi/util v0.1.0
 	go.opentelemetry.io/otel v1.2.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.0.0-RC3
 	go.opentelemetry.io/otel/exporters/prometheus v0.25.0
@@ -35,6 +34,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.2.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.12.0
+	gopkg.in/yaml.v2 v2.4.0
 	maunium.net/go/mautrix v0.16.1
 )
 
@@ -43,8 +43,6 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/chzyer/logex v1.1.10 // indirect
-	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
 	github.com/contribsys/faktory v1.6.1 // indirect
 	github.com/contribsys/faktory_worker_go v1.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -82,6 +80,7 @@ require (
 	github.com/prometheus/common v0.26.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
+	github.com/rs/zerolog v1.30.0 // indirect
 	github.com/sethvargo/go-limiter v0.7.2 // indirect
 	github.com/spf13/afero v1.1.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
@@ -95,7 +94,6 @@ require (
 	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	go.mau.fi/util v0.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.27.0 // indirect
 	go.opentelemetry.io/otel/internal/metric v0.25.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
@@ -115,7 +113,6 @@ require (
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.1.3 // indirect
 	maunium.net/go/maulogger/v2 v2.4.1 // indirect

@@ -1,6 +1,10 @@
 package model
 
 import (
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/kamva/gutil"
 	"space.org/space/internal/input"
 )
@@ -25,6 +29,45 @@ type Ticket struct {
 	SeenAt      *int64  `json:"seen_at" yaml:"seen_at"` // unix milliseconds.
 
 	Tags []string `sql:"" json:"tags" yaml:"tags"` // Set sql:"" to ignore this code generation scripts for DB.
+}
+
+func (m *Ticket) Markdown() string {
+	b := strings.Builder{}
+	w := func(val string, params ...any) {
+		b.WriteString(fmt.Sprintf(val+"\n", params...))
+	}
+
+	w("- id: `%d`", m.ID)
+	w("- is_firing: `%t`", m.IsFiring)
+	w("- is_spam: `%t`", m.IsSpam)
+
+	if m.Level != nil {
+		w("- level: `%s`", *m.Level)
+	} else {
+		w("- level: `null`")
+	}
+
+	if m.Description != nil {
+		w("- description: `%s`", *m.Description)
+	} else {
+		w("- level: `null`")
+	}
+
+	w("- started_at: `%s`", time.UnixMilli(m.StartedAt).Format(time.RFC3339))
+	if m.EndedAt != nil {
+		w("- ended_at: `%s`", time.UnixMilli(*m.EndedAt).Format(time.RFC3339))
+	} else {
+		w("- ended_at: `null`")
+	}
+	if m.SeenAt != nil {
+		w("- seen_at: `%s`", time.UnixMilli(*m.SeenAt).Format(time.RFC3339))
+	} else {
+		w("- seen-at: `null`")
+	}
+
+	w("- tags: `%s`", strings.Join(m.Tags, "`, `"))
+
+	return b.String()
 }
 
 func (m *Ticket) Create(in *input.CreateTicket) error {

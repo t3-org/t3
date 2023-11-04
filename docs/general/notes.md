@@ -19,3 +19,8 @@ see [here](https://github.com/launchbadge/realworld-axum-sqlx/blob/main/src/http
 - [matrix api](https://spec.matrix.org/v1.8/client-server-api/#sending-events-to-a-room)
 - [matrix sdk examples](https://github.com/matrix-org/matrix-rust-sdk/tree/main/examples)
 - [matrix element client](https://app.element.io)
+
+
+### TODO
+- Sometimes users send extra params and think that the param is applied, but the command doesn't
+  accept any param, in these cases we can check if the command has any param, return error.

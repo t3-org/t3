@@ -5,11 +5,22 @@ import (
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
+	"space.org/space/internal/registry/services"
+	"space.org/space/pkg/md"
 )
 
 type Resource struct {
 	okEmoji string
 	cli     *mautrix.Client
+	md      *md.Markdown
+}
+
+func NewResource(s services.Services) *Resource {
+	return &Resource{
+		okEmoji: s.Matrix().Options().OkEmoji,
+		cli:     s.Matrix().Client(),
+		md:      s.Markdown(),
+	}
 }
 
 func (r *Resource) threadEventID(e *event.Event) id.EventID {
@@ -21,6 +32,12 @@ func (r *Resource) SendTextWithSameRelation(e *event.Event, text string) error {
 		MsgType:   event.MsgText,
 		Body:      text,
 		RelatesTo: e.Content.AsMessage().GetRelatesTo(),
+	}
+
+	rendered := r.md.RenderString(text)
+	if rendered != text {
+		content.Format = event.FormatHTML
+		content.FormattedBody = rendered
 	}
 	_, err := r.cli.SendMessageEvent(e.RoomID, event.EventMessage, content)
 	return tracer.Trace(err)

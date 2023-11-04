@@ -9,6 +9,7 @@ import (
 	"github.com/kamva/tracer"
 	"space.org/space/internal/app"
 	"space.org/space/internal/config"
+	"space.org/space/internal/registry/services"
 	"space.org/space/internal/service/channel"
 )
 
@@ -25,19 +26,19 @@ type homeResource struct {
 	app    app.App
 }
 
-func newHomeResource(cfg *config.Config, router *Router, ch *channel.MatrixChannel, app app.App) *homeResource {
+func newHomeResource(s services.Services, router *Router, app app.App) *homeResource {
 	return &homeResource{
-		Resource: &Resource{okEmoji: ch.Options().OkEmoji, cli: ch.Client()},
-		cfg:      cfg,
+		Resource: NewResource(s),
+		cfg:      s.Config(),
 		router:   router,
-		mx:       ch,
+		mx:       s.Matrix(),
 		app:      app,
 	}
 }
 
 func (r *homeResource) NotFound(_ context.Context, cmd *Command) error {
 	txt := fmt.Sprintf(
-		"invalid command: %s \n\n %s",
+		"invalid command: `%s` \n\n %s",
 		cmd.Event.Content.AsMessage().Body,
 		r.helpMessage(),
 	)
@@ -52,31 +53,31 @@ func (r *homeResource) ErrorHandler(_ context.Context, cmd *Command, err error) 
 		hlog.Err(err),
 	)
 
-	txt := fmt.Sprintf("Error occurred: \n command: %s \n error: %s", msgBody, err.Error())
+	txt := fmt.Sprintf("Error occurred: \n command: `%s` \n error: `%s`", msgBody, err.Error())
 	return tracer.Trace(r.SendTextWithSameRelation(cmd.Event, txt))
 }
 
-func (r *homeResource) Help(ctx context.Context, cmd *Command) error {
+func (r *homeResource) Help(_ context.Context, cmd *Command) error {
 	return r.SendTextWithSameRelation(cmd.Event, r.helpMessage())
 }
 
 func (r *homeResource) helpMessage() string {
 	builder := strings.Builder{}
-	builder.WriteString("Itrack commands:\n\n")
+	builder.WriteString("\n### Available commands: \n\n")
 	for _, route := range r.router.Routes() {
 		builder.WriteString(fmt.Sprintf(
-			"- %s%s: %s\n\n",
+			"- `%s%s`: %s\n\n",
 			r.mx.Options().CommandPrefix,
 			route.CommandName,
 			route.About,
 		))
 	}
 
-	builder.WriteString("\n\n")
-	builder.WriteString("Dashboard: " + r.cfg.UI.DashboardUrl)
+	builder.WriteString("\n\n --- \n __Links:__  ")
+	builder.WriteString(fmt.Sprintf("[Dashboard](%s)", r.cfg.UI.DashboardUrl))
 	return builder.String()
 }
 
-func (r *homeResource) DashboardLink(ctx context.Context, cmd *Command) error {
-	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("open %s", r.cfg.UI.DashboardUrl))
+func (r *homeResource) DashboardLink(_ context.Context, cmd *Command) error {
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("[Dashboard](%s)", r.cfg.UI.DashboardUrl))
 }

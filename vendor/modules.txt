@@ -13,13 +13,6 @@ github.com/beorn7/perks/quantile
 # github.com/cespare/xxhash/v2 v2.1.2
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
-# github.com/chzyer/logex v1.1.10
-## explicit
-# github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
-## explicit
-github.com/chzyer/readline
-# github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1
-## explicit
 # github.com/contribsys/faktory v1.6.1
 ## explicit; go 1.17
 github.com/contribsys/faktory/client
@@ -68,6 +61,12 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/gomarkdown/markdown v0.0.0-20230922112808-5421fefb8386
+## explicit; go 1.12
+github.com/gomarkdown/markdown
+github.com/gomarkdown/markdown/ast
+github.com/gomarkdown/markdown/html
+github.com/gomarkdown/markdown/parser
 # github.com/gomodule/redigo v1.8.8
 ## explicit; go 1.16
 github.com/gomodule/redigo/redis
@@ -192,9 +191,6 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.14
 ## explicit; go 1.12
 github.com/mattn/go-isatty
-# github.com/mattn/go-sqlite3 v1.14.17
-## explicit; go 1.16
-github.com/mattn/go-sqlite3
 # github.com/matttproud/golang_protobuf_extensions v1.0.1
 ## explicit
 github.com/matttproud/golang_protobuf_extensions/pbutil

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/gomodule/redigo/redis"
 	"github.com/hibiken/asynq"
 	"github.com/kamva/hexa"
@@ -49,6 +51,7 @@ import (
 	"space.org/space/internal/service/channel"
 	"space.org/space/internal/store"
 	"space.org/space/internal/store/sqlstore"
+	"space.org/space/pkg/md"
 )
 
 func init() {
@@ -64,6 +67,7 @@ func init() {
 	registry.AddProvider(registry.ServiceNameMeterProvider, registry.ServiceNameMeterProvider, MeterProvider)
 	registry.AddProvider(registry.ServiceNameOpenTelemetry, registry.ServiceNameOpenTelemetry, OpenTelemetryProvider)
 	registry.AddProvider(registry.ServiceNameRedis, registry.ServiceNameRedis, RedisProvider)
+	registry.AddProvider(registry.ServiceNameMarkdown, registry.ServiceNameMarkdown, MarkdownProvider)
 	registry.AddProvider(registry.ServiceNameHttpServer, registry.ServiceNameHttpServer, HttpServerProvider)
 	registry.AddProvider(registry.ServiceNameJobs, registry.ServiceNameJobs, JobsProvider)
 	registry.AddProvider(registry.ServiceNameWorker, registry.ServiceNameWorker, WorkerProvider)
@@ -490,13 +494,13 @@ func MatrixProvider(r hexa.ServiceRegistry) error {
 	}
 
 	cli.Crypto = cryptoHelper
-
+	markdown := r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
 	chOpts := channel.MatrixChannelOpts{
 		KeyPrefix:     "mx",
 		OkEmoji:       mcfg.OKEmoji,
 		CommandPrefix: mcfg.CommandPrefix,
 	}
-	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), chOpts))
+	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), markdown, chOpts))
 	return nil
 }
 
@@ -510,12 +514,25 @@ func ChannelsProvider(r hexa.ServiceRegistry) error {
 
 func MatrixBotServerProvider(r hexa.ServiceRegistry) error {
 	mx := r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel)
-	a := r.Service(registry.ServiceNameApp).(app.App)
 
 	router := matrix.NewRouter(mx.Options().CommandPrefix)
-	matrix.RegisterCommands(conf(r), router, mx, a)
+	matrix.RegisterCommands(r, router)
 
 	// initialize the event handlers.
 	r.Register(registry.ServiceNameMatrixBotServer, matrix.NewServer(mx.Client(), router))
+	return nil
+}
+
+func MarkdownProvider(r hexa.ServiceRegistry) error {
+	// create Markdown parser with extensions
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	p := parser.NewWithExtensions(extensions)
+
+	// create HTML renderer with extensions
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+
+	r.Register(registry.ServiceNameMarkdown, md.NewMarkdown(p, renderer))
 	return nil
 }

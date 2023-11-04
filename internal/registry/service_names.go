@@ -18,6 +18,7 @@ const (
 	ServiceNameMeterProvider  = "meter_provider"
 	ServiceNameOpenTelemetry  = "open_telemetry"
 	ServiceNameRedis          = "redis"
+	ServiceNameMarkdown       = "markdown"
 	//ServiceNameCacheProvider  = "cache_provider"
 
 	ServiceNameHttpServer      = "http_server"
@@ -61,6 +62,7 @@ func bootPriority() []string {
 		ServiceNameMeterProvider,
 		ServiceNameOpenTelemetry,
 		ServiceNameRedis,
+		ServiceNameMarkdown,
 		//ServiceNameCacheProvider,
 
 		ServiceNameStore,
@@ -89,6 +91,8 @@ func BaseServices(exclude ...string) []string {
 		ServiceNameMeterProvider,
 		ServiceNameOpenTelemetry,
 		ServiceNameRedis,
+		ServiceNameMarkdown,
+
 		//ServiceNameCacheProvider,
 		ServiceNameStore,
 		ServiceNameMatrix,

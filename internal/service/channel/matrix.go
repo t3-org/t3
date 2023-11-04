@@ -13,12 +13,14 @@ import (
 	"maunium.net/go/mautrix/id"
 	apperr "space.org/space/internal/error"
 	"space.org/space/internal/model"
+	"space.org/space/pkg/md"
 )
 
 type MatrixChannel struct {
 	o       MatrixChannelOpts
 	cli     *mautrix.Client
 	kvStore KVStore
+	md      *md.Markdown
 }
 
 type MatrixChannelOpts struct {
@@ -27,8 +29,8 @@ type MatrixChannelOpts struct {
 	CommandPrefix string
 }
 
-func NewMatrixChannel(cli *mautrix.Client, kv KVStore, o MatrixChannelOpts) Channel {
-	return &MatrixChannel{cli: cli, kvStore: kv, o: o}
+func NewMatrixChannel(cli *mautrix.Client, kv KVStore, md *md.Markdown, o MatrixChannelOpts) Channel {
+	return &MatrixChannel{cli: cli, kvStore: kv, o: o, md: md}
 }
 
 func (m *MatrixChannel) Options() MatrixChannelOpts {
@@ -45,7 +47,7 @@ func (m *MatrixChannel) Client() *mautrix.Client {
 
 func (m *MatrixChannel) Firing(ctx context.Context, channelID string, t *model.Ticket) error {
 	roomID := id.RoomID(channelID)
-	res, err := m.cli.SendText(roomID, fmt.Sprintf("New Firing Ticket: %+v", t))
+	res, err := m.sendText(roomID, "", fmt.Sprintf("__New Firing Ticket__ \n\n %s ", t.Markdown()))
 	if err != nil {
 		return tracer.Trace(err)
 	}
@@ -60,16 +62,7 @@ func (m *MatrixChannel) Resolved(ctx context.Context, channelID string, t *model
 		return tracer.Trace(err)
 	}
 
-	content := &event.MessageEventContent{
-		MsgType: event.MsgText,
-		Body:    fmt.Sprintf("New resolved Ticket: %+v", t),
-	}
-
-	if eventID != "" { // if there's an eventID for the thread of this ticket on this room.
-		content.RelatesTo = &event.RelatesTo{Type: event.RelThread, EventID: id.EventID(eventID)}
-	}
-
-	_, err = m.cli.SendMessageEvent(roomID, event.EventMessage, content)
+	_, err = m.sendText(roomID, id.EventID(eventID), fmt.Sprintf("__Resolved Ticket__ \n\n %s ", t.Markdown()))
 	return tracer.Trace(err)
 }
 
@@ -79,6 +72,25 @@ func (m *MatrixChannel) Shutdown(ctx context.Context) error {
 		return tracer.Trace(c.Close())
 	}
 	return nil
+}
+
+func (m *MatrixChannel) sendText(roomID id.RoomID, threadEventId id.EventID, msg string) (*mautrix.RespSendEvent, error) {
+	content := &event.MessageEventContent{
+		MsgType: event.MsgText,
+		Body:    msg,
+	}
+
+	rendered := m.md.RenderString(msg)
+	if rendered != msg {
+		content.Format = event.FormatHTML
+		content.FormattedBody = rendered
+	}
+
+	if threadEventId != "" { // if there's an eventID for the thread of this ticket on this room.
+		content.RelatesTo = &event.RelatesTo{Type: event.RelThread, EventID: threadEventId}
+	}
+
+	return m.cli.SendMessageEvent(roomID, event.EventMessage, content)
 }
 
 var _ Channel = &MatrixChannel{}
