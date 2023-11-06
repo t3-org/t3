@@ -45,9 +45,9 @@ type SqlStore interface {
 }
 
 type sqlStoresList struct {
-	system   model.SystemStore
-	ticket   model.TicketStore
-	ticketKV model.TicketKVStore
+	system      model.SystemStore
+	ticket      model.TicketStore
+	ticketLabel model.TicketLabelStore
 
 	// Place your stores here.
 }
@@ -202,8 +202,8 @@ func (s *sqlStore) Ticket() model.TicketStore {
 	return s.stores.ticket
 }
 
-func (s *sqlStore) TicketKV() model.TicketKVStore {
-	return s.stores.ticketKV
+func (s *sqlStore) TicketLabel() model.TicketLabelStore {
+	return s.stores.ticketLabel
 }
 
 func (s *sqlStore) Shutdown(_ context.Context) error {
@@ -236,9 +236,9 @@ func New(l hlog.Logger, o config.DB) (SqlStore, error) {
 	}
 
 	s.stores = sqlStoresList{
-		system:   newSystemStore(s),
-		ticket:   newTicketStore(s),
-		ticketKV: newTicketKVStore(s),
+		system:      newSystemStore(s),
+		ticket:      newTicketStore(s),
+		ticketLabel: newTicketLabelStore(s),
 
 		// place your other stores here.
 	}

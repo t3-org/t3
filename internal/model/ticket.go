@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kamva/gutil"
 	"space.org/space/internal/input"
 )
 
@@ -17,18 +16,21 @@ const (
 
 type Ticket struct {
 	Base        `json:",inline" yaml:",inline"`
-	ID          int64  `json:"id" yaml:"id"`
-	Fingerprint string `json:"fingerprint" yaml:"fingerprint"`
-	IsFiring    bool   `json:"is_firing" yaml:"is_firing"`
-	StartedAt   int64  `json:"started_at" yaml:"started_at"` // unix milliseconds.
-	EndedAt     *int64 `json:"ended_at" yaml:"ended_at"`     // unix milliseconds.
+	ID          int64     `json:"id" yaml:"id"`
+	Annotations StringMap `json:"annotations" yaml:"annotations"`
+	Fingerprint string    `json:"fingerprint" yaml:"fingerprint"`
+	IsFiring    bool      `json:"is_firing" yaml:"is_firing"`
+	StartedAt   int64     `json:"started_at" yaml:"started_at"` // unix milliseconds.
+	// TODO: Set to 0 if it's not set(for both of ended_at and seen_at fields).
+	EndedAt *int64 `json:"ended_at" yaml:"ended_at"` // unix milliseconds.
 
 	IsSpam      bool    `json:"is_spam" yaml:"is_spam"`
 	Level       *string `json:"level" yaml:"level"`
 	Description *string `json:"description" yaml:"description"`
 	SeenAt      *int64  `json:"seen_at" yaml:"seen_at"` // unix milliseconds.
 
-	Tags []string `sql:"" json:"tags" yaml:"tags"` // Set sql:"" to ignore this code generation scripts for DB.
+	// Internal labels start with "_". API can not touch(edit,remove...) internal labels.
+	Labels map[string]string `sql:"" json:"labels" yaml:"labels"` // Set sql:"" to ignore this code generation scripts for DB.
 }
 
 func (m *Ticket) Markdown() string {
@@ -65,7 +67,10 @@ func (m *Ticket) Markdown() string {
 		w("- seen-at: `null`")
 	}
 
-	w("- tags: `%s`", strings.Join(m.Tags, "`, `"))
+	w("- labels: \n")
+	for k, v := range m.Labels {
+		w("	- %s: %s", k, v)
+	}
 
 	return b.String()
 }
@@ -80,7 +85,7 @@ func (m *Ticket) Create(in *input.CreateTicket) error {
 	m.Level = in.Level
 	m.Description = in.Description
 	m.SeenAt = in.SeenAt
-
+	m.Labels = in.Labels
 	m.Touch()
 	return nil
 }
@@ -112,8 +117,8 @@ func (m *Ticket) Patch(in *input.PatchTicket) error {
 		m.SeenAt = in.SeenAt
 	}
 
-	if len(in.RemoveTags) != 0 {
-		m.Tags = append(gutil.RemoveFromStrings(m.Tags, in.RemoveTags...), in.AddTags...)
+	if in.Labels != nil {
+		m.Labels = in.Labels
 	}
 
 	m.Touch()

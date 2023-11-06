@@ -7,10 +7,9 @@ import (
 )
 
 var (
-	systemColumns    = []string{"name", "value", "created_at", "updated_at"}
-	ticketColumns    = []string{"id", "fingerprint", "is_firing", "started_at", "ended_at", "is_spam", "level", "description", "seen_at", "created_at", "updated_at"}
-	ticketKVColumns  = []string{"ticket_id", "key", "value"}
-	ticketTagColumns = []string{"ticket_id", "term"}
+	systemColumns      = []string{"name", "value", "created_at", "updated_at"}
+	ticketColumns      = []string{"id", "annotations", "fingerprint", "is_firing", "started_at", "ended_at", "is_spam", "level", "description", "seen_at", "created_at", "updated_at"}
+	ticketLabelColumns = []string{"ticket_id", "key", "val"}
 )
 
 func systemFields(m *model.System) []any {
@@ -18,13 +17,9 @@ func systemFields(m *model.System) []any {
 }
 
 func ticketFields(m *model.Ticket) []any {
-	return []interface{}{&m.ID, &m.Fingerprint, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
+	return []interface{}{&m.ID, &m.Annotations, &m.Fingerprint, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
 }
 
-func ticketKVFields(m *model.TicketKV) []any {
-	return []interface{}{&m.TicketID, &m.Key, &m.Value}
-}
-
-func ticketTagFields(m *model.TicketTag) []any {
-	return []interface{}{&m.TicketID, &m.Term}
+func ticketLabelFields(m *model.TicketLabel) []any {
+	return []interface{}{&m.TicketID, &m.Key, &m.Val}
 }

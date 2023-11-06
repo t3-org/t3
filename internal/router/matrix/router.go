@@ -2,8 +2,11 @@ package matrix
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 
+	"github.com/kamva/tracer"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 )
@@ -75,9 +78,21 @@ func (r *Router) Route(ctx context.Context, source mautrix.EventSource, evt *eve
 		Params: strings.TrimSuffix(strings.TrimPrefix(params, " "), " "),
 	}
 
-	if err := h(ctx, &cmd); err != nil {
-		return r.ErrHandler(ctx, &cmd, err)
-	}
+	return tracer.Trace(r.route(ctx, h, &cmd))
+}
 
+func (r *Router) route(ctx context.Context, h Handler, cmd *Command) (errRes error) {
+	defer func() {
+		if recovered := recover(); recovered != nil && errRes == nil {
+			if err, ok := recovered.(error); ok {
+				errRes = err
+				return
+			}
+			errRes = errors.New(fmt.Sprint(recovered))
+		}
+	}()
+	if err := h(ctx, cmd); err != nil {
+		return r.ErrHandler(ctx, cmd, err)
+	}
 	return nil
 }

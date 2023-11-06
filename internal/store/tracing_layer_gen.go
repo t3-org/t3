@@ -15,10 +15,10 @@ import (
 )
 
 type tracingLayerStore struct {
-	next          model.Store
-	SystemStore   model.SystemStore
-	TicketStore   model.TicketStore
-	TicketKVStore model.TicketKVStore
+	next             model.Store
+	SystemStore      model.SystemStore
+	TicketStore      model.TicketStore
+	TicketLabelStore model.TicketLabelStore
 }
 
 func (s *tracingLayerStore) DBLayer() model.Store {
@@ -36,8 +36,8 @@ func (s *tracingLayerStore) System() model.SystemStore {
 func (s *tracingLayerStore) Ticket() model.TicketStore {
 	return s.TicketStore
 }
-func (s *tracingLayerStore) TicketKV() model.TicketKVStore {
-	return s.TicketKVStore
+func (s *tracingLayerStore) TicketLabel() model.TicketLabelStore {
+	return s.TicketLabelStore
 }
 func (s *tracingLayerStore) HealthIdentifier() string {
 	return s.next.HealthIdentifier()
@@ -56,10 +56,10 @@ func NewTracingLayerStore(instrumentationPostfix string, tp trace.TracerProvider
 	pkgPath := reflect.TypeOf(tracingLayerStore{}).PkgPath() + "." + instrumentationPostfix
 
 	return &tracingLayerStore{
-		next:          next,
-		SystemStore:   &tracingLayerSystemStore{t: tp.Tracer(pkgPath), next: next.System()},
-		TicketStore:   &tracingLayerTicketStore{t: tp.Tracer(pkgPath), next: next.Ticket()},
-		TicketKVStore: &tracingLayerTicketKVStore{t: tp.Tracer(pkgPath), next: next.TicketKV()},
+		next:             next,
+		SystemStore:      &tracingLayerSystemStore{t: tp.Tracer(pkgPath), next: next.System()},
+		TicketStore:      &tracingLayerTicketStore{t: tp.Tracer(pkgPath), next: next.Ticket()},
+		TicketLabelStore: &tracingLayerTicketLabelStore{t: tp.Tracer(pkgPath), next: next.TicketLabel()},
 	}
 }
 
@@ -154,15 +154,15 @@ func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Tic
 
 	return r1, r2
 }
-func (s *tracingLayerTicketStore) GetByTicketKeyVal(ctx context.Context, key string, val string) (*model.Ticket, error) {
+func (s *tracingLayerTicketStore) GetByTicketLabel(ctx context.Context, key string, val string) (*model.Ticket, error) {
 	if ctx == nil {
-		return s.next.GetByTicketKeyVal(ctx, key, val)
+		return s.next.GetByTicketLabel(ctx, key, val)
 	}
 
-	ctx, span := s.t.Start(ctx, "TicketStore.GetByTicketKeyVal")
+	ctx, span := s.t.Start(ctx, "TicketStore.GetByTicketLabel")
 	defer span.End()
 
-	r1, r2 := s.next.GetByTicketKeyVal(ctx, key, val)
+	r1, r2 := s.next.GetByTicketLabel(ctx, key, val)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)
@@ -288,17 +288,17 @@ func (s *tracingLayerTicketStore) Query(ctx context.Context, query string, offse
 	return r1, r2
 }
 
-type tracingLayerTicketKVStore struct {
+type tracingLayerTicketLabelStore struct {
 	t    trace.Tracer
-	next model.TicketKVStore
+	next model.TicketLabelStore
 }
 
-func (s *tracingLayerTicketKVStore) Set(ctx context.Context, ticketID int64, key string, val string) error {
+func (s *tracingLayerTicketLabelStore) Set(ctx context.Context, ticketID int64, key string, val string) error {
 	if ctx == nil {
 		return s.next.Set(ctx, ticketID, key, val)
 	}
 
-	ctx, span := s.t.Start(ctx, "TicketKVStore.Set")
+	ctx, span := s.t.Start(ctx, "TicketLabelStore.Set")
 	defer span.End()
 
 	r1 := s.next.Set(ctx, ticketID, key, val)
@@ -312,12 +312,12 @@ func (s *tracingLayerTicketKVStore) Set(ctx context.Context, ticketID int64, key
 
 	return r1
 }
-func (s *tracingLayerTicketKVStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
+func (s *tracingLayerTicketLabelStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
 	if ctx == nil {
 		return s.next.Val(ctx, ticketID, key)
 	}
 
-	ctx, span := s.t.Start(ctx, "TicketKVStore.Val")
+	ctx, span := s.t.Start(ctx, "TicketLabelStore.Val")
 	defer span.End()
 
 	r1, r2 := s.next.Val(ctx, ticketID, key)

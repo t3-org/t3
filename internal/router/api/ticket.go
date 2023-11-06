@@ -23,6 +23,9 @@ func (r *ticketResource) Create(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
+	// We do not allow API to touch internal labels:
+	input.RemoveInternalLabels(in.Labels)
+
 	dto, err := r.app.CreateTicket(c.Request().Context(), &in)
 	if err != nil {
 		return tracer.Trace(err)
@@ -36,6 +39,9 @@ func (r *ticketResource) Patch(c echo.Context) error {
 	if err := c.Bind(&in); err != nil {
 		return tracer.Trace(err)
 	}
+
+	// We do not allow API to touch internal labels:
+	input.RemoveInternalLabels(in.Labels)
 
 	dto, err := r.app.PatchTicket(c.Request().Context(), r.ID(c), &in)
 	if err != nil {

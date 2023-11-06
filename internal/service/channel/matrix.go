@@ -24,6 +24,7 @@ type MatrixChannel struct {
 }
 
 type MatrixChannelOpts struct {
+	// Set keyPrefix with "_" to set that label as an internal label.
 	KeyPrefix     string
 	OkEmoji       string
 	CommandPrefix string

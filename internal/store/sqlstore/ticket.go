@@ -6,27 +6,25 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/kamva/tracer"
 	apperr "space.org/space/internal/error"
+	"space.org/space/internal/helpers"
 	"space.org/space/internal/model"
 	"space.org/space/pkg/sqld"
 )
 
 const tableTicket = "tickets"
-const tableTicketTags = "ticket_tags"
 
 type ticketStore struct {
-	s         SqlStore
-	tbl       *sqld.Table
-	tagsTbl   *sqld.Table
-	valuesTbl *sqld.Table
+	s        SqlStore
+	tbl      *sqld.Table
+	labelTbl *sqld.Table
 }
 
 // newTicketStore returns new instance of the repository
 func newTicketStore(store SqlStore) model.TicketStore {
 	return &ticketStore{
-		s:         store,
-		tbl:       sqld.NewTable(tableTicket, ticketColumns, store.QueryBuilder),
-		tagsTbl:   sqld.NewTable(tableTicketTags, ticketTagColumns, store.QueryBuilder),
-		valuesTbl: sqld.NewTable(tableTicketValues, ticketKVColumns, store.QueryBuilder),
+		s:        store,
+		tbl:      sqld.NewTable(tableTicket, ticketColumns, store.QueryBuilder),
+		labelTbl: sqld.NewTable(tableTicketLabels, ticketLabelColumns, store.QueryBuilder),
 	}
 }
 
@@ -35,19 +33,22 @@ func (s *ticketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) 
 	if err := s.tbl.FindByID(ctx, id, ticketFields(&ticket)); err != nil {
 		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
 	}
-	if err := s.fetchTags(ctx, &ticket); err != nil {
+	if err := s.fetchLabels(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
 	return &ticket, nil
 }
 
-func (s *ticketStore) GetByTicketKeyVal(ctx context.Context, key, val string) (*model.Ticket, error) {
+func (s *ticketStore) GetByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
 	var ticket model.Ticket
-	s.tbl.First(ctx, ticketFields(&ticket),
-		"id in (select ticket_id from ticket_values where key=? and value=?)", key, val,
+	err := s.tbl.First(ctx, ticketFields(&ticket),
+		"id in (select ticket_id from ticket_labels where key=? and val=?)", key, val,
 	)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
 
-	if err := s.fetchTags(ctx, &ticket); err != nil {
+	if err := s.fetchLabels(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
 	return &ticket, nil
@@ -60,7 +61,7 @@ func (s *ticketStore) GetByCode(ctx context.Context, code string) (*model.Ticket
 		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
 	}
 
-	if err := s.fetchTags(ctx, &ticket); err != nil {
+	if err := s.fetchLabels(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
 
@@ -73,7 +74,7 @@ func (s *ticketStore) Create(ctx context.Context, ticket *model.Ticket) error {
 		return tracer.Trace(err)
 	}
 
-	return s.syncTags(ctx, ticket)
+	return s.syncLabels(ctx, ticket)
 }
 
 func (s *ticketStore) Update(ctx context.Context, ticket *model.Ticket) error {
@@ -82,7 +83,7 @@ func (s *ticketStore) Update(ctx context.Context, ticket *model.Ticket) error {
 		return tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
 	}
 
-	return s.syncTags(ctx, ticket)
+	return s.syncLabels(ctx, ticket)
 }
 
 //nolint:revive // To disable unused query param issue.
@@ -111,41 +112,49 @@ func (s *ticketStore) Delete(ctx context.Context, m *model.Ticket) error {
 	return tracer.Trace(err)
 }
 
-func (s *ticketStore) syncTags(ctx context.Context, ticket *model.Ticket) error {
-	// Remove not-existed tags.
-	_, err := s.tagsTbl.DeleteBuilder(ctx).
+func (s *ticketStore) syncLabels(ctx context.Context, ticket *model.Ticket) error {
+	// Remove not-existed labels.
+	_, err := s.labelTbl.DeleteBuilder(ctx).
 		Where(sq.Eq{"ticket_id": ticket.ID}).
-		Where(sq.NotEq{"term": ticket.Tags}).
+		Where(sq.NotEq{"key": helpers.MapKeys(ticket.Labels)}).
 		ExecContext(ctx)
 
 	if err != nil {
 		return tracer.Trace(err)
 	}
 
-	// Insert all tags
-	if len(ticket.Tags) == 0 {
+	// Insert all labels
+	if len(ticket.Labels) == 0 {
 		return nil
 	}
-	b := s.s.QueryBuilder(ctx).Insert(tableTicketTags).Columns(ticketTagColumns...)
-	for _, term := range ticket.Tags {
-		b.Values(ticket.ID, term)
+
+	b := s.s.QueryBuilder(ctx).Insert(tableTicketLabels).Columns(ticketLabelColumns...)
+	sqld.SetValues(b, ticketLabelFields, model.LabelsFromMap(ticket.ID, ticket.Labels))
+
+	// Add "on conflict(...) do update set field=excluded.field"
+	expr, err := sqld.UpsertSuffix(
+		sqld.OnConflictSet("ticket_id", "key"),
+		sqld.Clauses(ticketLabelColumns, sqld.ExcludedColumns(ticketLabelColumns))...,
+	)
+	if err != nil {
+		return tracer.Trace(err)
 	}
-	b.SuffixExpr(sq.Expr(sqld.OnConflictDoNothing("ticket_id", "term"))) // ignore already existed tags
+	b.SuffixExpr(expr) // on conflict set values.
 	_, err = b.ExecContext(ctx)
 	return tracer.Trace(err)
 }
 
-func (s *ticketStore) fetchTags(ctx context.Context, ticket *model.Ticket) error {
-	rows, err := s.tagsTbl.Select(ctx).Where(sq.Eq{"ticket_id": ticket.ID}).QueryContext(ctx)
+func (s *ticketStore) fetchLabels(ctx context.Context, ticket *model.Ticket) error {
+	rows, err := s.labelTbl.Select(ctx).Where(sq.Eq{"ticket_id": ticket.ID}).QueryContext(ctx)
 	if err != nil {
 		return tracer.Trace(err)
 	}
 
-	l, err := sqld.ScanRows(rows, ticketTagFields)
+	l, err := sqld.ScanRows(rows, ticketLabelFields)
 	if err != nil {
 		return tracer.Trace(err)
 	}
-	ticket.Tags = model.Tags(l...)
+	ticket.Labels = model.LabelsMap(l...)
 	return nil
 }
 

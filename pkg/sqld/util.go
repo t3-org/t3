@@ -57,3 +57,19 @@ func ScanRows[T any](rows *sql.Rows, fields func(m *T) []any) ([]*T, error) {
 
 	return res, nil
 }
+
+func SetValues[T any](b squirrel.InsertBuilder, fields func(m *T) []any, values []*T) {
+	for _, v := range values {
+		b.Values(fields(v)...)
+	}
+}
+
+// ExcludedColumns prefixes all column names with the "excluded." term.
+// see [this](https://stackoverflow.com/questions/58638586/postgres-insert-multiple-rows-on-conflict-update-not-working)
+func ExcludedColumns(cols []string) []any {
+	excluded := make([]any, len(cols))
+	for i, v := range cols {
+		excluded[i] = "excluded." + v
+	}
+	return excluded
+}

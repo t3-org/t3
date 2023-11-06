@@ -496,11 +496,13 @@ func MatrixProvider(r hexa.ServiceRegistry) error {
 	cli.Crypto = cryptoHelper
 	markdown := r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
 	chOpts := channel.MatrixChannelOpts{
-		KeyPrefix:     "mx",
+		// We prefix the key with "_" to set the label as an internal
+		// label on the ticket. see ticket labels.
+		KeyPrefix:     "_mx",
 		OkEmoji:       mcfg.OKEmoji,
 		CommandPrefix: mcfg.CommandPrefix,
 	}
-	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketKV(), markdown, chOpts))
+	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketLabel(), markdown, chOpts))
 	return nil
 }
 

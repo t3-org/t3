@@ -3,6 +3,7 @@ CREATE TABLE tickets
 (
     id          bigserial PRIMARY KEY,
 
+    annotations text,
     fingerprint text UNIQUE NOT NULL,
     is_firing   BOOLEAN     not null,
     started_at  bigint      NOT NULL,
@@ -24,14 +25,11 @@ create index on tickets (level);
 create index on tickets (seen_at);
 create index on tickets (started_at, ended_at);
 
-create table ticket_tags
+create table ticket_labels
 (
-    ticket_id bigint  not null references tickets (id) on delete cascade,
-    term      text not null,
-    UNIQUE (ticket_id, term)
+    ticket_id bigint not null references tickets (id) on delete cascade,
+    key       text   not null,
+    val       text   not null,
+    UNIQUE (ticket_id, key)
 );
-
-
--- ticket_tags indexes
-create index on ticket_tags (ticket_id);
 

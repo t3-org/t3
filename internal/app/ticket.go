@@ -13,7 +13,7 @@ import (
 )
 
 func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {
-	ticket, err := a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+	ticket, err := a.store.Ticket().GetByTicketLabel(ctx, key, val)
 	if err != nil {
 		return "", tracer.Trace(err)
 	}
@@ -22,7 +22,7 @@ func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (stri
 }
 
 func (a *appCore) GetTicketByKey(ctx context.Context, key, val string) (*dto.Ticket, error) {
-	return a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+	return a.store.Ticket().GetByTicketLabel(ctx, key, val)
 }
 
 func (a *appCore) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
@@ -57,7 +57,7 @@ func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.PatchTick
 }
 
 func (a *appCore) PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
-	ticket, err := a.store.Ticket().GetByTicketKeyVal(ctx, key, val)
+	ticket, err := a.store.Ticket().GetByTicketLabel(ctx, key, val)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}

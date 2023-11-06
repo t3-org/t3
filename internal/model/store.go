@@ -38,9 +38,9 @@ type Store interface {
 	// @subStore
 	Ticket() TicketStore
 
-	// TicketKV
+	// TicketLabel
 	// @subStore
-	TicketKV() TicketKVStore
+	TicketLabel() TicketLabelStore
 
 	// Place other store providers here.
 
@@ -54,7 +54,7 @@ type SystemStore interface {
 
 type TicketStore interface {
 	Get(ctx context.Context, id int64) (*Ticket, error)
-	GetByTicketKeyVal(ctx context.Context, key, val string) (*Ticket, error)
+	GetByTicketLabel(ctx context.Context, key, val string) (*Ticket, error)
 	GetByCode(ctx context.Context, code string) (*Ticket, error)
 	Create(ctx context.Context, m *Ticket) error
 	Update(ctx context.Context, m *Ticket) error
@@ -63,7 +63,7 @@ type TicketStore interface {
 	Query(ctx context.Context, query string, offset, limit uint64) ([]*Ticket, error)
 }
 
-type TicketKVStore interface {
+type TicketLabelStore interface {
 	Set(ctx context.Context, ticketID int64, key string, val string) error
 	Val(ctx context.Context, ticketID int64, key string) (string, error)
 }

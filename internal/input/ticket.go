@@ -15,11 +15,12 @@ type CreateTicket struct {
 	StartedAt   int64  `json:"started_at"`
 	EndedAt     *int64 `json:"ended_at"`
 
-	IsSpam      bool     `json:"is_spam"`
-	Level       *string  `json:"level"`
-	Description *string  `json:"description"`
-	SeenAt      *int64   `json:"seen_at"`
-	Webhook     *Webhook `json:"webhook"`
+	IsSpam      bool              `json:"is_spam"`
+	Level       *string           `json:"level"`
+	Description *string           `json:"description"`
+	SeenAt      *int64            `json:"seen_at"`
+	Labels      map[string]string `json:"labels"`
+	Webhook     *Webhook          `json:"webhook"`
 }
 
 func (i *CreateTicket) Validate() error {
@@ -40,8 +41,7 @@ type PatchTicket struct {
 	Description *string `json:"description"`
 	SeenAt      *int64  `json:"seen_at"`
 
-	RemoveTags []string `json:"remove_tags"`
-	AddTags    []string `json:"add_tags"`
+	Labels map[string]string
 
 	Webhook *Webhook `json:"webhook"`
 }
@@ -55,3 +55,11 @@ func (i *PatchTicket) Validate() error {
 
 var _ validation.Validatable = &CreateTicket{}
 var _ validation.Validatable = &PatchTicket{}
+
+func RemoveInternalLabels(labels map[string]string) {
+	for k, _ := range labels {
+		if len(k) != 0 && k[0] == '_' {
+			delete(labels, k)
+		}
+	}
+}
