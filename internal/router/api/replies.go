@@ -26,3 +26,11 @@ var (
 	RespSuccessDeleteTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.delete.ok")
 	RespSuccessQueryTicket  = hexa.NewReply(http.StatusOK, "itrack.ticket.query.ok")
 )
+
+//--------------------------------
+// Webhook
+//--------------------------------
+
+var (
+	RespSuccessHandleWebhook = hexa.NewReply(http.StatusOK, "itrack.webhook.handle.ok")
+)

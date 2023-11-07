@@ -39,7 +39,7 @@ func (s *ticketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) 
 	return &ticket, nil
 }
 
-func (s *ticketStore) GetByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
+func (s *ticketStore) FirstByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
 	var ticket model.Ticket
 	err := s.tbl.First(ctx, ticketFields(&ticket),
 		"id in (select ticket_id from ticket_labels where key=? and val=?)", key, val,

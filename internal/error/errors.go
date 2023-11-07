@@ -45,3 +45,10 @@ var (
 var (
 	ErrTooManyRequests = hexa.NewError(http.StatusTooManyRequests, "itrack.gateway.too_many_requests")
 )
+
+// --------------------------------
+// Webhook errors
+// --------------------------------
+var (
+	ErrInvalidWebhookType = hexa.NewError(http.StatusBadRequest, "itrack.webhook.err")
+)

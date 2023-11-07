@@ -80,6 +80,8 @@ type Config struct {
 	RedisDB       int          `json:"redis_db"`
 	Matrix        MatrixConfig `json:"matrix"`
 	UI            UI           `json:"ui"`
+	// WebhookUniqueID is a unique value in webhook path to do not allow being guessable its path.
+	WebhookUniqueID string `json:"webhook_unique_id"`
 }
 
 func (c *Config) validate() error {

@@ -140,6 +140,9 @@ github.com/kamva/hexa-rpc
 # github.com/kamva/hexa-tuner v0.1.1-0.20220912214214-3b85dd3c6dc8
 ## explicit; go 1.18
 github.com/kamva/hexa-tuner
+# github.com/kamva/ozzo-vcomplement v0.0.0-20220817150104-b956fb554948
+## explicit; go 1.13
+github.com/kamva/ozzo-vcomplement
 # github.com/kamva/tracer v0.0.0-20201115122932-ea39052d56cd
 ## explicit; go 1.13
 github.com/kamva/tracer

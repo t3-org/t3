@@ -340,9 +340,9 @@ func (mr *MockTicketStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.
 }
 
 // GetByTicketLabel mocks base method.
-func (m *MockTicketStore) GetByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
+func (m *MockTicketStore) FirstByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByTicketLabel", ctx, key, val)
+	ret := m.ctrl.Call(m, "FirstByTicketLabel", ctx, key, val)
 	ret0, _ := ret[0].(*model.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -351,7 +351,7 @@ func (m *MockTicketStore) GetByTicketLabel(ctx context.Context, key, val string)
 // GetByTicketLabel indicates an expected call of GetByTicketLabel.
 func (mr *MockTicketStoreMockRecorder) GetByTicketLabel(ctx, key, val interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByTicketLabel", reflect.TypeOf((*MockTicketStore)(nil).GetByTicketLabel), ctx, key, val)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FirstByTicketLabel", reflect.TypeOf((*MockTicketStore)(nil).FirstByTicketLabel), ctx, key, val)
 }
 
 // Query mocks base method.

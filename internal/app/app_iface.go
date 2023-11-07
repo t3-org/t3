@@ -28,6 +28,7 @@ type Health interface {
 var _ hexa.Health = Health(nil) // Assertion
 
 type TicketService interface {
+	UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error)
 	EditTicketUrlByKey(ctx context.Context, key, val string) (string, error)
 	GetTicketByKey(ctx context.Context, key, val string) (*dto.Ticket, error)
 	GetTicket(ctx context.Context, id int64) (*dto.Ticket, error)

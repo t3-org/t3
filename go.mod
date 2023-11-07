@@ -15,6 +15,7 @@ require (
 	github.com/kamva/hexa-echo v0.1.1-0.20221015212418-e3ea3020053a
 	github.com/kamva/hexa-job v0.0.0-20221015215638-fb0bf029e960
 	github.com/kamva/hexa-tuner v0.1.1-0.20220912214214-3b85dd3c6dc8
+	github.com/kamva/ozzo-vcomplement v0.0.0-20220817150104-b956fb554948
 	github.com/kamva/tracer v0.0.0-20201115122932-ea39052d56cd
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lib/pq v1.10.9
@@ -34,7 +35,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.2.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.12.0
-	gopkg.in/yaml.v2 v2.4.0
 	maunium.net/go/mautrix v0.16.1
 )
 
@@ -113,6 +113,7 @@ require (
 	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/ini.v1 v1.57.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.1.3 // indirect
 	maunium.net/go/maulogger/v2 v2.4.1 // indirect

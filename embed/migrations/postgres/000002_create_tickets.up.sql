@@ -1,23 +1,27 @@
 create type TicketLevel AS ENUM ('low','medium','high');
 CREATE TABLE tickets
 (
-    id          bigserial PRIMARY KEY,
+    id            bigserial PRIMARY KEY,
+    source        text,
+    raw_alert     text,
+    annotations   text,
+    fingerprint   text UNIQUE NOT NULL,
+    is_firing     BOOLEAN     not null,
+    started_at    bigint      NOT NULL,
+    ended_at      bigint,
+    values        text,
+    generator_url text,
 
-    annotations text,
-    fingerprint text UNIQUE NOT NULL,
-    is_firing   BOOLEAN     not null,
-    started_at  bigint      NOT NULL,
-    ended_at    bigint,
-
-    is_spam     boolean     not null,
-    level       TicketLevel,
-    description text,
-    seen_at     bigint,
-    created_at  bigint,
-    updated_at  bigint
+    is_spam       boolean     not null,
+    level         TicketLevel,
+    description   text,
+    seen_at       bigint,
+    created_at    bigint,
+    updated_at    bigint
 );
 
 -- ticket indexes
+create index on tickets (source);
 create index on tickets (fingerprint);
 create index on tickets (is_firing);
 create index on tickets (is_spam);

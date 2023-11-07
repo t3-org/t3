@@ -1,11 +1,12 @@
 Used global fields:
+
 - `alerts`
-- `orgId`: ?
 
 ignored global fields:
+
 - `receiver`
 - `status`
-- `orgId`
+- `orgId`: We can later use it to support multi-tenancy.
 - `truncatedAlerts`
 - `groupLabels`
 - `commonLabels`
@@ -16,6 +17,7 @@ ignored global fields:
 - `truncatedAlerts`
 
 Used Alert fields:
+
 - `status`: is firing or not.
 - `labels`: the alert labels.
 - `annotations`:? the alert annotations.
@@ -26,6 +28,7 @@ Used Alert fields:
 - `fingerprint`: The labels fingerprint, alarms with the same labels will have the same fingerprint.
 
 Ignored alert fields:
+
 - `silenceURL`
 - `imageURL`
 

@@ -154,15 +154,15 @@ func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Tic
 
 	return r1, r2
 }
-func (s *tracingLayerTicketStore) GetByTicketLabel(ctx context.Context, key string, val string) (*model.Ticket, error) {
+func (s *tracingLayerTicketStore) FirstByTicketLabel(ctx context.Context, key string, val string) (*model.Ticket, error) {
 	if ctx == nil {
-		return s.next.GetByTicketLabel(ctx, key, val)
+		return s.next.FirstByTicketLabel(ctx, key, val)
 	}
 
-	ctx, span := s.t.Start(ctx, "TicketStore.GetByTicketLabel")
+	ctx, span := s.t.Start(ctx, "TicketStore.FirstByTicketLabel")
 	defer span.End()
 
-	r1, r2 := s.next.GetByTicketLabel(ctx, key, val)
+	r1, r2 := s.next.FirstByTicketLabel(ctx, key, val)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)

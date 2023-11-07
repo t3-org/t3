@@ -4,24 +4,12 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
-type Webhook struct {
-	Channel   string `json:"channel"`
-	ChannelID string `json:"channel_id"`
+type Channel struct {
+	Name string `json:"name"` // Name of the channel (to find the channel instance that we should use)
+	ID   string `json:"id"`   // id of the channel (e.g., in matrix it's the roomID).
 }
 
-type CreateTicket struct {
-	Fingerprint string `json:"fingerprint"`
-	IsFiring    bool   `json:"is_firing"`
-	StartedAt   int64  `json:"started_at"`
-	EndedAt     *int64 `json:"ended_at"`
-
-	IsSpam      bool              `json:"is_spam"`
-	Level       *string           `json:"level"`
-	Description *string           `json:"description"`
-	SeenAt      *int64            `json:"seen_at"`
-	Labels      map[string]string `json:"labels"`
-	Webhook     *Webhook          `json:"webhook"`
-}
+type CreateTicket PatchTicket
 
 func (i *CreateTicket) Validate() error {
 	return validation.ValidateStruct(&i,
@@ -31,35 +19,74 @@ func (i *CreateTicket) Validate() error {
 }
 
 type PatchTicket struct {
-	Fingerprint *string `json:"fingerprint"`
-	IsFiring    *bool   `json:"is_firing"`
-	StartedAt   *int64  `json:"started_at"`
-	EndedAt     *int64  `json:"ended_at"`
+	isCreation bool
 
-	IsSpam      *bool   `json:"is_spam"`
-	Level       *string `json:"level"`
-	Description *string `json:"description"`
-	SeenAt      *int64  `json:"seen_at"`
+	Source          *string           `json:"source"`
+	RawAlert        *string           `json:"raw_alert"`
+	Fingerprint     string            `json:"fingerprint"` // In patch requests, we'll ignore this field.
+	Annotations     map[string]string `json:"annotations"`
+	SyncAnnotations bool              `json:"sync_annotations"` // if true, set annotations, otherwise upsert the provided annotations.
+	IsFiring        *bool             `json:"is_firing"`
+	StartedAt       *int64            `json:"started_at"`
+	EndedAt         *int64            `json:"ended_at"`
+	Values          map[string]string `json:"values"`
+	GeneratorUrl    *string           `json:"generator_url"`
+	IsSpam          *bool             `json:"is_spam"`
+	Level           *string           `json:"level"`
+	Description     *string           `json:"description"`
+	SeenAt          *int64            `json:"seen_at"`
+	Labels          map[string]string `json:"labels"`
+	SyncLabels      bool              `json:"sync_labels"`
+	Channel         *Channel          `json:"channel"`
+}
 
-	Labels map[string]string
-
-	Webhook *Webhook `json:"webhook"`
+func (i *PatchTicket) SetIsCreation(isCreation bool) {
+	i.isCreation = isCreation
 }
 
 func (i *PatchTicket) Validate() error {
-	return validation.ValidateStruct(&i,
+	if i.isCreation { // Another validation for creations.
+		val := CreateTicket(*i)
+		return val.Validate()
+	}
+
+	return validation.ValidateStruct(i,
 		validation.Field(&i.Level, validation.In("low", "medium", "high")),
 	) // TODO: update validations.
 
 }
 
-var _ validation.Validatable = &CreateTicket{}
-var _ validation.Validatable = &PatchTicket{}
-
-func RemoveInternalLabels(labels map[string]string) {
-	for k, _ := range labels {
+func RemoveInternalLabels(values map[string]string) {
+	for k, _ := range values {
 		if len(k) != 0 && k[0] == '_' {
-			delete(labels, k)
+			delete(values, k)
 		}
 	}
 }
+
+type BatchUpsertTickets struct {
+	Tickets []*PatchTicket `json:"tickets"`
+}
+
+func (i *BatchUpsertTickets) Validate() error {
+	return validation.ValidateStruct(i,
+		validation.Field(&i.Tickets, validation.Each(validation.Required)))
+}
+
+func (i *BatchUpsertTickets) Fingerprints() []string {
+	res := make([]string, len(i.Tickets))
+	for i, v := range i.Tickets {
+		res[i] = v.Fingerprint
+	}
+	return res
+}
+
+func (i *BatchUpsertTickets) RemoveInternalLabels() {
+	for _, v := range i.Tickets {
+		RemoveInternalLabels(v.Labels)
+	}
+}
+
+var _ validation.Validatable = &CreateTicket{}
+var _ validation.Validatable = &PatchTicket{}
+var _ validation.Validatable = &BatchUpsertTickets{}
