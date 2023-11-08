@@ -1,4 +1,4 @@
-import { toRefs, reactive, computed } from 'vue';
+import {computed, reactive, toRefs} from 'vue';
 
 const layoutConfig = reactive({
     ripple: false,
@@ -49,5 +49,14 @@ export function useLayout() {
 
     const isDarkTheme = computed(() => layoutConfig.darkTheme);
 
-    return { layoutConfig: toRefs(layoutConfig), layoutState: toRefs(layoutState), changeThemeSettings, setScale, onMenuToggle, isSidebarActive, isDarkTheme, setActiveMenuItem };
+    return {
+        layoutConfig: toRefs(layoutConfig),
+        layoutState: toRefs(layoutState),
+        changeThemeSettings,
+        setScale,
+        onMenuToggle,
+        isSidebarActive,
+        isDarkTheme,
+        setActiveMenuItem
+    };
 }
