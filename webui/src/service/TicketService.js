@@ -1,4 +1,5 @@
-export default class ProductService {
+export default class TicketService {
+    // TODO: Add methods to CRUD tickets.
     getProductsSmall() {
         return fetch('demo/data/products-small.json')
             .then((res) => res.json())
