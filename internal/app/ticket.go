@@ -30,7 +30,7 @@ func (a *appCore) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) 
 }
 
 func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
-	l, err := a.store.Ticket().GetAllByFingerprint(ctx, in.Fingerprints()...)
+	l, err := a.store.Ticket().GetAllByFingerprint(ctx, in.Fingerprints())
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -38,9 +38,8 @@ func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTicket
 
 	// Validate data
 	for _, in := range in.Tickets {
-		if _, ok := tickets[in.Fingerprint]; ok {
-			in.SetIsCreation(true) // mark this input as the creation input instead of patch input.
-		}
+		// mark this input as the creation input instead of patch input if ticket is nil.
+		in.SetIsCreation(tickets[in.Fingerprint] == nil)
 	}
 	if err := v(ctx, in); err != nil {
 		return nil, tracer.Trace(err)
@@ -100,7 +99,7 @@ func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.PatchTick
 	return a.patchTicket(ctx, ticket, in)
 }
 
-func (a *appCore) PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
+func (a *appCore) PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
 	ticket, err := a.store.Ticket().FirstByTicketLabel(ctx, key, val)
 	if err != nil {
 		return nil, tracer.Trace(err)
@@ -118,7 +117,7 @@ func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.Pa
 
 	if in.Channel != nil && in.IsFiring != nil {
 		if err := a.callTicketWebhook(ctx, in.Channel, t); err != nil {
-			return nil, err
+			return nil, tracer.Trace(err)
 		}
 	}
 

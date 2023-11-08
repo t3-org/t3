@@ -170,9 +170,9 @@ func (mr *MockAppMockRecorder) PatchTicket(ctx, id, in interface{}) *gomock.Call
 }
 
 // PatchTicketByKey mocks base method.
-func (m *MockApp) PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
+func (m *MockApp) PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PatchTicketByKey", ctx, key, val, in)
+	ret := m.ctrl.Call(m, "PatchTicketByLabel", ctx, key, val, in)
 	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -181,7 +181,7 @@ func (m *MockApp) PatchTicketByKey(ctx context.Context, key, val string, in *inp
 // PatchTicketByKey indicates an expected call of PatchTicketByKey.
 func (mr *MockAppMockRecorder) PatchTicketByKey(ctx, key, val, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByKey", reflect.TypeOf((*MockApp)(nil).PatchTicketByKey), ctx, key, val, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByLabel", reflect.TypeOf((*MockApp)(nil).PatchTicketByLabel), ctx, key, val, in)
 }
 
 // QueryTickets mocks base method.
@@ -211,6 +211,21 @@ func (m *MockApp) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus {
 func (mr *MockAppMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadinessStatus", reflect.TypeOf((*MockApp)(nil).ReadinessStatus), ctx)
+}
+
+// UpsertTickets mocks base method.
+func (m *MockApp) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertTickets", ctx, in)
+	ret0, _ := ret[0].([]*dto.Ticket)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertTickets indicates an expected call of UpsertTickets.
+func (mr *MockAppMockRecorder) UpsertTickets(ctx, in interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTickets", reflect.TypeOf((*MockApp)(nil).UpsertTickets), ctx, in)
 }
 
 // MockHealth is a mock of Health interface.
@@ -405,9 +420,9 @@ func (mr *MockTicketServiceMockRecorder) PatchTicket(ctx, id, in interface{}) *g
 }
 
 // PatchTicketByKey mocks base method.
-func (m *MockTicketService) PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
+func (m *MockTicketService) PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PatchTicketByKey", ctx, key, val, in)
+	ret := m.ctrl.Call(m, "PatchTicketByLabel", ctx, key, val, in)
 	ret0, _ := ret[0].(*dto.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -416,7 +431,7 @@ func (m *MockTicketService) PatchTicketByKey(ctx context.Context, key, val strin
 // PatchTicketByKey indicates an expected call of PatchTicketByKey.
 func (mr *MockTicketServiceMockRecorder) PatchTicketByKey(ctx, key, val, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByKey", reflect.TypeOf((*MockTicketService)(nil).PatchTicketByKey), ctx, key, val, in)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByLabel", reflect.TypeOf((*MockTicketService)(nil).PatchTicketByLabel), ctx, key, val, in)
 }
 
 // QueryTickets mocks base method.
@@ -432,4 +447,19 @@ func (m *MockTicketService) QueryTickets(ctx context.Context, query string, page
 func (mr *MockTicketServiceMockRecorder) QueryTickets(ctx, query, page, perPage interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryTickets", reflect.TypeOf((*MockTicketService)(nil).QueryTickets), ctx, query, page, perPage)
+}
+
+// UpsertTickets mocks base method.
+func (m *MockTicketService) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertTickets", ctx, in)
+	ret0, _ := ret[0].([]*dto.Ticket)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpsertTickets indicates an expected call of UpsertTickets.
+func (mr *MockTicketServiceMockRecorder) UpsertTickets(ctx, in interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertTickets", reflect.TypeOf((*MockTicketService)(nil).UpsertTickets), ctx, in)
 }

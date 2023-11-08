@@ -51,6 +51,10 @@ func upsertSuffix(prefix string, clauses ...*SetClause) (sqlStr string, args []i
 				valSql = vsql
 			}
 			args = append(args, vargs...)
+		} else if setClause.value == ExcludedCol(setClause.column) {
+			// If it's an excluded columns, just simply put the excluded column as part of sql.
+			// e.g., `on conflict(...) do update set color=excluded.color`
+			valSql = setClause.value.(string)
 		} else {
 			valSql = "?"
 			args = append(args, setClause.value)

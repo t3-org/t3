@@ -164,7 +164,7 @@ func (m *Ticket) Markdown() string {
 
 	w("- labels: \n")
 	for k, v := range m.Labels {
-		w("	- %s: %s", k, v)
+		w("	- `%s`: `%s`", k, v)
 	}
 
 	return b.String()

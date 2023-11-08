@@ -39,6 +39,23 @@ func (s *ticketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) 
 	return &ticket, nil
 }
 
+func (s *ticketStore) GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
+	if len(fingerprints) == 0 {
+		return nil, nil
+	}
+
+	rows, err := s.tbl.Select(ctx).Where(sq.Eq{"fingerprint": fingerprints}).QueryContext(ctx)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	l, err := sqld.ScanRows(rows, ticketFields)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+	return l, s.fetchLabelsForAll(ctx, l...)
+}
+
 func (s *ticketStore) FirstByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
 	var ticket model.Ticket
 	err := s.tbl.First(ctx, ticketFields(&ticket),
@@ -104,7 +121,8 @@ func (s *ticketStore) Query(ctx context.Context, query string, offset, limit uin
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
-	return l, nil
+
+	return l, s.fetchLabelsForAll(ctx, l...)
 }
 
 func (s *ticketStore) Delete(ctx context.Context, m *model.Ticket) error {
@@ -129,7 +147,7 @@ func (s *ticketStore) syncLabels(ctx context.Context, ticket *model.Ticket) erro
 	}
 
 	b := s.s.QueryBuilder(ctx).Insert(tableTicketLabels).Columns(ticketLabelColumns...)
-	sqld.SetValues(b, ticketLabelFields, model.LabelsFromMap(ticket.ID, ticket.Labels))
+	b = sqld.SetValues(b, ticketLabelFields, model.LabelsFromMap(ticket.ID, ticket.Labels))
 
 	// Add "on conflict(...) do update set field=excluded.field"
 	expr, err := sqld.UpsertSuffix(
@@ -139,8 +157,7 @@ func (s *ticketStore) syncLabels(ctx context.Context, ticket *model.Ticket) erro
 	if err != nil {
 		return tracer.Trace(err)
 	}
-	b.SuffixExpr(expr) // on conflict set values.
-	_, err = b.ExecContext(ctx)
+	_, err = b.SuffixExpr(expr).ExecContext(ctx)
 	return tracer.Trace(err)
 }
 
@@ -155,6 +172,38 @@ func (s *ticketStore) fetchLabels(ctx context.Context, ticket *model.Ticket) err
 		return tracer.Trace(err)
 	}
 	ticket.Labels = model.LabelsMap(l...)
+	return nil
+}
+
+func (s *ticketStore) fetchLabelsForAll(ctx context.Context, tickets ...*model.Ticket) error {
+	if len(tickets) == 0 {
+		return nil
+	}
+
+	ids := make([]int64, len(tickets))
+	ticketsMap := make(map[int64]*model.Ticket, len(tickets))
+	for i, v := range tickets {
+		ids[i] = v.ID
+		ticketsMap[v.ID] = v
+	}
+
+	rows, err := s.labelTbl.Select(ctx).Where(sq.Eq{"ticket_id": ids}).QueryContext(ctx)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	l, err := sqld.ScanRows(rows, ticketLabelFields)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	for _, label := range l {
+		t := ticketsMap[label.TicketID]
+		if t.Labels == nil {
+			t.Labels = make(map[string]string)
+		}
+		t.Labels[label.Key] = label.Val
+	}
 	return nil
 }
 

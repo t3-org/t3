@@ -309,6 +309,21 @@ func (mr *MockTicketStoreMockRecorder) Delete(ctx, m interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockTicketStore)(nil).Delete), ctx, m)
 }
 
+// FirstByTicketLabel mocks base method.
+func (m *MockTicketStore) FirstByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FirstByTicketLabel", ctx, key, val)
+	ret0, _ := ret[0].(*model.Ticket)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FirstByTicketLabel indicates an expected call of FirstByTicketLabel.
+func (mr *MockTicketStoreMockRecorder) FirstByTicketLabel(ctx, key, val interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FirstByTicketLabel", reflect.TypeOf((*MockTicketStore)(nil).FirstByTicketLabel), ctx, key, val)
+}
+
 // Get mocks base method.
 func (m *MockTicketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
@@ -324,6 +339,26 @@ func (mr *MockTicketStoreMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockTicketStore)(nil).Get), ctx, id)
 }
 
+// GetAllByFingerprint mocks base method.
+func (m *MockTicketStore) GetAllByFingerprint(ctx context.Context, fingerprints ...string) ([]*model.Ticket, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx}
+	for _, a := range fingerprints {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetAllByFingerprint", varargs...)
+	ret0, _ := ret[0].([]*model.Ticket)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllByFingerprint indicates an expected call of GetAllByFingerprint.
+func (mr *MockTicketStoreMockRecorder) GetAllByFingerprint(ctx interface{}, fingerprints ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx}, fingerprints...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByFingerprint", reflect.TypeOf((*MockTicketStore)(nil).GetAllByFingerprint), varargs...)
+}
+
 // GetByCode mocks base method.
 func (m *MockTicketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
@@ -337,21 +372,6 @@ func (m *MockTicketStore) GetByCode(ctx context.Context, code string) (*model.Ti
 func (mr *MockTicketStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByCode", reflect.TypeOf((*MockTicketStore)(nil).GetByCode), ctx, code)
-}
-
-// GetByTicketLabel mocks base method.
-func (m *MockTicketStore) FirstByTicketLabel(ctx context.Context, key, val string) (*model.Ticket, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FirstByTicketLabel", ctx, key, val)
-	ret0, _ := ret[0].(*model.Ticket)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetByTicketLabel indicates an expected call of GetByTicketLabel.
-func (mr *MockTicketStoreMockRecorder) GetByTicketLabel(ctx, key, val interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FirstByTicketLabel", reflect.TypeOf((*MockTicketStore)(nil).FirstByTicketLabel), ctx, key, val)
 }
 
 // Query mocks base method.

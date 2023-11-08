@@ -50,7 +50,7 @@ func (r *ticketResource) patch(ctx context.Context, cmd *Command, in *input.Patc
 		return apperr.ErrTicketNotFound
 	}
 
-	_, err := r.app.PatchTicketByKey(ctx, r.mx.Key(cmd.Event.RoomID), threadID, in)
+	_, err := r.app.PatchTicketByLabel(ctx, r.mx.Key(cmd.Event.RoomID), threadID, in)
 	if err != nil {
 		return tracer.Trace(err)
 	}

@@ -10,7 +10,5 @@ import (
 )
 
 func v(ctx context.Context, in validation.Validatable) error {
-	if err := vcomplement.TranslateByHexa(hexatranslator.CtxTranslator(ctx), in.Validate()); err != nil {
-		return tracer.Trace(err)
-	}
+	return tracer.Trace(vcomplement.TranslateByHexa(hexatranslator.CtxTranslator(ctx), in.Validate()))
 }

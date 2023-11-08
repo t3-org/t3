@@ -58,10 +58,11 @@ func ScanRows[T any](rows *sql.Rows, fields func(m *T) []any) ([]*T, error) {
 	return res, nil
 }
 
-func SetValues[T any](b squirrel.InsertBuilder, fields func(m *T) []any, values []*T) {
+func SetValues[T any](b squirrel.InsertBuilder, fields func(m *T) []any, values []*T) squirrel.InsertBuilder {
 	for _, v := range values {
-		b.Values(fields(v)...)
+		b = b.Values(fields(v)...)
 	}
+	return b
 }
 
 // ExcludedColumns prefixes all column names with the "excluded." term.
@@ -69,7 +70,11 @@ func SetValues[T any](b squirrel.InsertBuilder, fields func(m *T) []any, values 
 func ExcludedColumns(cols []string) []any {
 	excluded := make([]any, len(cols))
 	for i, v := range cols {
-		excluded[i] = "excluded." + v
+		excluded[i] = ExcludedCol(v)
 	}
 	return excluded
+}
+
+func ExcludedCol(col string) string {
+	return "excluded." + col
 }

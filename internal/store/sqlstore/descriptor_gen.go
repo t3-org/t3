@@ -8,7 +8,7 @@ import (
 
 var (
 	systemColumns      = []string{"name", "value", "created_at", "updated_at"}
-	ticketColumns      = []string{"id", "annotations", "fingerprint", "is_firing", "started_at", "ended_at", "is_spam", "level", "description", "seen_at", "created_at", "updated_at"}
+	ticketColumns      = []string{"id", "source", "raw_alert", "fingerprint", "annotations", "is_firing", "started_at", "ended_at", "values", "generator_url", "is_spam", "level", "description", "seen_at", "created_at", "updated_at"}
 	ticketLabelColumns = []string{"ticket_id", "key", "val"}
 )
 
@@ -17,7 +17,7 @@ func systemFields(m *model.System) []any {
 }
 
 func ticketFields(m *model.Ticket) []any {
-	return []interface{}{&m.ID, &m.Annotations, &m.Fingerprint, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
+	return []interface{}{&m.ID, &m.Source, &m.RawAlert, &m.Fingerprint, &m.Annotations, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.Values, &m.GeneratorUrl, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
 }
 
 func ticketLabelFields(m *model.TicketLabel) []any {

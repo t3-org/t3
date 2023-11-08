@@ -34,7 +34,7 @@ type TicketService interface {
 	GetTicket(ctx context.Context, id int64) (*dto.Ticket, error)
 	CreateTicket(ctx context.Context, in *input.CreateTicket) (*dto.Ticket, error)
 	PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error)
-	PatchTicketByKey(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error)
+	PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error)
 	DeleteTicket(ctx context.Context, id int64) error
 	QueryTickets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error)
 }

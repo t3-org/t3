@@ -154,6 +154,25 @@ func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Tic
 
 	return r1, r2
 }
+func (s *tracingLayerTicketStore) GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
+	if ctx == nil {
+		return s.next.GetAllByFingerprint(ctx, fingerprints)
+	}
+
+	ctx, span := s.t.Start(ctx, "TicketStore.GetAllByFingerprint")
+	defer span.End()
+
+	r1, r2 := s.next.GetAllByFingerprint(ctx, fingerprints)
+
+	if apperr.IsInternalErr(r2) {
+		span.RecordError(r2)
+		span.SetStatus(codes.Error, r2.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1, r2
+}
 func (s *tracingLayerTicketStore) FirstByTicketLabel(ctx context.Context, key string, val string) (*model.Ticket, error) {
 	if ctx == nil {
 		return s.next.FirstByTicketLabel(ctx, key, val)

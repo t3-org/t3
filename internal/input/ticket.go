@@ -12,7 +12,7 @@ type Channel struct {
 type CreateTicket PatchTicket
 
 func (i *CreateTicket) Validate() error {
-	return validation.ValidateStruct(&i,
+	return validation.ValidateStruct(i,
 		validation.Field(&i.Level, validation.In("low", "medium", "high")),
 	) // TODO: write validations.
 

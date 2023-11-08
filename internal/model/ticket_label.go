@@ -17,6 +17,7 @@ func LabelsFromMap(ticketID int64, m map[string]string) []*TicketLabel {
 			Key:      k,
 			Val:      v,
 		}
+		i++
 	}
 	return l
 }

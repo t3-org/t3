@@ -54,7 +54,7 @@ type SystemStore interface {
 
 type TicketStore interface {
 	Get(ctx context.Context, id int64) (*Ticket, error)
-	GetAllByFingerprint(ctx context.Context, fingerprints ...string) ([]*Ticket, error)
+	GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*Ticket, error)
 	FirstByTicketLabel(ctx context.Context, key, val string) (*Ticket, error)
 	GetByCode(ctx context.Context, code string) (*Ticket, error)
 	Create(ctx context.Context, m *Ticket) error

@@ -6,7 +6,6 @@ import (
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
 	"space.org/space/internal/app"
-	"space.org/space/internal/config"
 	apperr "space.org/space/internal/error"
 	"space.org/space/internal/input"
 )
@@ -17,7 +16,6 @@ func (api *API) registerWebhookRoutes(webhooks *echo.Group, res *webhookResource
 
 type webhookResource struct {
 	Resource
-	cfg *config.Config
 	app app.App
 }
 
@@ -37,7 +35,8 @@ func (r *webhookResource) handleGrafanaWebhook(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
-	in := input.BatchUpsertTickets{Tickets: webhook.PatchInputs()}
+	ch := input.Channel{Name: c.Param("ch_name"), ID: c.Param("ch_id")}
+	in := input.BatchUpsertTickets{Tickets: webhook.PatchInputs(&ch)}
 	in.RemoveInternalLabels() // We do not allow API to touch internal labels:
 
 	dto, err := r.app.UpsertTickets(c.Request().Context(), &in)

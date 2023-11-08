@@ -26,4 +26,5 @@ func (api *API) RegisterRoutes() {
 
 	api.registerLabRoutes(v1("/lab"), &labResource{app: api.app, e: api.echo})
 	api.registerTicketRoutes(v1("/tickets"), &ticketResource{app: api.app})
+	api.registerWebhookRoutes(v1("/webhooks"), &webhookResource{app: api.app})
 }
