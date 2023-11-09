@@ -1,4 +1,4 @@
-This template should help get you started developing with Vue 3 in Vite.
+This Web UI is using Vue3 and Vite.
 
 ## Customize configuration
 

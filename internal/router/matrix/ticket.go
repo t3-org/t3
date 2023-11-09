@@ -112,7 +112,7 @@ func (r *ticketResource) SetAsFiring(ctx context.Context, cmd *Command) error {
 }
 
 func (r *ticketResource) SetLevel(ctx context.Context, cmd *Command) error {
-	return r.patch(ctx, cmd, &input.PatchTicket{Level: &cmd.Params})
+	return r.patch(ctx, cmd, &input.PatchTicket{Severity: &cmd.Params})
 }
 
 func (r *ticketResource) SetDescription(ctx context.Context, cmd *Command) error {

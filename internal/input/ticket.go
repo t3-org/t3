@@ -13,7 +13,7 @@ type CreateTicket PatchTicket
 
 func (i *CreateTicket) Validate() error {
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Level, validation.In("low", "medium", "high")),
+		validation.Field(&i.Severity, validation.In("low", "medium", "high")),
 	) // TODO: write validations.
 
 }
@@ -22,7 +22,7 @@ type PatchTicket struct {
 	isCreation bool
 
 	Source          *string           `json:"source"`
-	RawAlert        *string           `json:"raw_alert"`
+	Raw             *string           `json:"raw"`
 	Fingerprint     string            `json:"fingerprint"` // In patch requests, we'll ignore this field.
 	Annotations     map[string]string `json:"annotations"`
 	SyncAnnotations bool              `json:"sync_annotations"` // if true, set annotations, otherwise upsert the provided annotations.
@@ -32,7 +32,8 @@ type PatchTicket struct {
 	Values          map[string]string `json:"values"`
 	GeneratorUrl    *string           `json:"generator_url"`
 	IsSpam          *bool             `json:"is_spam"`
-	Level           *string           `json:"level"`
+	Severity        *string           `json:"severity"`
+	Title           *string           `json:"title"`
 	Description     *string           `json:"description"`
 	SeenAt          *int64            `json:"seen_at"`
 	Labels          map[string]string `json:"labels"`
@@ -51,7 +52,7 @@ func (i *PatchTicket) Validate() error {
 	}
 
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Level, validation.In("low", "medium", "high")),
+		validation.Field(&i.Severity, validation.In("low", "medium", "high")),
 	) // TODO: update validations.
 
 }

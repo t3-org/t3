@@ -17,7 +17,7 @@ func systemFields(m *model.System) []any {
 }
 
 func ticketFields(m *model.Ticket) []any {
-	return []interface{}{&m.ID, &m.Source, &m.RawAlert, &m.Fingerprint, &m.Annotations, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.Values, &m.GeneratorUrl, &m.IsSpam, &m.Level, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
+	return []interface{}{&m.ID, &m.Source, &m.Raw, &m.Fingerprint, &m.Annotations, &m.IsFiring, &m.StartedAt, &m.EndedAt, &m.Values, &m.GeneratorUrl, &m.IsSpam, &m.Severity, &m.Description, &m.SeenAt, &m.CreatedAt, &m.UpdatedAt}
 }
 
 func ticketLabelFields(m *model.TicketLabel) []any {

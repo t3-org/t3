@@ -56,6 +56,7 @@ func (in *GrafanaAlert) PatchInput(ch *Channel) *PatchTicket {
 		Values:          values,
 		GeneratorUrl:    &in.GeneratorURL,
 		IsSpam:          gutil.NewBool(false),
+		Title:           gutil.NewString(gutil.StringDefault(in.Labels["alertname"], "(no_title)")),
 		Labels:          in.Labels,
 		SyncLabels:      false,
 		Channel:         ch,

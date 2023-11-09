@@ -10,9 +10,9 @@ import (
 )
 
 const (
-	TicketLevelLow    = "low"
-	TicketLevelMedium = "medium"
-	TicketLevelHigh   = "high"
+	TicketSeverityLow    = "low"
+	TicketSeverityMedium = "medium"
+	TicketSeverityHigh   = "high"
 )
 
 const (
@@ -22,8 +22,8 @@ const (
 type Ticket struct {
 	Base         `json:",inline" yaml:",inline"`
 	ID           int64     `json:"id" yaml:"id"`
-	Source       string    `json:"source"`    // Source of the alert.
-	RawAlert     *string   `json:"raw_alert"` // the raw alert content. (optional)
+	Source       string    `json:"source"` // Source of the alert.
+	Raw          *string   `json:"raw"`    // the raw alert content. (optional)
 	Fingerprint  string    `json:"fingerprint" yaml:"fingerprint"`
 	Annotations  StringMap `json:"annotations" yaml:"annotations"`
 	IsFiring     bool      `json:"is_firing" yaml:"is_firing"`
@@ -32,7 +32,8 @@ type Ticket struct {
 	Values       StringMap `json:"values" yaml:"values"`
 	GeneratorUrl *string   `json:"generator_url"`
 	IsSpam       bool      `json:"is_spam" yaml:"is_spam"`
-	Level        *string   `json:"level" yaml:"level"`
+	Severity     *string   `json:"severity" yaml:"severity"`
+	Title        string    `json:"title" yaml:"title"`
 	Description  *string   `json:"description" yaml:"description"`
 	SeenAt       *int64    `json:"seen_at" yaml:"seen_at"` // unix milliseconds.
 
@@ -43,8 +44,8 @@ type Ticket struct {
 func (m *Ticket) Create(in *input.CreateTicket) error {
 	m.ID = genId()
 	m.Source = *in.Source
-	if in.RawAlert != nil {
-		m.RawAlert = in.RawAlert
+	if in.Raw != nil {
+		m.Raw = in.Raw
 	}
 	m.Fingerprint = in.Fingerprint
 	m.Annotations = in.Annotations
@@ -56,7 +57,8 @@ func (m *Ticket) Create(in *input.CreateTicket) error {
 		m.GeneratorUrl = in.GeneratorUrl
 	}
 	m.IsSpam = *in.IsSpam
-	m.Level = in.Level
+	m.Severity = in.Severity
+	m.Title = *in.Title
 	m.Description = in.Description
 	m.SeenAt = in.SeenAt
 	m.Labels = in.Labels
@@ -69,8 +71,8 @@ func (m *Ticket) Patch(in *input.PatchTicket) error {
 	if in.Source != nil {
 		m.Source = *in.Source
 	}
-	if in.RawAlert != nil {
-		m.RawAlert = in.RawAlert
+	if in.Raw != nil {
+		m.Raw = in.Raw
 	}
 
 	if in.SyncAnnotations {
@@ -104,9 +106,14 @@ func (m *Ticket) Patch(in *input.PatchTicket) error {
 		m.IsSpam = *in.IsSpam
 	}
 
-	if in.Level != nil {
-		m.Level = in.Level
+	if in.Severity != nil {
+		m.Severity = in.Severity
 	}
+
+	if in.Title != nil {
+		m.Title = *in.Title
+	}
+
 	if in.Description != nil {
 		m.Description = in.Description
 	}
@@ -138,16 +145,16 @@ func (m *Ticket) Markdown() string {
 	w("- is_firing: `%t`", m.IsFiring)
 	w("- is_spam: `%t`", m.IsSpam)
 
-	if m.Level != nil {
-		w("- level: `%s`", *m.Level)
+	if m.Severity != nil {
+		w("- severity: `%s`", *m.Severity)
 	} else {
-		w("- level: `null`")
+		w("- severity: `null`")
 	}
 
 	if m.Description != nil {
 		w("- description: `%s`", *m.Description)
 	} else {
-		w("- level: `null`")
+		w("- description: `null`")
 	}
 
 	w("- started_at: `%s`", time.UnixMilli(m.StartedAt).Format(time.RFC3339))

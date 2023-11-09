@@ -71,7 +71,7 @@ const isOutsideClicked = (event) => {
     <div class="box justify-content-center">
       <router-link to="/" class="layout-topbar-logo">
         <img :src="logoUrl" alt="logo"/>
-        <span>iTRACK</span>
+        <span>T3</span>
       </router-link>
     </div>
 
