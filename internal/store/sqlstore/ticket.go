@@ -28,7 +28,7 @@ func newTicketStore(store SqlStore) model.TicketStore {
 	}
 }
 
-func (s *ticketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
+func (s *ticketStore) Get(ctx context.Context, id string) (*model.Ticket, error) {
 	var ticket model.Ticket
 	if err := s.tbl.FindByID(ctx, id, ticketFields(&ticket)); err != nil {
 		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
@@ -180,8 +180,8 @@ func (s *ticketStore) fetchLabelsForAll(ctx context.Context, tickets ...*model.T
 		return nil
 	}
 
-	ids := make([]int64, len(tickets))
-	ticketsMap := make(map[int64]*model.Ticket, len(tickets))
+	ids := make([]string, len(tickets))
+	ticketsMap := make(map[string]*model.Ticket, len(tickets))
 	for i, v := range tickets {
 		ids[i] = v.ID
 		ticketsMap[v.ID] = v

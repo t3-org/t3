@@ -135,7 +135,7 @@ type tracingLayerTicketStore struct {
 	next model.TicketStore
 }
 
-func (s *tracingLayerTicketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
+func (s *tracingLayerTicketStore) Get(ctx context.Context, id string) (*model.Ticket, error) {
 	if ctx == nil {
 		return s.next.Get(ctx, id)
 	}
@@ -312,7 +312,7 @@ type tracingLayerTicketLabelStore struct {
 	next model.TicketLabelStore
 }
 
-func (s *tracingLayerTicketLabelStore) Set(ctx context.Context, ticketID int64, key string, val string) error {
+func (s *tracingLayerTicketLabelStore) Set(ctx context.Context, ticketID string, key string, val string) error {
 	if ctx == nil {
 		return s.next.Set(ctx, ticketID, key, val)
 	}
@@ -331,7 +331,7 @@ func (s *tracingLayerTicketLabelStore) Set(ctx context.Context, ticketID int64, 
 
 	return r1
 }
-func (s *tracingLayerTicketLabelStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
+func (s *tracingLayerTicketLabelStore) Val(ctx context.Context, ticketID string, key string) (string, error) {
 	if ctx == nil {
 		return s.next.Val(ctx, ticketID, key)
 	}

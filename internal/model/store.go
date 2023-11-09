@@ -53,7 +53,7 @@ type SystemStore interface {
 }
 
 type TicketStore interface {
-	Get(ctx context.Context, id int64) (*Ticket, error)
+	Get(ctx context.Context, id string) (*Ticket, error)
 	GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*Ticket, error)
 	FirstByTicketLabel(ctx context.Context, key, val string) (*Ticket, error)
 	GetByCode(ctx context.Context, code string) (*Ticket, error)
@@ -65,8 +65,8 @@ type TicketStore interface {
 }
 
 type TicketLabelStore interface {
-	Set(ctx context.Context, ticketID int64, key string, val string) error
-	Val(ctx context.Context, ticketID int64, key string) (string, error)
+	Set(ctx context.Context, ticketID string, key string, val string) error
+	Val(ctx context.Context, ticketID string, key string) (string, error)
 }
 
 type Health interface {

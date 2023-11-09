@@ -25,7 +25,7 @@ func newTicketLabelStore(store SqlStore) model.TicketLabelStore {
 	}
 }
 
-func (s *ticketLabelsStore) Set(ctx context.Context, ticketID int64, key string, val string) error {
+func (s *ticketLabelsStore) Set(ctx context.Context, ticketID string, key string, val string) error {
 	label := &model.TicketLabel{
 		TicketID: ticketID,
 		Key:      key,
@@ -35,7 +35,7 @@ func (s *ticketLabelsStore) Set(ctx context.Context, ticketID int64, key string,
 	return tracer.Trace(err)
 }
 
-func (s *ticketLabelsStore) Val(ctx context.Context, id int64, key string) (string, error) {
+func (s *ticketLabelsStore) Val(ctx context.Context, id string, key string) (string, error) {
 	var label model.TicketLabel
 	err := s.tbl.First(ctx, ticketLabelFields(&label), sq.Eq{"ticket_id": id, "key": key})
 	if err != nil {

@@ -325,7 +325,7 @@ func (mr *MockTicketStoreMockRecorder) FirstByTicketLabel(ctx, key, val interfac
 }
 
 // Get mocks base method.
-func (m *MockTicketStore) Get(ctx context.Context, id int64) (*model.Ticket, error) {
+func (m *MockTicketStore) Get(ctx context.Context, id string) (*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, id)
 	ret0, _ := ret[0].(*model.Ticket)
@@ -340,23 +340,18 @@ func (mr *MockTicketStoreMockRecorder) Get(ctx, id interface{}) *gomock.Call {
 }
 
 // GetAllByFingerprint mocks base method.
-func (m *MockTicketStore) GetAllByFingerprint(ctx context.Context, fingerprints ...string) ([]*model.Ticket, error) {
+func (m *MockTicketStore) GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
 	m.ctrl.T.Helper()
-	varargs := []interface{}{ctx}
-	for _, a := range fingerprints {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "GetAllByFingerprint", varargs...)
+	ret := m.ctrl.Call(m, "GetAllByFingerprint", ctx, fingerprints)
 	ret0, _ := ret[0].([]*model.Ticket)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllByFingerprint indicates an expected call of GetAllByFingerprint.
-func (mr *MockTicketStoreMockRecorder) GetAllByFingerprint(ctx interface{}, fingerprints ...interface{}) *gomock.Call {
+func (mr *MockTicketStoreMockRecorder) GetAllByFingerprint(ctx, fingerprints interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{ctx}, fingerprints...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByFingerprint", reflect.TypeOf((*MockTicketStore)(nil).GetAllByFingerprint), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllByFingerprint", reflect.TypeOf((*MockTicketStore)(nil).GetAllByFingerprint), ctx, fingerprints)
 }
 
 // GetByCode mocks base method.
@@ -427,7 +422,7 @@ func (m *MockTicketLabelStore) EXPECT() *MockTicketLabelStoreMockRecorder {
 }
 
 // Set mocks base method.
-func (m *MockTicketLabelStore) Set(ctx context.Context, ticketID int64, key, val string) error {
+func (m *MockTicketLabelStore) Set(ctx context.Context, ticketID, key, val string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Set", ctx, ticketID, key, val)
 	ret0, _ := ret[0].(error)
@@ -441,7 +436,7 @@ func (mr *MockTicketLabelStoreMockRecorder) Set(ctx, ticketID, key, val interfac
 }
 
 // Val mocks base method.
-func (m *MockTicketLabelStore) Val(ctx context.Context, ticketID int64, key string) (string, error) {
+func (m *MockTicketLabelStore) Val(ctx context.Context, ticketID, key string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Val", ctx, ticketID, key)
 	ret0, _ := ret[0].(string)

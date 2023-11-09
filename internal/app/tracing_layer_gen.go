@@ -125,7 +125,7 @@ func (a *tracingLayer) GetTicketByKey(ctx context.Context, key string, val strin
 
 	return r1, r2
 }
-func (a *tracingLayer) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
+func (a *tracingLayer) GetTicket(ctx context.Context, id string) (*dto.Ticket, error) {
 	if ctx == nil {
 		return a.next.GetTicket(ctx, id)
 	}
@@ -165,7 +165,7 @@ func (a *tracingLayer) CreateTicket(ctx context.Context, in *input.CreateTicket)
 
 	return r1, r2
 }
-func (a *tracingLayer) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
+func (a *tracingLayer) PatchTicket(ctx context.Context, id string, in *input.PatchTicket) (*dto.Ticket, error) {
 	if ctx == nil {
 		return a.next.PatchTicket(ctx, id, in)
 	}
@@ -205,7 +205,7 @@ func (a *tracingLayer) PatchTicketByLabel(ctx context.Context, key string, val s
 
 	return r1, r2
 }
-func (a *tracingLayer) DeleteTicket(ctx context.Context, id int64) error {
+func (a *tracingLayer) DeleteTicket(ctx context.Context, id string) error {
 	if ctx == nil {
 		return a.next.DeleteTicket(ctx, id)
 	}

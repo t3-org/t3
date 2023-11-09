@@ -8,8 +8,8 @@ import (
 
 type KVStore interface {
 	// Set sets the value and update it if it already existed.
-	Set(ctx context.Context, ticketID int64, key string, val string) error
-	Val(ctx context.Context, ticketID int64, key string) (string, error)
+	Set(ctx context.Context, ticketID string, key string, val string) error
+	Val(ctx context.Context, ticketID string, key string) (string, error)
 }
 
 type Channel interface {

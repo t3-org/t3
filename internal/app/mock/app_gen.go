@@ -54,7 +54,7 @@ func (mr *MockAppMockRecorder) CreateTicket(ctx, in interface{}) *gomock.Call {
 }
 
 // DeleteTicket mocks base method.
-func (m *MockApp) DeleteTicket(ctx context.Context, id int64) error {
+func (m *MockApp) DeleteTicket(ctx context.Context, id string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTicket", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -83,7 +83,7 @@ func (mr *MockAppMockRecorder) EditTicketUrlByKey(ctx, key, val interface{}) *go
 }
 
 // GetTicket mocks base method.
-func (m *MockApp) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
+func (m *MockApp) GetTicket(ctx context.Context, id string) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTicket", ctx, id)
 	ret0, _ := ret[0].(*dto.Ticket)
@@ -155,7 +155,7 @@ func (mr *MockAppMockRecorder) LivenessStatus(ctx interface{}) *gomock.Call {
 }
 
 // PatchTicket mocks base method.
-func (m *MockApp) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
+func (m *MockApp) PatchTicket(ctx context.Context, id string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Ticket)
@@ -169,7 +169,7 @@ func (mr *MockAppMockRecorder) PatchTicket(ctx, id, in interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicket", reflect.TypeOf((*MockApp)(nil).PatchTicket), ctx, id, in)
 }
 
-// PatchTicketByKey mocks base method.
+// PatchTicketByLabel mocks base method.
 func (m *MockApp) PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicketByLabel", ctx, key, val, in)
@@ -178,8 +178,8 @@ func (m *MockApp) PatchTicketByLabel(ctx context.Context, key, val string, in *i
 	return ret0, ret1
 }
 
-// PatchTicketByKey indicates an expected call of PatchTicketByKey.
-func (mr *MockAppMockRecorder) PatchTicketByKey(ctx, key, val, in interface{}) *gomock.Call {
+// PatchTicketByLabel indicates an expected call of PatchTicketByLabel.
+func (mr *MockAppMockRecorder) PatchTicketByLabel(ctx, key, val, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByLabel", reflect.TypeOf((*MockApp)(nil).PatchTicketByLabel), ctx, key, val, in)
 }
@@ -346,7 +346,7 @@ func (mr *MockTicketServiceMockRecorder) CreateTicket(ctx, in interface{}) *gomo
 }
 
 // DeleteTicket mocks base method.
-func (m *MockTicketService) DeleteTicket(ctx context.Context, id int64) error {
+func (m *MockTicketService) DeleteTicket(ctx context.Context, id string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTicket", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -375,7 +375,7 @@ func (mr *MockTicketServiceMockRecorder) EditTicketUrlByKey(ctx, key, val interf
 }
 
 // GetTicket mocks base method.
-func (m *MockTicketService) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
+func (m *MockTicketService) GetTicket(ctx context.Context, id string) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTicket", ctx, id)
 	ret0, _ := ret[0].(*dto.Ticket)
@@ -405,7 +405,7 @@ func (mr *MockTicketServiceMockRecorder) GetTicketByKey(ctx, key, val interface{
 }
 
 // PatchTicket mocks base method.
-func (m *MockTicketService) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
+func (m *MockTicketService) PatchTicket(ctx context.Context, id string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicket", ctx, id, in)
 	ret0, _ := ret[0].(*dto.Ticket)
@@ -419,7 +419,7 @@ func (mr *MockTicketServiceMockRecorder) PatchTicket(ctx, id, in interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicket", reflect.TypeOf((*MockTicketService)(nil).PatchTicket), ctx, id, in)
 }
 
-// PatchTicketByKey mocks base method.
+// PatchTicketByLabel mocks base method.
 func (m *MockTicketService) PatchTicketByLabel(ctx context.Context, key, val string, in *input.PatchTicket) (*dto.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PatchTicketByLabel", ctx, key, val, in)
@@ -428,8 +428,8 @@ func (m *MockTicketService) PatchTicketByLabel(ctx context.Context, key, val str
 	return ret0, ret1
 }
 
-// PatchTicketByKey indicates an expected call of PatchTicketByKey.
-func (mr *MockTicketServiceMockRecorder) PatchTicketByKey(ctx, key, val, in interface{}) *gomock.Call {
+// PatchTicketByLabel indicates an expected call of PatchTicketByLabel.
+func (mr *MockTicketServiceMockRecorder) PatchTicketByLabel(ctx, key, val, in interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PatchTicketByLabel", reflect.TypeOf((*MockTicketService)(nil).PatchTicketByLabel), ctx, key, val, in)
 }

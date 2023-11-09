@@ -21,9 +21,10 @@ func (i *CreateTicket) Validate() error {
 type PatchTicket struct {
 	isCreation bool
 
+	Fingerprint string `json:"fingerprint"` // In patch requests, we'll ignore this field.
+
 	Source          *string           `json:"source"`
 	Raw             *string           `json:"raw"`
-	Fingerprint     string            `json:"fingerprint"` // In patch requests, we'll ignore this field.
 	Annotations     map[string]string `json:"annotations"`
 	SyncAnnotations bool              `json:"sync_annotations"` // if true, set annotations, otherwise upsert the provided annotations.
 	IsFiring        *bool             `json:"is_firing"`

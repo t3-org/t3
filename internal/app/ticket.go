@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"github.com/kamva/hexa/pagination"
@@ -17,7 +16,7 @@ func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (stri
 	if err != nil {
 		return "", tracer.Trace(err)
 	}
-	r := strings.NewReplacer("{id}", strconv.FormatInt(ticket.ID, 10))
+	r := strings.NewReplacer("{id}", ticket.ID)
 	return r.Replace(a.cfg.UI.EditTicketURL), nil
 }
 
@@ -25,7 +24,7 @@ func (a *appCore) GetTicketByKey(ctx context.Context, key, val string) (*dto.Tic
 	return a.store.Ticket().FirstByTicketLabel(ctx, key, val)
 }
 
-func (a *appCore) GetTicket(ctx context.Context, id int64) (*dto.Ticket, error) {
+func (a *appCore) GetTicket(ctx context.Context, id string) (*dto.Ticket, error) {
 	return a.store.Ticket().Get(ctx, id)
 }
 
@@ -91,7 +90,7 @@ func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket) (*mo
 	return &ticket, nil
 }
 
-func (a *appCore) PatchTicket(ctx context.Context, id int64, in *input.PatchTicket) (*dto.Ticket, error) {
+func (a *appCore) PatchTicket(ctx context.Context, id string, in *input.PatchTicket) (*dto.Ticket, error) {
 	ticket, err := a.store.Ticket().Get(ctx, id)
 	if err != nil {
 		return nil, tracer.Trace(err)
@@ -124,7 +123,7 @@ func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.Pa
 	return t, nil
 }
 
-func (a *appCore) DeleteTicket(ctx context.Context, id int64) error {
+func (a *appCore) DeleteTicket(ctx context.Context, id string) error {
 	ticket, err := a.store.Ticket().Get(ctx, id)
 	if err != nil {
 		return tracer.Trace(err)
@@ -133,12 +132,16 @@ func (a *appCore) DeleteTicket(ctx context.Context, id int64) error {
 	return tracer.Trace(a.store.Ticket().Delete(ctx, ticket))
 }
 
-// TODO: Return ([]*model.Ticket,*pagination.Pages,error) as return result.
-
-//nolint:revive
 func (a *appCore) QueryTickets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error) {
-	// TODO: implement me
-	panic("implement me")
+	count, err := a.store.Ticket().Count(ctx, query)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+	p := pagination.New(page, perPage, count)
+	p.Items, err = a.store.Ticket().Query(ctx, query, uint64(p.Offset()), uint64(p.Limit()))
+
+	// TODO: Return ([]*model.Ticket,*pagination.Pages,error) as return result.
+	return p, tracer.Trace(err)
 }
 
 var _ TicketService = &appCore{}

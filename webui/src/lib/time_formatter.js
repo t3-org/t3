@@ -23,3 +23,17 @@ export function formatTimeAgo(date) {
         duration /= division.amount
     }
 }
+
+export function toLocalTime(val) {
+    if (!val) {
+        return "-"
+    }
+
+    const now = new Date()
+    const d = new Date(val)
+    if (now.toLocaleDateString() === d.toLocaleDateString()) {
+        return d.toLocaleTimeString()
+    }
+
+    return d.toLocaleString()
+}

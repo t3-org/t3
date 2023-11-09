@@ -21,10 +21,10 @@ const (
 
 type Ticket struct {
 	Base         `json:",inline" yaml:",inline"`
-	ID           int64     `json:"id" yaml:"id"`
+	ID           string    `json:"id" yaml:"id"`
+	Fingerprint  string    `json:"fingerprint" yaml:"fingerprint"`
 	Source       string    `json:"source"` // Source of the alert.
 	Raw          *string   `json:"raw"`    // the raw alert content. (optional)
-	Fingerprint  string    `json:"fingerprint" yaml:"fingerprint"`
 	Annotations  StringMap `json:"annotations" yaml:"annotations"`
 	IsFiring     bool      `json:"is_firing" yaml:"is_firing"`
 	StartedAt    int64     `json:"started_at" yaml:"started_at"` // unix milliseconds.
@@ -43,11 +43,11 @@ type Ticket struct {
 
 func (m *Ticket) Create(in *input.CreateTicket) error {
 	m.ID = genId()
+	m.Fingerprint = in.Fingerprint
 	m.Source = *in.Source
 	if in.Raw != nil {
 		m.Raw = in.Raw
 	}
-	m.Fingerprint = in.Fingerprint
 	m.Annotations = in.Annotations
 	m.IsFiring = *in.IsFiring
 	m.StartedAt = *in.StartedAt

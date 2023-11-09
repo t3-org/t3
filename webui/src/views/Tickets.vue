@@ -1,7 +1,10 @@
 <script setup>
 import Ticket from "@/components/Ticket.vue";
 
-import {reactive, ref} from 'vue';
+import {onMounted, ref} from 'vue';
+import T3Service from "@/service/T3Service";
+
+const cli = new T3Service()
 
 const raw = `{
       "status": "firing",
@@ -27,26 +30,20 @@ const raw = `{
         "C": 1
       }
     }`
+const tickets = ref([])
 
-const ticket = reactive({
-  raw,
-  source: "grafana",
-  title: "high memory usage",
-  description: "the memory usage is high",
-  id: "12343247823",
-  fingerprint: "2e33938jfehbfubhy3fsda",
-  values: {
-    "B": "44.23943737541908",
-    "C": "1"
-  },
-  is_spam: false,
-  is_firing: true,
-  generator_url: "https://play.grafana.org/alerting/1afz29v7z/edit",
-  severity: "low",
-  started_at: 1699517416399,
-  seen_at: 1699517416399,
-  ended_at: 1699517416399,
+// initialization
+onMounted(async () => {
+  const res = await cli.fetchTickets(searchTerm, 1)
+  if (res.status !== 200) {
+    console.log(res)
+    alert('we got error on fetching tickets')
+    return
+  }
+
+  tickets.value = res.body.data.items
 })
+
 
 const searchTerm = ref()
 
@@ -66,8 +63,15 @@ async function search(event, val) {
 
   </form>
 
-  <Ticket :value="ticket">
-    <p>Content</p>
-  </Ticket>
+  <div>
+    <Ticket v-for="ticket in tickets" :key="ticket.id" class="my-3" :value="ticket"/>
+  </div>
+
+  <Paginator :rows="10" :total-records="100"
+             template="PrevPageLink CurrentPageReport NextPageLink"
+             currentPageReportTemplate="{first} to {last} of (page: {currentPage})"
+  />
+
+
 </template>
 
