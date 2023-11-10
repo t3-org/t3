@@ -8,8 +8,10 @@ export const SeveritiesList = [
     {name: "High", value: "high"},
 ]
 
+export const ticketZeroVal = {title: "", is_spam: false, is_firing: true}
+
 export default class T3Service {
-    static baseAPI = "api/v1"
+    static baseAPI = "/api/v1"
     static perPage = 15
 
     url(p) {
@@ -17,7 +19,23 @@ export default class T3Service {
         return `${T3Service.baseAPI}/${trimmed}`
     }
 
-    async fetchTickets(query, page, perPage) {
+    async toResp(rawResp) {
+        const contentType = rawResp.headers.get("content-type");
+        const isJson = contentType && contentType.indexOf("application/json") !== -1
+        const body = isJson ? await rawResp.json() : await rawResp.text()
+
+        if (rawResp.status !== 200) {
+            console.log("failed request", {raw: rawResp, body})
+        }
+
+        return {status: rawResp.status, body}
+    }
+
+    async getTicket(id) {
+        return this.toResp(await fetch(this.url(`tickets/${id}`)))
+    }
+
+    async queryTickets(query, page, perPage) {
         if (!perPage) {
             perPage = T3Service.perPage
         }
@@ -27,12 +45,11 @@ export default class T3Service {
             page,
             'per_page': perPage ? perPage : T3Service.perPage,
         })
-        const resp = await fetch(this.url(`tickets?`) + params)
-        return {status: resp.status, body: await resp.json()}
+        return this.toResp(await fetch(this.url(`tickets?`) + params))
     }
 
     async patchTicket(id, ticket) {
-        const rawResponse = await fetch(this.url(`tickets/${id}`), {
+        const resp = await fetch(this.url(`tickets/${id}`), {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
@@ -40,26 +57,19 @@ export default class T3Service {
             },
             body: JSON.stringify(ticket)
         });
-        const content = await rawResponse.json()
-        console.log(content);
-        return {status: rawResponse.status, body: rawResponse.json()}
+        return this.toResp(resp)
     }
 
-    getProductsSmall() {
-        return fetch('demo/data/products-small.json')
-            .then((res) => res.json())
-            .then((d) => d.data);
-    }
+    async createTicket(ticket) {
+        const resp = await fetch(this.url(`tickets`), {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ticket)
+        });
 
-    getProducts() {
-        return fetch('demo/data/products.json')
-            .then((res) => res.json())
-            .then((d) => d.data);
-    }
-
-    getProductsWithOrdersSmall() {
-        return fetch('demo/data/products-orders-small.json')
-            .then((res) => res.json())
-            .then((d) => d.data);
+        return this.toResp(resp)
     }
 }

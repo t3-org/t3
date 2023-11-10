@@ -14,10 +14,20 @@ const router = createRouter({
                     component: () => import('@/views/Tickets.vue')
                 },
                 {
+                    path: "/new",
+                    name: "new",
+                    component: () => import('@/views/NewTicket.vue')
+                },
+                {
+                    path: "/edit/:id",
+                    name: "edit",
+                    component: () => import('@/views/EditTicket.vue')
+                },
+                {
                     path: '/docs',
                     name: 'docs',
                     component: () => import('@/views/pages/Docs.vue')
-                } ,
+                },
                 {
                     path: '/about',
                     name: 'about',

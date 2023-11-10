@@ -17,6 +17,15 @@ type ticketResource struct {
 	app app.App
 }
 
+func (r *ticketResource) Get(c echo.Context) error {
+	t, err := r.app.GetTicket(c.Request().Context(), r.ID(c))
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	return hecho.Write(c, RespSuccessGetTicket.SetData(t))
+}
+
 func (r *ticketResource) Create(c echo.Context) error {
 	var in input.CreateTicket
 	if err := c.Bind(&in); err != nil {
@@ -71,6 +80,7 @@ func (r *ticketResource) Query(c echo.Context) error {
 }
 
 var _ hecho.CreateResource = &ticketResource{}
+var _ hecho.GetResource = &ticketResource{}
 var _ hecho.PatchResource = &ticketResource{}
 var _ hecho.DeleteResource = &ticketResource{}
 var _ hecho.QueryResource = &ticketResource{}

@@ -9,7 +9,7 @@ import (
 
 type StringMap map[string]string
 
-func (a StringMap) Scan(value any) error {
+func (a *StringMap) Scan(value any) error {
 	if value == nil {
 		a = nil
 		return nil
@@ -25,9 +25,9 @@ func (a StringMap) Scan(value any) error {
 	}
 }
 
-func (a StringMap) Value() (driver.Value, error) {
-	return json.Marshal(a)
+func (a *StringMap) Value() (driver.Value, error) {
+	return json.Marshal(&a)
 }
 
-var _ driver.Valuer = StringMap{}
-var _ sql.Scanner = StringMap{}
+var _ driver.Valuer = &StringMap{}
+var _ sql.Scanner = &StringMap{}

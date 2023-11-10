@@ -1,62 +1,75 @@
 <script setup>
 import Ticket from "@/components/Ticket.vue";
 
-import {onMounted, ref} from 'vue';
+import {onMounted, reactive, watch} from 'vue';
 import T3Service from "@/service/T3Service";
+import {useToast} from "primevue/usetoast";
+import _ from "lodash";
 
 const cli = new T3Service()
-
-const raw = `{
-      "status": "firing",
-      "labels": {
-        "alertname": "High memory usage",
-        "team": "blue",
-        "zone": "us-1"
-      },
-      "annotations": {
-        "description": "The system has high memory usage",
-        "runbook_url": "https://myrunbook.com/runbook/1234",
-        "summary": "This alert was triggered for zone us-1"
-      },
-      "startsAt": "2021-10-12T09:51:03.157076+02:00",
-      "endsAt": "0001-01-01T00:00:00Z",
-      "generatorURL": "https://play.grafana.org/alerting/1afz29v7z/edit",
-      "fingerprint": "c6eadffa33fcdf37",
-      "silenceURL": "https://play.grafana.org/alerting/silence/new?alertmanager=grafana&matchers=alertname%3DT2%2Cteam%3Dblue%2Czone%3Dus-1",
-      "dashboardURL": "",
-      "panelURL": "",
-      "values": {
-        "B": 44.23943737541908,
-        "C": 1
-      }
-    }`
-const tickets = ref([])
+const toast = useToast()
 
 // initialization
-onMounted(async () => {
-  const res = await cli.fetchTickets(searchTerm, 1)
-  if (res.status !== 200) {
-    console.log(res)
-    alert('we got error on fetching tickets')
-    return
-  }
+onMounted(search)
 
-  tickets.value = res.body.data.items
+
+const tickets = reactive({
+  items: [],
+  query: "",
+  ignorePaginationChanges: false,
+  pagination: {
+    page: 1,
+    per_page: 15,
+    page_count: 10,
+    total_count: 100,
+  }
 })
 
 
-const searchTerm = ref()
+async function search() {
+  if (tickets.ignorePaginationChanges){
+    tickets.ignorePaginationChanges=false
+    return
+  }
+  const res = await cli.queryTickets(
+      tickets.query,
+      tickets.pagination.page,
+      tickets.pagination.per_page,
+  )
 
-async function search(event, val) {
-  console.log("searching...", val)
+  if (res.status !== 200) {
+    toast.add({severity: 'error', summary: 'can not fetch tickets', detail: res.body, life: 15000});
+    return
+  }
+
+  tickets.items = res.body.data.items
+  tickets.ignorePaginationChanges = true
+  tickets.pagination = res.body.data.pagination
 }
+
+function updateTicketById(ticket) {
+  for (let i = 0; i < tickets.items.length; i++) {
+    if (tickets.items[i].id === ticket.id) {
+      tickets.items[i] = ticket
+    }
+  }
+}
+
+const debounceQuery = _.debounce(function (e) {
+  tickets.query = e.target.value;
+}, 500)
+
+watch(() => tickets.query, search);
+watch(() => tickets.pagination, search, {deep: true});
+
 
 </script>
 
 <template>
-  <form @submit.prevent="search($event,searchTerm)">
+  <form @submit.prevent="search">
     <div class="p-inputgroup mb-2">
-      <InputText v-model="searchTerm"
+      <InputText :value="tickets.query"
+                 v-on:input="debounceQuery"
                  size="large"
                  placeholder="search in k8s label selector format (e.g., team=ordering)"/>
     </div>
@@ -64,12 +77,20 @@ async function search(event, val) {
   </form>
 
   <div>
-    <Ticket v-for="ticket in tickets" :key="ticket.id" class="my-3" :value="ticket"/>
+    <Ticket v-for="ticket in tickets.items"
+            :key="ticket.id"
+            class="my-3"
+            :value="ticket"
+            @update:value="updateTicketById($event)"
+    />
   </div>
 
-  <Paginator :rows="10" :total-records="100"
-             template="PrevPageLink CurrentPageReport NextPageLink"
-             currentPageReportTemplate="{first} to {last} of (page: {currentPage})"
+  <Paginator
+      @page="(e)=>tickets.pagination.page=e.page"
+      :rows="tickets.pagination.per_page"
+      :total-records="tickets.pagination.total_count"
+      template="PrevPageLink CurrentPageReport NextPageLink"
+      currentPageReportTemplate="{first} to {last} of {totalRecords} (page: {currentPage})"
   />
 
 
