@@ -11,9 +11,9 @@ import (
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
-	apperr "space.org/space/internal/error"
-	"space.org/space/internal/model"
-	"space.org/space/pkg/md"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/pkg/md"
 )
 
 type MatrixChannel struct {

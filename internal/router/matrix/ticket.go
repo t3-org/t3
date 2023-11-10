@@ -8,12 +8,12 @@ import (
 	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
 	"gopkg.in/yaml.v2"
-	"space.org/space/internal/app"
-	"space.org/space/internal/config"
-	apperr "space.org/space/internal/error"
-	"space.org/space/internal/input"
-	"space.org/space/internal/registry/services"
-	"space.org/space/internal/service/channel"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/config"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/input"
+	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/internal/service/channel"
 )
 
 func registerTicketCommands(r *Router, res *ticketResource) {

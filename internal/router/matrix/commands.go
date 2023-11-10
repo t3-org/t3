@@ -2,9 +2,9 @@ package matrix
 
 import (
 	"github.com/kamva/hexa"
-	"space.org/space/internal/app"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
 )
 
 func RegisterCommands(r hexa.ServiceRegistry, router *Router) {

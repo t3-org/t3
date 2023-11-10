@@ -6,9 +6,9 @@ import (
 
 	"github.com/kamva/hexa/pagination"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/dto"
-	"space.org/space/internal/input"
-	"space.org/space/internal/model"
+	"t3.org/t3/internal/dto"
+	"t3.org/t3/internal/input"
+	"t3.org/t3/internal/model"
 )
 
 func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {

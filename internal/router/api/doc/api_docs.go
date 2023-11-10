@@ -30,8 +30,8 @@ package doc
 import (
 	"github.com/kamva/hexa/pagination"
 	"github.com/labstack/echo/v4"
-	"space.org/space/internal/dto"
-	"space.org/space/internal/input"
+	"t3.org/t3/internal/dto"
+	"t3.org/t3/internal/input"
 )
 
 type replyCode struct {

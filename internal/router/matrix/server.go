@@ -8,7 +8,7 @@ import (
 	"github.com/kamva/tracer"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 type Server struct {

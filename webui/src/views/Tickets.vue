@@ -20,8 +20,8 @@ const tickets = reactive({
   pagination: {
     page: 1,
     per_page: 15,
-    page_count: 10,
-    total_count: 100,
+    page_count: 0,
+    total_count: 0,
   }
 })
 

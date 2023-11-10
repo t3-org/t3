@@ -7,10 +7,10 @@ import (
 
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/app"
-	"space.org/space/internal/config"
-	"space.org/space/internal/registry/services"
-	"space.org/space/internal/service/channel"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/internal/service/channel"
 )
 
 func registerHomeCommands(r *Router, res *homeResource) {

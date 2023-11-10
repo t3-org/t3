@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 var versionCmd = &cobra.Command{

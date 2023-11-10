@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"space.org/space/internal/model"
+	"t3.org/t3/internal/model"
 )
 
 type Ticket = model.Ticket

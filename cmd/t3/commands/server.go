@@ -4,10 +4,10 @@ import (
 	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
-	"space.org/space/internal/app"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
-	"space.org/space/internal/router/matrix"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/internal/router/matrix"
 )
 
 var serverCmd = &cobra.Command{

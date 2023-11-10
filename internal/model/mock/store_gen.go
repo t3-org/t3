@@ -10,8 +10,8 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	hexa "github.com/kamva/hexa"
-	model "space.org/space/internal/model"
-	sqld "space.org/space/pkg/sqld"
+	model "t3.org/t3/internal/model"
+	sqld "t3.org/t3/pkg/sqld"
 )
 
 // MockStore is a mock of Store interface.

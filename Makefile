@@ -13,11 +13,11 @@ layers:
 
 .PHONY: listen
 listen:
-	go run -ldflags='$(LDFLAGS)' ./cmd/itrack/main.go server listen
+	go run -ldflags='$(LDFLAGS)' ./cmd/t3/main.go server listen
 
 .PHONY: extract-api-docs
 extract-api-docs:
-	go run -ldflags='$(LDFLAGS)' ./cmd/itrack/main.go openapi extract
+	go run -ldflags='$(LDFLAGS)' ./cmd/t3/main.go openapi extract
 
 .PHONY: build-api-docs
 build-api-docs:

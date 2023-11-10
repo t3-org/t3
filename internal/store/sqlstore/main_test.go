@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	_ "space.org/space/internal/registry/provider"
+	_ "t3.org/t3/internal/registry/provider"
 
 	"github.com/kamva/gutil"
 	huner "github.com/kamva/hexa-tuner"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/testbox"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/testbox"
 )
 
 func TestMain(t *testing.M) {

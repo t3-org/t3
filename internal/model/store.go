@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"github.com/kamva/hexa"
-	"space.org/space/pkg/sqld"
+	"t3.org/t3/pkg/sqld"
 )
 
 //nolint:unused

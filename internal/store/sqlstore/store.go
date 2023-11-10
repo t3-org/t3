@@ -17,11 +17,11 @@ import (
 	ps "github.com/mattermost/morph/drivers/postgres"
 	"github.com/mattermost/morph/sources/embedded"
 	sqldblogger "github.com/simukti/sqldb-logger"
-	appembed "space.org/space/embed"
-	"space.org/space/internal/config"
-	"space.org/space/internal/model"
-	"space.org/space/pkg/hlogadapter"
-	"space.org/space/pkg/sqld"
+	appembed "t3.org/t3/embed"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/pkg/hlogadapter"
+	"t3.org/t3/pkg/sqld"
 )
 
 const (

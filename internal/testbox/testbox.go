@@ -7,7 +7,7 @@ import (
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/hexa/sr"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/registry"
+	"t3.org/t3/internal/registry"
 )
 
 // TODO: We can remove testbox completely and just have couple of helper methods around registry (in a helper package in hexa).

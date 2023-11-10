@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"space.org/space/internal/input"
-	"space.org/space/internal/model"
+	"t3.org/t3/internal/input"
+	"t3.org/t3/internal/model"
 )
 
 func (a *appCore) callTicketWebhook(ctx context.Context, in *input.Channel, t *model.Ticket) error {

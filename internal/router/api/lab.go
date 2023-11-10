@@ -5,7 +5,7 @@ import (
 
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/labstack/echo/v4"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 func (api *API) registerLabRoutes(lab *echo.Group, res *labResource) {

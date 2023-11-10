@@ -4,8 +4,8 @@ import (
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
-	"space.org/space/internal/app"
-	"space.org/space/internal/input"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/input"
 )
 
 func (api *API) registerTicketRoutes(tickets *echo.Group, res *ticketResource) {

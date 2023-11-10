@@ -1,4 +1,4 @@
-Space is an example project created by Hexa next gen.
+T3(The Ticket Tracker) tracks the tickets (e.g., grafana alerts).
 
 __Prerequisites__
 
@@ -11,7 +11,7 @@ __Prerequisites__
 - Run the server:
 
 ```bash
-  go run ./cmd/space/main.go server listen
+  go run ./cmd/t3/main.go server listen
 ```
 
 ### How to update docs?
@@ -73,7 +73,7 @@ go run main.go openapi extract
 package main
 
 import (
-	_ "space.org/space/internal/doc"
+	_ "t3.org/t3/internal/doc"
 )
 ```
 

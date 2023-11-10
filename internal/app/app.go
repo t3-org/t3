@@ -4,12 +4,12 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/htel"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/service/channel"
+	"t3.org/t3/internal/service/channel"
 
-	"space.org/space/internal/config"
-	"space.org/space/internal/model"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
 )
 
 // appCore is implementation of the App

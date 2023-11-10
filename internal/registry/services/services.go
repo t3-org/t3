@@ -8,10 +8,10 @@ import (
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/hexa/htel"
 	"github.com/kamva/hexa/probe"
-	"space.org/space/internal/config"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/service/channel"
-	"space.org/space/pkg/md"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/service/channel"
+	"t3.org/t3/pkg/md"
 )
 
 // Services is a simple facade that provides services using

@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/labstack/echo/v4"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 type API struct {

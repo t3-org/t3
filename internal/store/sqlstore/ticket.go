@@ -5,10 +5,10 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/kamva/tracer"
-	apperr "space.org/space/internal/error"
-	"space.org/space/internal/helpers"
-	"space.org/space/internal/model"
-	"space.org/space/pkg/sqld"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/helpers"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/pkg/sqld"
 )
 
 const tableTicket = "tickets"

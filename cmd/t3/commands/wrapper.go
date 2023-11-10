@@ -9,11 +9,11 @@ import (
 	"github.com/kamva/hexa/sr"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
-	"space.org/space/infra"
-	"space.org/space/internal/app"
-	"space.org/space/internal/config"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
+	"t3.org/t3/infra"
+	"t3.org/t3/internal/app"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
 )
 
 type cmdOpts struct {

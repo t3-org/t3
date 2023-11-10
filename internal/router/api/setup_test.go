@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"space.org/space/internal/model"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
-	"space.org/space/internal/testbox"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/internal/testbox"
 )
 
 func service() services.Services {

@@ -9,7 +9,7 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/config"
+	"t3.org/t3/internal/config"
 )
 
 type TempDB interface {

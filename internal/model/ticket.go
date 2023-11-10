@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/kamva/gutil"
-	"space.org/space/internal/input"
+	"t3.org/t3/internal/input"
 )
 
 const (

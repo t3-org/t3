@@ -293,7 +293,7 @@ func (c AsynqConfig) Queues() map[string]int {
 }
 
 type MatrixConfig struct {
-	// CommandPrefix is the prefix of each command. e.g., "!itrack"
+	// CommandPrefix is the prefix of each command. e.g., "!t"
 	CommandPrefix  string `json:"command_prefix"`
 	OKEmoji        string `json:"ok_emoji"` // The emoji we use to set a command as done.
 	PickleKey      string `json:"pickle_key"`

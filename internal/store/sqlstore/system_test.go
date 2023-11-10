@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	apperr "space.org/space/internal/error"
-	"space.org/space/internal/model"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/testbox"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/model"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/testbox"
 )
 
 func store() model.Store {

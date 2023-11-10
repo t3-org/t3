@@ -5,7 +5,7 @@ import (
 	"github.com/kamva/hexa"
 	hjob "github.com/kamva/hexa-job"
 	"github.com/kamva/tracer"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 func RegisterJobs(w hjob.Worker, r hexa.ServiceRegistry, a app.App) error {

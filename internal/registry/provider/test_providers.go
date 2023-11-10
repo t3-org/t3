@@ -5,12 +5,12 @@ import (
 	"github.com/kamva/gutil"
 	"github.com/kamva/hexa"
 	"github.com/kamva/tracer"
-	mockapp "space.org/space/internal/app/mock"
-	"space.org/space/internal/config"
-	"space.org/space/internal/model"
-	mockmodel "space.org/space/internal/model/mock"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/store/sqlstore"
+	mockapp "t3.org/t3/internal/app/mock"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/model"
+	mockmodel "t3.org/t3/internal/model/mock"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/store/sqlstore"
 )
 
 func TmpDBProvider(r hexa.ServiceRegistry) error {

@@ -8,9 +8,9 @@ import (
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/sr"
 	"github.com/stretchr/testify/require"
-	mockmodel "space.org/space/internal/model/mock"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/testbox"
+	mockmodel "t3.org/t3/internal/model/mock"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/testbox"
 )
 
 var _any = gomock.Any()

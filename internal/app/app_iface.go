@@ -6,8 +6,8 @@ import (
 
 	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/pagination"
-	"space.org/space/internal/dto"
-	"space.org/space/internal/input"
+	"t3.org/t3/internal/dto"
+	"t3.org/t3/internal/input"
 )
 
 // App is core of the project

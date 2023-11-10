@@ -4,8 +4,8 @@ import (
 	"github.com/kamva/hexa-echo/hechodoc"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
-	"space.org/space/internal/registry"
-	"space.org/space/internal/registry/services"
+	"t3.org/t3/internal/registry"
+	"t3.org/t3/internal/registry/services"
 )
 
 var openapiCmd = &cobra.Command{

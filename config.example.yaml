@@ -1,4 +1,4 @@
-app_name: "Itrack"
+app_name: "T3"
 instance_name: "single_local"
 environment: development
 debug: true
@@ -16,7 +16,7 @@ fallback_languages:
 port: 4000
 db:
   driver: postgres
-  dsn: postgres://root:12345@localhost/itrack?sslmode=disable&connect_timeout=10&binary_parameters=yes
+  dsn: postgres://root:12345@localhost/t3?sslmode=disable&connect_timeout=10&binary_parameters=yes
   max_open_conns: 300 # unlimited.
   max_idle_conns: 20
   conn_max_idle_time_milliseconds: 300000

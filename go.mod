@@ -1,4 +1,4 @@
-module space.org/space
+module t3.org/t3
 
 go 1.20
 

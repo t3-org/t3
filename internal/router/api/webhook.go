@@ -5,9 +5,9 @@ import (
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
-	"space.org/space/internal/app"
-	apperr "space.org/space/internal/error"
-	"space.org/space/internal/input"
+	"t3.org/t3/internal/app"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/input"
 )
 
 func (api *API) registerWebhookRoutes(webhooks *echo.Group, res *webhookResource) {

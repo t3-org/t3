@@ -3,7 +3,7 @@ package channel
 import (
 	"context"
 
-	"space.org/space/internal/model"
+	"t3.org/t3/internal/model"
 )
 
 type KVStore interface {

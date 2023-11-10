@@ -11,7 +11,7 @@ import (
 //--------------------------------
 
 var (
-	RespSuccessGetRoutes = hexa.NewReply(http.StatusOK, "itrack.lab.get_routes.ok")
+	RespSuccessGetRoutes = hexa.NewReply(http.StatusOK, "t3.lab.get_routes.ok")
 	RespSuccessPong      = hexa.NewReply(http.StatusOK, "pong")
 )
 
@@ -20,11 +20,11 @@ var (
 //--------------------------------
 
 var (
-	RespSuccessGetTicket    = hexa.NewReply(http.StatusOK, "itrack.ticket.get.ok")
-	RespSuccessCreateTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.create.ok")
-	RespSuccessUpdateTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.update.ok")
-	RespSuccessDeleteTicket = hexa.NewReply(http.StatusOK, "itrack.ticket.delete.ok")
-	RespSuccessQueryTicket  = hexa.NewReply(http.StatusOK, "itrack.ticket.query.ok")
+	RespSuccessGetTicket    = hexa.NewReply(http.StatusOK, "t3.ticket.get.ok")
+	RespSuccessCreateTicket = hexa.NewReply(http.StatusOK, "t3.ticket.create.ok")
+	RespSuccessUpdateTicket = hexa.NewReply(http.StatusOK, "t3.ticket.update.ok")
+	RespSuccessDeleteTicket = hexa.NewReply(http.StatusOK, "t3.ticket.delete.ok")
+	RespSuccessQueryTicket  = hexa.NewReply(http.StatusOK, "t3.ticket.query.ok")
 )
 
 //--------------------------------
@@ -32,5 +32,5 @@ var (
 //--------------------------------
 
 var (
-	RespSuccessHandleWebhook = hexa.NewReply(http.StatusOK, "itrack.webhook.handle.ok")
+	RespSuccessHandleWebhook = hexa.NewReply(http.StatusOK, "t3.webhook.handle.ok")
 )

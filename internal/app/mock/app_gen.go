@@ -11,8 +11,8 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	hexa "github.com/kamva/hexa"
 	pagination "github.com/kamva/hexa/pagination"
-	dto "space.org/space/internal/dto"
-	input "space.org/space/internal/input"
+	dto "t3.org/t3/internal/dto"
+	input "t3.org/t3/internal/input"
 )
 
 // MockApp is a mock of App interface.

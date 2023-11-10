@@ -2,7 +2,7 @@ package jobs
 
 import (
 	"github.com/kamva/hexa"
-	"space.org/space/internal/app"
+	"t3.org/t3/internal/app"
 )
 
 type Resources struct {

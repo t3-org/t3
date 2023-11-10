@@ -11,7 +11,7 @@ import (
 //--------------------------------
 
 var (
-	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "itrack.invalid_id_value")
+	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "t3.invalid_id_value")
 )
 
 //--------------------------------
@@ -19,7 +19,7 @@ var (
 //--------------------------------
 
 var (
-	ErrTicketNotFound = hexa.NewError(http.StatusNotFound, "itrack.ticket.not_found_error")
+	ErrTicketNotFound = hexa.NewError(http.StatusNotFound, "t3.ticket.not_found_error")
 )
 
 // --------------------------------
@@ -27,7 +27,7 @@ var (
 // --------------------------------
 
 var (
-	ErrTicketKVNotFound = hexa.NewError(http.StatusNotFound, "itrack.ticket_kv.not_found_error")
+	ErrTicketKVNotFound = hexa.NewError(http.StatusNotFound, "t3.ticket_kv.not_found_error")
 )
 
 //--------------------------------
@@ -35,7 +35,7 @@ var (
 //--------------------------------
 
 var (
-	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "itrack.system.property_not_found")
+	ErrSystemPropertyNotFound = hexa.NewError(http.StatusNotFound, "t3.system.property_not_found")
 )
 
 //--------------------------------
@@ -43,12 +43,12 @@ var (
 //--------------------------------
 
 var (
-	ErrTooManyRequests = hexa.NewError(http.StatusTooManyRequests, "itrack.gateway.too_many_requests")
+	ErrTooManyRequests = hexa.NewError(http.StatusTooManyRequests, "t3.gateway.too_many_requests")
 )
 
 // --------------------------------
 // Webhook errors
 // --------------------------------
 var (
-	ErrInvalidWebhookType = hexa.NewError(http.StatusBadRequest, "itrack.webhook.err")
+	ErrInvalidWebhookType = hexa.NewError(http.StatusBadRequest, "t3.webhook.err")
 )

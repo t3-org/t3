@@ -5,8 +5,8 @@ import (
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
-	"space.org/space/internal/registry/services"
-	"space.org/space/pkg/md"
+	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/pkg/md"
 )
 
 type Resource struct {

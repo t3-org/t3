@@ -2,8 +2,8 @@ package provider
 
 import (
 	"github.com/kamva/hexa"
-	"space.org/space/internal/config"
-	"space.org/space/internal/registry"
+	"t3.org/t3/internal/config"
+	"t3.org/t3/internal/registry"
 )
 
 func conf(r hexa.ServiceRegistry) *config.Config {
