@@ -123,7 +123,7 @@ open_telemetry:
 - To run the app's server, run `{build_app} server listen` command.
 - liveness, readiness endpoints:
 
-```http request
+```text
 // liveness
 http://{probe_server_address}/live
 
