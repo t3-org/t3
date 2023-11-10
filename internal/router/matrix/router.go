@@ -84,11 +84,12 @@ func (r *Router) Route(ctx context.Context, source mautrix.EventSource, evt *eve
 func (r *Router) route(ctx context.Context, h Handler, cmd *Command) (errRes error) {
 	defer func() {
 		if recovered := recover(); recovered != nil && errRes == nil {
-			if err, ok := recovered.(error); ok {
-				errRes = err
-				return
+			err, _ := recovered.(error)
+			if err == nil {
+				err = errors.New(fmt.Sprint(recovered))
 			}
-			errRes = errors.New(fmt.Sprint(recovered))
+
+			errRes = r.ErrHandler(ctx, cmd, err)
 		}
 	}()
 	if err := h(ctx, cmd); err != nil {

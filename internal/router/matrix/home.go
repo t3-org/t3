@@ -53,7 +53,7 @@ func (r *homeResource) ErrorHandler(_ context.Context, cmd *Command, err error) 
 		hlog.Err(err),
 	)
 
-	txt := fmt.Sprintf("Error occurred: \n command: `%s` \n error: `%s`", msgBody, err.Error())
+	txt := fmt.Sprintf("Error occurred: \n\n command: `%s` \n\n error: `%s`", msgBody, err.Error())
 	return tracer.Trace(r.SendTextWithSameRelation(cmd.Event, txt))
 }
 

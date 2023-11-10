@@ -7,6 +7,7 @@ import (
 
 	"github.com/kamva/gutil"
 	"github.com/kamva/tracer"
+	"gopkg.in/yaml.v2"
 	"space.org/space/internal/app"
 	"space.org/space/internal/config"
 	apperr "space.org/space/internal/error"
@@ -16,9 +17,12 @@ import (
 )
 
 func registerTicketCommands(r *Router, res *ticketResource) {
-	r.Register("new", res.NewTicketLink, "get a link to the ticket creation form in the UI.") // non-thread command
-	r.Register("edit", res.EditTicketLink, "Get a link to the ticket edition form in the UI.")
+	r.Register("new", res.New, "Creaet a new ticket by providing its yaml data")                   // non-thread command
+	r.Register("new_link", res.NewTicketLink, "get a link to the ticket creation form in the UI.") // non-thread command
+	r.Register("patch", res.Patch, "Patch the ticket using yaml value passed as param of the command")
+	r.Register("edit_link", res.EditTicketLink, "Get a link to the ticket edition form in the UI.")
 	r.Register("ticket", res.GetTicket, "Get the ticket.")
+	r.Register("ticket_yaml", res.GetTicketInYaml, "Get the ticket in yaml format.")
 
 	r.Register("seen", res.SetSeen, "mark ticket as seen. e.g., `!!seen {minutes(default: 0)`")
 	r.Register("spam", res.SetSpam, "set the spam flag on the ticket. e.g., `!!spam`, `!!spam false`, `!!spam true(default)`")
@@ -88,6 +92,44 @@ func (r *ticketResource) GetTicket(ctx context.Context, cmd *Command) error {
 	}
 
 	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("__Ticket__ \n\n %s ", t.Markdown()))
+}
+
+func (r *ticketResource) GetTicketInYaml(ctx context.Context, cmd *Command) error {
+	threadID := string(r.threadEventID(cmd.Event))
+	if threadID == "" {
+		return apperr.ErrTicketNotFound
+	}
+
+	t, err := r.app.GetTicketByKey(ctx, r.mx.Key(cmd.Event.RoomID), threadID)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	res, err := yaml.Marshal(t)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf(`<code><pre>%s</pre></code>`, string(res)))
+}
+
+func (r *ticketResource) New(ctx context.Context, cmd *Command) error {
+	var in input.CreateTicket
+	if err := yaml.Unmarshal([]byte(cmd.Params), &in); err != nil {
+		return tracer.Trace(err)
+	}
+	_, err := r.app.CreateTicket(ctx, &in)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	return r.SendOKReaction(cmd.Event)
+}
+
+func (r *ticketResource) Patch(ctx context.Context, cmd *Command) error {
+	var in input.PatchTicket
+	if err := yaml.Unmarshal([]byte(cmd.Params), &in); err != nil {
+		return tracer.Trace(err)
+	}
+	return r.patch(ctx, cmd, &in)
 }
 
 func (r *ticketResource) SetSeen(ctx context.Context, cmd *Command) error {

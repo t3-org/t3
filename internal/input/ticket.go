@@ -21,25 +21,25 @@ func (i *CreateTicket) Validate() error {
 type PatchTicket struct {
 	isCreation bool
 
-	Fingerprint string `json:"fingerprint"` // In patch requests, we'll ignore this field.
+	Fingerprint string `json:"fingerprint" yaml:"fingerprint"` // In patch requests, we'll ignore this field.
 
-	Source          *string           `json:"source"`
-	Raw             *string           `json:"raw"`
-	Annotations     map[string]string `json:"annotations"`
-	SyncAnnotations bool              `json:"sync_annotations"` // if true, set annotations, otherwise upsert the provided annotations.
-	IsFiring        *bool             `json:"is_firing"`
-	StartedAt       *int64            `json:"started_at"`
-	EndedAt         *int64            `json:"ended_at"`
-	Values          map[string]string `json:"values"`
-	GeneratorUrl    *string           `json:"generator_url"`
-	IsSpam          *bool             `json:"is_spam"`
-	Severity        *string           `json:"severity"`
-	Title           *string           `json:"title"`
-	Description     *string           `json:"description"`
-	SeenAt          *int64            `json:"seen_at"`
-	Labels          map[string]string `json:"labels"`
-	SyncLabels      bool              `json:"sync_labels"`
-	Channel         *Channel          `json:"channel"`
+	Source          *string           `json:"source" yaml:"source"`
+	Raw             *string           `json:"raw" yaml:"raw"`
+	Annotations     map[string]string `json:"annotations" yaml:"annotations"`
+	SyncAnnotations bool              `json:"sync_annotations" yaml:"sync_annotations"` // if true, set annotations, otherwise upsert the provided annotations.
+	IsFiring        *bool             `json:"is_firing" yaml:"is_firing"`
+	StartedAt       *int64            `json:"started_at" yaml:"started_at"`
+	EndedAt         *int64            `json:"ended_at" yaml:"ended_at"`
+	Values          map[string]string `json:"values" yaml:"values"`
+	GeneratorUrl    *string           `json:"generator_url" yaml:"generator_url"`
+	IsSpam          *bool             `json:"is_spam" yaml:"is_spam"`
+	Severity        *string           `json:"severity" yaml:"severity"`
+	Title           *string           `json:"title" yaml:"title"`
+	Description     *string           `json:"description" yaml:"description"`
+	SeenAt          *int64            `json:"seen_at" yaml:"seen_at"`
+	Labels          map[string]string `json:"labels" yaml:"labels"`
+	SyncLabels      bool              `json:"sync_labels" yaml:"sync_labels"`
+	Channel         *Channel          `json:"channel" yaml:"channel"`
 }
 
 func (i *PatchTicket) SetIsCreation(isCreation bool) {

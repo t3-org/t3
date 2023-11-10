@@ -23,8 +23,8 @@ type Ticket struct {
 	Base         `json:",inline" yaml:",inline"`
 	ID           string    `json:"id" yaml:"id"`
 	Fingerprint  string    `json:"fingerprint" yaml:"fingerprint"`
-	Source       string    `json:"source"` // Source of the alert.
-	Raw          *string   `json:"raw"`    // the raw alert content. (optional)
+	Source       string    `json:"source" yaml:"source"` // Source of the alert.
+	Raw          *string   `json:"raw" yaml:"raw"`       // the raw alert content. (optional)
 	Annotations  StringMap `json:"annotations" yaml:"annotations"`
 	IsFiring     bool      `json:"is_firing" yaml:"is_firing"`
 	StartedAt    int64     `json:"started_at" yaml:"started_at"` // unix milliseconds.
@@ -166,7 +166,7 @@ func (m *Ticket) Markdown() string {
 	if m.SeenAt != nil {
 		w("- seen_at: `%s`", time.UnixMilli(*m.SeenAt).Format(time.RFC3339))
 	} else {
-		w("- seen-at: `null`")
+		w("- seen_at: `null`")
 	}
 
 	w("- labels: \n")
