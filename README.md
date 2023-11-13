@@ -145,3 +145,9 @@ http://{probe_server_address}/ready
 ```bash
 xh -v post :4000/api/v1/tickets fingerprint="h" is_firing:=true started_at:=1 level="low" description="a test alert" webhook:='{"channel":"matrix","channel_id":"!sGJfLhjEueOpYkVKdz:matrix.org"}'
 ```
+
+### TODO:
+- validate create/patch data.
+- Write query filter functionality at server-side.
+- Write tests
+- QA

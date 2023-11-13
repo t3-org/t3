@@ -526,15 +526,13 @@ func MatrixBotServerProvider(r hexa.ServiceRegistry) error {
 }
 
 func MarkdownProvider(r hexa.ServiceRegistry) error {
-	// create Markdown parser with extensions
+	// create Markdown parser extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
-	p := parser.NewWithExtensions(extensions)
 
-	// create HTML renderer with extensions
+	// create HTML renderer options
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{Flags: htmlFlags}
-	renderer := html.NewRenderer(opts)
 
-	r.Register(registry.ServiceNameMarkdown, md.NewMarkdown(p, renderer))
+	r.Register(registry.ServiceNameMarkdown, md.NewMarkdown(extensions, opts))
 	return nil
 }

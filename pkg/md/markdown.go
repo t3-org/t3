@@ -2,23 +2,26 @@ package md
 
 import (
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 )
 
 type Markdown struct {
-	p *parser.Parser
-	r markdown.Renderer
+	parserExtensions parser.Extensions
+	rendererOptions  html.RendererOptions
 }
 
-func NewMarkdown(parser *parser.Parser, renderer markdown.Renderer) *Markdown {
+func NewMarkdown(extensions parser.Extensions, rendererOptions html.RendererOptions) *Markdown {
 	return &Markdown{
-		p: parser,
-		r: renderer,
+		parserExtensions: extensions,
+		rendererOptions:  rendererOptions,
 	}
 }
 
 func (m *Markdown) Render(md []byte) []byte {
-	return markdown.Render(m.p.Parse(md), m.r)
+	p := parser.NewWithExtensions(m.parserExtensions)
+	r := html.NewRenderer(m.rendererOptions)
+	return markdown.Render(p.Parse(md), r)
 }
 
 func (m *Markdown) RenderString(md string) string {

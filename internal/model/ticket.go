@@ -141,7 +141,7 @@ func (m *Ticket) Markdown() string {
 		b.WriteString(fmt.Sprintf(val+"\n", params...))
 	}
 
-	w("- id: `%d`", m.ID)
+	w("- id: `%s`", m.ID)
 	w("- is_firing: `%t`", m.IsFiring)
 	w("- is_spam: `%t`", m.IsSpam)
 

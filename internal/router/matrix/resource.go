@@ -35,6 +35,7 @@ func (r *Resource) SendTextWithSameRelation(e *event.Event, text string) error {
 	}
 
 	rendered := r.md.RenderString(text)
+	rendered = r.md.RenderString(text)
 	if rendered != text {
 		content.Format = event.FormatHTML
 		content.FormattedBody = rendered
