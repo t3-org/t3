@@ -13,15 +13,25 @@ type CreateTicket PatchTicket
 
 func (i *CreateTicket) Validate() error {
 	return validation.ValidateStruct(i,
-		validation.Field(&i.Severity, validation.In("low", "medium", "high")),
-	) // TODO: write validations.
+		validation.Field(&i.Fingerprint, validation.Required),
+		validation.Field(&i.Source, validation.Required),
+		validation.Field(&i.IsFiring, validation.Required),
+		validation.Field(&i.StartedAt, validation.Required, validation.Min(1)),
+		validation.Field(&i.EndedAt, validation.Min(1)),
+		validation.Field(&i.IsSpam, validation.Required),
+		validation.Field(&i.Severity, validation.Required, validation.In("low", "medium", "high")),
+		validation.Field(&i.Title, validation.Required),
+		validation.Field(&i.SeenAt, validation.Min(1)),
+	)
 
 }
 
 type PatchTicket struct {
 	isCreation bool
 
-	Fingerprint string `json:"fingerprint" yaml:"fingerprint"` // In patch requests, we'll ignore this field.
+	// In patch requests, we'll ignore the fingerprint field. in creation
+	// requests it's required.
+	Fingerprint string `json:"fingerprint" yaml:"fingerprint"`
 
 	Source          *string           `json:"source" yaml:"source"`
 	Raw             *string           `json:"raw" yaml:"raw"`
@@ -52,10 +62,13 @@ func (i *PatchTicket) Validate() error {
 		return val.Validate()
 	}
 
+	// Patch validation
 	return validation.ValidateStruct(i,
+		validation.Field(&i.StartedAt, validation.Min(1)),
+		validation.Field(&i.EndedAt, validation.Min(1)),
 		validation.Field(&i.Severity, validation.In("low", "medium", "high")),
-	) // TODO: update validations.
-
+		validation.Field(&i.SeenAt, validation.Min(1)),
+	)
 }
 
 func RemoveInternalLabels(values map[string]string) {

@@ -8,12 +8,7 @@
 - Add a method to set custom error on db constraints(e.g., when a row is duplicate)
 see [here](https://github.com/launchbadge/realworld-axum-sqlx/blob/main/src/http/error.rs#L199)
 
-
-### architecture improvement
-- let services have `Option<T>` as their needed servres and also an `inline functino` for 
-  each service to return the services without calling to `unwrap` method.
-
-
+  
 ### Matrix Links
 - [matrix concepts](https://spec.matrix.org/v1.8/client-server-api/#sending-events-to-a-room)
 - [matrix api](https://spec.matrix.org/v1.8/client-server-api/#sending-events-to-a-room)

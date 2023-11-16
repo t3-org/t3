@@ -15,7 +15,7 @@ channels:
 - Grafana will send a firing alert to our webhook.
 - Create the ticket (if it's not already created by another webhook, check by its fingerprint). and then
   get its channel instance (we'll have a map of channels instances) and calls it's `firing` method to send
-  a message to the targer third-party service(e.g., matrix).
+  a message to the target third-party service(e.g., matrix).
 - Do the same for resolved grafana alert. I mean update its state in DB(if it's not upated already) and use
   the webhook's channel to send a message.
 

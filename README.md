@@ -147,7 +147,7 @@ xh -v post :4000/api/v1/tickets fingerprint="h" is_firing:=true started_at:=1 le
 ```
 
 ### TODO:
-- validate create/patch data.
+
 - Write query filter functionality at server-side.
 - Write tests
 - QA
