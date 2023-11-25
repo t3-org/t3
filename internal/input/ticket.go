@@ -2,12 +2,8 @@ package input
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/kamva/gutil"
 )
-
-type Channel struct {
-	Name string `json:"name"` // Name of the channel (to find the channel instance that we should use)
-	ID   string `json:"id"`   // id of the channel (e.g., in matrix it's the roomID).
-}
 
 type CreateTicket PatchTicket
 
@@ -15,15 +11,14 @@ func (i *CreateTicket) Validate() error {
 	return validation.ValidateStruct(i,
 		validation.Field(&i.Fingerprint, validation.Required),
 		validation.Field(&i.Source, validation.Required),
-		validation.Field(&i.IsFiring, validation.Required),
+		validation.Field(&i.IsFiring, validation.NotNil),
 		validation.Field(&i.StartedAt, validation.Required, validation.Min(1)),
 		validation.Field(&i.EndedAt, validation.Min(1)),
-		validation.Field(&i.IsSpam, validation.Required),
-		validation.Field(&i.Severity, validation.Required, validation.In("low", "medium", "high")),
+		validation.Field(&i.IsSpam, validation.NotNil),
+		validation.Field(&i.Severity, validation.NotNil, validation.In("low", "medium", "high")),
 		validation.Field(&i.Title, validation.Required),
 		validation.Field(&i.SeenAt, validation.Min(1)),
 	)
-
 }
 
 type PatchTicket struct {
@@ -49,11 +44,23 @@ type PatchTicket struct {
 	SeenAt          *int64            `json:"seen_at" yaml:"seen_at"`
 	Labels          map[string]string `json:"labels" yaml:"labels"`
 	SyncLabels      bool              `json:"sync_labels" yaml:"sync_labels"`
-	Channel         *Channel          `json:"channel" yaml:"channel"`
 }
 
 func (i *PatchTicket) SetIsCreation(isCreation bool) {
 	i.isCreation = isCreation
+	if i.isCreation {
+		i.SetCreationDefaults()
+	}
+}
+
+func (i *PatchTicket) SetCreationDefaults() {
+	if i.IsSpam == nil {
+		i.IsSpam = gutil.NewBool(false)
+	}
+
+	if i.Severity == nil {
+		i.Severity = gutil.NewString("low")
+	}
 }
 
 func (i *PatchTicket) Validate() error {

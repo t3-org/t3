@@ -1,27 +1,41 @@
-version: '2.3'
 services:
 #  postgres:
-#    image: postgres:14
+#    image: postgres:14.5
 #    restart: unless-stopped
 #    volumes:
 #      - ./postgresdata:/var/lib/postgresql/data
-#
+#    ports:
+#      - "6644:5432"
 #    # These will be used in homeserver.yaml later on
 #    environment:
 #      - POSTGRES_DB=synapse
 #      - POSTGRES_USER=synapse
-#      - POSTGRES_PASSWORD=STRONGPASSWORD
-#
+#      - POSTGRES_PASSWORD=synapsepass
+#    networks:
+#      - matrix
   element:
     image: vectorim/element-web:v1.11.47
     restart: unless-stopped
     volumes:
       - ./element-config.json:/app/config.json
-
+    ports:
+      - "8080:80"
+    networks:
+      - matrix
+  # admin: username: root, password: root
   synapse:
     image: matrixdotorg/synapse:v1.95.1
     restart: unless-stopped
+    environment:
+      - SYNAPSE_CONFIG_PATH=/etc/homeserver.yaml
     volumes:
       - ./synapse:/data
+      - ./homeserver.yaml:/etc/homeserver.yaml
     ports:
-      - 8008:8008
+      - "8008:8008"
+    networks:
+      - matrix
+
+networks:
+  matrix:
+

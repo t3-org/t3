@@ -29,9 +29,9 @@ type Services interface {
 	CronJobs() hjob.CronJobs
 	HttpServer() *hecho.EchoService
 	Worker() hjob.Worker
-	Matrix() *channel.MatrixChannel
-	Channels() map[string]channel.Channel
+	ChannelClients() map[string]channel.Home
 	Markdown() *md.Markdown
+	Dispatcher() *channel.Dispatcher
 }
 
 type services struct {
@@ -93,16 +93,16 @@ func (s *services) Worker() hjob.Worker {
 	return srv
 }
 
-func (s *services) Matrix() *channel.MatrixChannel {
-	return s.r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel)
-}
-
-func (s *services) Channels() map[string]channel.Channel {
-	return s.r.Service(registry.ServiceNameChannels).(map[string]channel.Channel)
+func (s *services) ChannelClients() map[string]channel.Home {
+	return s.r.Service(registry.ServiceNameChannelHomes).(map[string]channel.Home)
 }
 
 func (s *services) Markdown() *md.Markdown {
 	return s.r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
+}
+
+func (s *services) Dispatcher() *channel.Dispatcher {
+	return s.r.Service(registry.ServiceNameDispatcher).(*channel.Dispatcher)
 }
 
 // New returns a Services facade.

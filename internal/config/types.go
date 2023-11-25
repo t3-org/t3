@@ -20,6 +20,10 @@ const (
 	DBDriverPostgres = "postgres"
 )
 
+const (
+	ChannelHomeTypeMatrix = "matrix"
+)
+
 type Test struct {
 	// We'll use this connection to connect to the database to create and destroy the temporary DB.
 	DBRootConn DB `json:"db_root_conn"`
@@ -290,16 +294,6 @@ func (c AsynqConfig) Queues() map[string]int {
 	return map[string]int{
 		"default": 1,
 	}
-}
-
-type MatrixConfig struct {
-	// CommandPrefix is the prefix of each command. e.g., "!t"
-	CommandPrefix  string `json:"command_prefix"`
-	OKEmoji        string `json:"ok_emoji"` // The emoji we use to set a command as done.
-	PickleKey      string `json:"pickle_key"`
-	HomeServerAddr string `json:"home_server_addr"`
-	Username       string `json:"username"`
-	Password       string `json:"password"`
 }
 
 type UI struct {

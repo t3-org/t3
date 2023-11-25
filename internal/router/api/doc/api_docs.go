@@ -1,11 +1,11 @@
 // Package doc.
 //
-// # Space API docs
+// # T3 API docs
 //
 // Terms Of Service:
 //
 //	Schemes: http, https
-//	Host: space.app
+//	Host: t3.app
 //	BasePath:
 //	Version: 0.1.0
 //

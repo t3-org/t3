@@ -3,9 +3,9 @@ package commands
 import "github.com/spf13/cobra"
 
 var rootCmd = &cobra.Command{
-	Use:   "space",
-	Short: "space",
-	Long:  "space",
+	Use:   "t3",
+	Short: "t3",
+	Long:  "t3",
 }
 
 func Run() error {

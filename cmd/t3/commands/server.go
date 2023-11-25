@@ -1,13 +1,14 @@
 package commands
 
 import (
-	"github.com/kamva/gutil"
+	"github.com/kamva/hexa"
+	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"github.com/spf13/cobra"
 	"t3.org/t3/internal/app"
 	"t3.org/t3/internal/registry"
 	"t3.org/t3/internal/registry/services"
-	"t3.org/t3/internal/router/matrix"
+	"t3.org/t3/internal/service/channel"
 )
 
 var serverCmd = &cobra.Command{
@@ -33,7 +34,6 @@ func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	err := registry.ProvideByNames(
 		o.Registry,
 		registry.ServiceNameHttpServer,
-		registry.ServiceNameMatrixBotServer,
 	)
 
 	if err != nil {
@@ -45,11 +45,19 @@ func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 	}
 
 	// Start server
-	app.Banner("Space")
+	app.Banner("T3")
 
-	mxDone, err := o.Registry.Service(registry.ServiceNameMatrixBotServer).(*matrix.Server).Run()
-	if err != nil {
-		return tracer.Trace(err)
+	chHomes := o.Registry.Service(registry.ServiceNameChannelHomes).(map[string]channel.Home)
+	channels := make(map[string]<-chan error)
+	for name, home := range chHomes {
+		if runnable := home.(hexa.Runnable); runnable != nil {
+			hlog.Info("running channel home", hlog.String("name", name))
+			closeCh, err := runnable.Run()
+			if err != nil {
+				return tracer.Trace(err)
+			}
+			channels[name] = closeCh
+		}
 	}
 
 	done, err := s.HttpServer().Run()
@@ -57,5 +65,15 @@ func serverCmdF(o *cmdOpts, _ *cobra.Command, _ []string) error {
 		return tracer.Trace(err)
 	}
 
-	return gutil.AnyErr(tracer.Trace(<-mxDone), tracer.Trace(<-done))
+	if err := <-done; err != nil {
+		hlog.Error("error on server", hlog.Err(err))
+	}
+
+	// Waiting till close all runnable channel homes:
+	for name, ch := range channels {
+		if err := <-ch; err != nil {
+			hlog.Error("error on channel", hlog.String("name", name), hlog.Err(err))
+		}
+	}
+	return nil
 }

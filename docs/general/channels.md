@@ -24,20 +24,23 @@ We'll implement it by defining channels, channel_policies in T3 config.
 An example config could be like the following snippet:
 
 ```yaml
-channel_connections:
-  central_matrix: # the connection name is central_matrix.
+channel_homes:
+  central_matrix: # the server name is central_matrix.
     type: matrix
-    username: abc
-    password:
-      env: BASE_MATRIX_PASSWORD # it supports reading from env variable too.
+    config:
+      username: abc
+      password:
+        env: BASE_MATRIX_PASSWORD # it supports reading from env variable too.
       
 channels:
   sre:
-    connection: central_matrix
-    room_id: "!asodifjewfasff"
+    home: central_matrix
+    config:
+      room_id: "!asodifjewfasff"
   orders:
-    connection: central_matrix
-    room_id: "!3ifjslanfasdfadsvd"
+    home: central_matrix
+    config:
+      room_id: "!3ifjslanfasdfadsvd"
 
 channel_policies:
   - channel: sre # send all messages to the "sre" channel.
@@ -45,5 +48,4 @@ channel_policies:
     labels:
       team: orders
 ```
-
 

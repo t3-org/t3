@@ -11,7 +11,7 @@ import (
 )
 
 func (api *API) registerWebhookRoutes(webhooks *echo.Group, res *webhookResource) {
-	webhooks.POST("/:webhook_type/:ch_name/:ch_id", res.Handle)
+	webhooks.POST("/:webhook_type", res.Handle)
 }
 
 type webhookResource struct {
@@ -35,8 +35,7 @@ func (r *webhookResource) handleGrafanaWebhook(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
-	ch := input.Channel{Name: c.Param("ch_name"), ID: c.Param("ch_id")}
-	in := input.BatchUpsertTickets{Tickets: webhook.PatchInputs(&ch)}
+	in := input.BatchUpsertTickets{Tickets: webhook.PatchInputs()}
 	in.RemoveInternalLabels() // We do not allow API to touch internal labels:
 
 	dto, err := r.app.UpsertTickets(c.Request().Context(), &in)

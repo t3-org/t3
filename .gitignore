@@ -10,6 +10,9 @@
 config.yaml
 config.*.yaml
 !config.example.yaml
+channels.yaml
+channels.*.yaml
+!channels.example.yaml
 
 # Add http-client private env data
 requests.http

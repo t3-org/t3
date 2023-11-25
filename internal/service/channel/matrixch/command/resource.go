@@ -1,25 +1,25 @@
-package matrix
+package command
 
 import (
 	"github.com/kamva/tracer"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
-	"t3.org/t3/internal/registry/services"
+	"t3.org/t3/internal/service/channel/matrixch"
 	"t3.org/t3/pkg/md"
 )
 
 type Resource struct {
-	okEmoji string
-	cli     *mautrix.Client
-	md      *md.Markdown
+	o   *matrixch.HomeOpts
+	cli *mautrix.Client
+	md  *md.Markdown
 }
 
-func NewResource(s services.Services) *Resource {
+func NewResource(opts *matrixch.HomeOpts) *Resource {
 	return &Resource{
-		okEmoji: s.Matrix().Options().OkEmoji,
-		cli:     s.Matrix().Client(),
-		md:      s.Markdown(),
+		o:   opts,
+		cli: opts.Client,
+		md:  opts.MarkDown,
 	}
 }
 
@@ -35,7 +35,6 @@ func (r *Resource) SendTextWithSameRelation(e *event.Event, text string) error {
 	}
 
 	rendered := r.md.RenderString(text)
-	rendered = r.md.RenderString(text)
 	if rendered != text {
 		content.Format = event.FormatHTML
 		content.FormattedBody = rendered
@@ -45,7 +44,7 @@ func (r *Resource) SendTextWithSameRelation(e *event.Event, text string) error {
 }
 
 func (r *Resource) SendOKReaction(e *event.Event) error {
-	return r.sendReaction(e, r.okEmoji)
+	return r.sendReaction(e, r.o.OkEmoji)
 }
 
 func (r *Resource) sendReaction(e *event.Event, key string) error {

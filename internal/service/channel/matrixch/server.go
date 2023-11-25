@@ -1,4 +1,4 @@
-package matrix
+package matrixch
 
 import (
 	"context"
@@ -8,18 +8,23 @@ import (
 	"github.com/kamva/tracer"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
-	"t3.org/t3/internal/app"
 )
 
 type Server struct {
+	// TODO: move this fn to the registry package after
+	//  changing the sr package to include BootFn definition in itself.
+	bootFn func() error
 	cli    *mautrix.Client
 	router *Router
-	app    app.App
 	doneCh chan error
 }
 
-func NewServer(cli *mautrix.Client, r *Router) *Server {
-	return &Server{cli: cli, router: r, doneCh: make(chan error)}
+func NewServer(cli *mautrix.Client, r *Router, bootFn func() error) *Server {
+	return &Server{bootFn: bootFn, cli: cli, router: r, doneCh: make(chan error)}
+}
+
+func (s *Server) Boot() error {
+	return tracer.Trace(s.bootFn())
 }
 
 func (s *Server) Run() (done <-chan error, err error) {
@@ -37,7 +42,7 @@ func (s *Server) Run() (done <-chan error, err error) {
 	return s.doneCh, nil
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
+func (s *Server) doShutdown(_ context.Context) error {
 	s.cli.StopSync()
 	close(s.doneCh)
 	return nil
@@ -77,8 +82,8 @@ func (s *Server) registerInviteHandler() {
 			}
 		}
 	})
-
 }
+
 func (s *Server) registerMsgHandler() {
 	syncer := s.cli.Syncer.(*mautrix.DefaultSyncer)
 	syncer.OnEventType(event.EventMessage, func(source mautrix.EventSource, evt *event.Event) {
@@ -91,5 +96,5 @@ func (s *Server) registerMsgHandler() {
 	})
 }
 
+var _ hexa.Bootable = &Server{}
 var _ hexa.Runnable = &Server{}
-var _ hexa.Shutdownable = &Server{}

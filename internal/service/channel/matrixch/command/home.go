@@ -1,4 +1,4 @@
-package matrix
+package command
 
 import (
 	"context"
@@ -8,35 +8,29 @@ import (
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"t3.org/t3/internal/app"
-	"t3.org/t3/internal/config"
-	"t3.org/t3/internal/registry/services"
-	"t3.org/t3/internal/service/channel"
+	"t3.org/t3/internal/service/channel/matrixch"
 )
 
-func registerHomeCommands(r *Router, res *homeResource) {
+func registerHomeCommands(r *matrixch.Router, res *homeResource) {
 	r.Register("help", res.Help, "shows the help message.") // non-thread command
 	r.Register("dash", res.DashboardLink, "returns link to the dashboard")
 }
 
 type homeResource struct {
 	*Resource
-	cfg    *config.Config
-	router *Router
-	mx     *channel.MatrixChannel
+	router *matrixch.Router
 	app    app.App
 }
 
-func newHomeResource(s services.Services, router *Router, app app.App) *homeResource {
+func newHomeResource(res *Resource, router *matrixch.Router, app app.App) *homeResource {
 	return &homeResource{
-		Resource: NewResource(s),
-		cfg:      s.Config(),
+		Resource: res,
 		router:   router,
-		mx:       s.Matrix(),
 		app:      app,
 	}
 }
 
-func (r *homeResource) NotFound(_ context.Context, cmd *Command) error {
+func (r *homeResource) NotFound(_ context.Context, cmd *matrixch.Command) error {
 	txt := fmt.Sprintf(
 		"invalid command: `%s` \n\n %s",
 		cmd.Event.Content.AsMessage().Body,
@@ -45,7 +39,7 @@ func (r *homeResource) NotFound(_ context.Context, cmd *Command) error {
 	return tracer.Trace(r.SendTextWithSameRelation(cmd.Event, txt))
 }
 
-func (r *homeResource) ErrorHandler(_ context.Context, cmd *Command, err error) error {
+func (r *homeResource) ErrorHandler(_ context.Context, cmd *matrixch.Command, err error) error {
 	msgBody := cmd.Event.Content.AsMessage().Body
 
 	hlog.Error("error on handling matrix command",
@@ -57,7 +51,7 @@ func (r *homeResource) ErrorHandler(_ context.Context, cmd *Command, err error) 
 	return tracer.Trace(r.SendTextWithSameRelation(cmd.Event, txt))
 }
 
-func (r *homeResource) Help(_ context.Context, cmd *Command) error {
+func (r *homeResource) Help(_ context.Context, cmd *matrixch.Command) error {
 	return r.SendTextWithSameRelation(cmd.Event, r.helpMessage())
 }
 
@@ -67,17 +61,17 @@ func (r *homeResource) helpMessage() string {
 	for _, route := range r.router.Routes() {
 		builder.WriteString(fmt.Sprintf(
 			"- `%s%s`: %s\n\n",
-			r.mx.Options().CommandPrefix,
+			r.o.CommandPrefix,
 			route.CommandName,
 			route.About,
 		))
 	}
 
 	builder.WriteString("\n\n --- \n __Links:__  ")
-	builder.WriteString(fmt.Sprintf("[Dashboard](%s)", r.cfg.UI.DashboardUrl))
+	builder.WriteString(fmt.Sprintf("[Dashboard](%s)", r.o.UI.DashboardUrl))
 	return builder.String()
 }
 
-func (r *homeResource) DashboardLink(_ context.Context, cmd *Command) error {
-	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("[Dashboard](%s)", r.cfg.UI.DashboardUrl))
+func (r *homeResource) DashboardLink(_ context.Context, cmd *matrixch.Command) error {
+	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("[Dashboard](%s)", r.o.UI.DashboardUrl))
 }

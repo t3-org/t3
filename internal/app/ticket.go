@@ -81,10 +81,8 @@ func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket) (*mo
 		return nil, tracer.Trace(err)
 	}
 
-	if in.Channel != nil {
-		if err := a.callTicketWebhook(ctx, in.Channel, &ticket); err != nil {
-			return nil, err
-		}
+	if err := a.dispatcher.Dispatch(ctx, &ticket); err != nil {
+		return nil, err
 	}
 
 	return &ticket, nil
@@ -107,6 +105,7 @@ func (a *appCore) PatchTicketByLabel(ctx context.Context, key, val string, in *i
 }
 
 func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.PatchTicket) (*dto.Ticket, error) {
+	isChangedFiring := in.IsFiring != nil && *in.IsFiring != t.IsFiring
 	if err := t.Patch(in); err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -114,8 +113,8 @@ func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.Pa
 		return nil, tracer.Trace(err)
 	}
 
-	if in.Channel != nil && in.IsFiring != nil {
-		if err := a.callTicketWebhook(ctx, in.Channel, t); err != nil {
+	if isChangedFiring {
+		if err := a.dispatcher.Dispatch(ctx, t); err != nil {
 			return nil, tracer.Trace(err)
 		}
 	}

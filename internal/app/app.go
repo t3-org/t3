@@ -14,9 +14,9 @@ import (
 
 // appCore is implementation of the App
 type appCore struct {
-	cfg      *config.Config
-	store    model.Store
-	channels map[string]channel.Channel
+	cfg        *config.Config
+	store      model.Store
+	dispatcher *channel.Dispatcher
 }
 
 // New returns new instance of the App
@@ -24,9 +24,9 @@ func New(r hexa.ServiceRegistry, store model.Store) (App, error) {
 	s := services.New(r)
 
 	return &appCore{
-		cfg:      s.Config(),
-		store:    store,
-		channels: s.Channels(),
+		cfg:        s.Config(),
+		store:      store,
+		dispatcher: s.Dispatcher(),
 	}, nil
 }
 

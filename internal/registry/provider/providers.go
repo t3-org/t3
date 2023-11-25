@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -47,8 +48,9 @@ import (
 	"t3.org/t3/internal/registry/services"
 	"t3.org/t3/internal/router/api"
 	"t3.org/t3/internal/router/jobs"
-	"t3.org/t3/internal/router/matrix"
 	"t3.org/t3/internal/service/channel"
+	"t3.org/t3/internal/service/channel/matrixch"
+	"t3.org/t3/internal/service/channel/matrixch/command"
 	"t3.org/t3/internal/store"
 	"t3.org/t3/internal/store/sqlstore"
 	"t3.org/t3/pkg/md"
@@ -71,12 +73,10 @@ func init() {
 	registry.AddProvider(registry.ServiceNameHttpServer, registry.ServiceNameHttpServer, HttpServerProvider)
 	registry.AddProvider(registry.ServiceNameJobs, registry.ServiceNameJobs, JobsProvider)
 	registry.AddProvider(registry.ServiceNameWorker, registry.ServiceNameWorker, WorkerProvider)
-	registry.AddProvider(registry.ServiceNameMatrix, registry.ServiceNameMatrix, MatrixProvider)
-	registry.AddProvider(registry.ServiceNameChannels, registry.ServiceNameChannels, ChannelsProvider)
-	registry.AddProvider(registry.ServiceNameMatrixBotServer, registry.ServiceNameMatrixBotServer, MatrixBotServerProvider)
+	registry.AddProvider(registry.ServiceNameChannelHomes, registry.ServiceNameChannelHomes, ChannelHomesProvider)
+	registry.AddProvider(registry.ServiceNameDispatcher, registry.ServiceNameDispatcher, DispatcherProvider)
 	registry.AddProvider(registry.ServiceNameStore, registry.ServiceNameStore, StoreProvider)
 	registry.AddProvider(registry.ServiceNameApp, registry.ServiceNameApp, AppProvider)
-
 	registry.AddProvider(registry.ProviderNameMockStore, registry.ServiceNameStore, MockStoreProvider)
 	registry.AddProvider(registry.ProviderNameMockApp, registry.ServiceNameApp, MockAppProvider)
 }
@@ -461,70 +461,6 @@ func WorkerProvider(r hexa.ServiceRegistry) error {
 	return nil
 }
 
-func MatrixProvider(r hexa.ServiceRegistry) error {
-	cfg := conf(r)
-	mcfg := cfg.Matrix
-
-	s := r.Service(registry.ServiceNameStore).(model.Store)
-	db, err := dbutil.NewWithDB(s.DBLayer().(sqlstore.SqlStore).DB(), cfg.DB.Driver)
-	if err != nil {
-		return tracer.Trace(err)
-	}
-
-	cli, err := mautrix.NewClient(mcfg.HomeServerAddr, "", "")
-	if err != nil {
-		return tracer.Trace(err)
-	}
-
-	cryptoHelper, err := cryptohelper.NewCryptoHelper(cli, []byte(mcfg.PickleKey), db)
-	if err != nil {
-		return tracer.Trace(err)
-	}
-
-	cryptoHelper.LoginAs = &mautrix.ReqLogin{
-		Type:       mautrix.AuthTypePassword,
-		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierTypeUser, User: mcfg.Username},
-		Password:   mcfg.Password,
-	}
-
-	// If you want to use multiple clients with the same DB, you should set a distinct database account ID for each one.
-	//cryptoHelper.DBAccountID = ""
-	if err := cryptoHelper.Init(); err != nil {
-		return tracer.Trace(err)
-	}
-
-	cli.Crypto = cryptoHelper
-	markdown := r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
-	chOpts := channel.MatrixChannelOpts{
-		// We prefix the key with "_" to set the label as an internal
-		// label on the ticket. see ticket labels.
-		KeyPrefix:     "_mx",
-		OkEmoji:       mcfg.OKEmoji,
-		CommandPrefix: mcfg.CommandPrefix,
-	}
-	r.Register(registry.ServiceNameMatrix, channel.NewMatrixChannel(cli, s.TicketLabel(), markdown, chOpts))
-	return nil
-}
-
-func ChannelsProvider(r hexa.ServiceRegistry) error {
-	channels := map[string]channel.Channel{
-		"matrix": r.Service(registry.ServiceNameMatrix).(channel.Channel),
-	}
-	r.Register(registry.ServiceNameChannels, channels)
-	return nil
-}
-
-func MatrixBotServerProvider(r hexa.ServiceRegistry) error {
-	mx := r.Service(registry.ServiceNameMatrix).(*channel.MatrixChannel)
-
-	router := matrix.NewRouter(mx.Options().CommandPrefix)
-	matrix.RegisterCommands(r, router)
-
-	// initialize the event handlers.
-	r.Register(registry.ServiceNameMatrixBotServer, matrix.NewServer(mx.Client(), router))
-	return nil
-}
-
 func MarkdownProvider(r hexa.ServiceRegistry) error {
 	// create Markdown parser extensions
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
@@ -534,5 +470,128 @@ func MarkdownProvider(r hexa.ServiceRegistry) error {
 	opts := html.RendererOptions{Flags: htmlFlags}
 
 	r.Register(registry.ServiceNameMarkdown, md.NewMarkdown(extensions, opts))
+	return nil
+}
+
+func ChannelHomesProvider(r hexa.ServiceRegistry) error {
+	homes := make(map[string]channel.Home)
+	chConf, err := config.LoadChannelsConfig(conf(r).ChannelsConfigFilePath)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+	for name, homeCfg := range chConf.ChannelHomes {
+		cli, err := channelHomeProvider(r, homeCfg)
+		if err != nil {
+			return tracer.Trace(err)
+		}
+		homes[name] = cli
+		r.Register(registry.ServiceNamePrefixChannelClient+name, cli)
+	}
+
+	r.Register(registry.ServiceNameChannelHomes, homes)
+	return nil
+}
+
+func channelHomeProvider(r hexa.ServiceRegistry, rawCfg config.ChannelHome) (channel.Home, error) {
+	switch rawCfg.Type {
+	case config.ChannelHomeTypeMatrix: // Currently we use type just here, convert them to constant if needed.
+		var cfg config.MatrixHomeConfig
+		if err := rawCfg.Config.Decode(&cfg); err != nil {
+			return nil, tracer.Trace(err)
+		}
+		return matrixProvider(r, cfg)
+	}
+	// Add other channel types to the switch case.
+	return nil, tracer.Trace(fmt.Errorf("invalid channel type: %s", rawCfg.Type))
+}
+
+func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (channel.Home, error) {
+	cfg := conf(r)
+
+	s := r.Service(registry.ServiceNameStore).(model.Store)
+	db, err := dbutil.NewWithDB(s.DBLayer().(sqlstore.SqlStore).DB(), cfg.DB.Driver)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	cli, err := mautrix.NewClient(mcfg.HomeServerAddr, "", "")
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	cryptoHelper, err := cryptohelper.NewCryptoHelper(cli, []byte(mcfg.PickleKey), db)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	cryptoHelper.LoginAs = &mautrix.ReqLogin{
+		Type:       mautrix.AuthTypePassword,
+		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierTypeUser, User: mcfg.Username},
+		Password:   mcfg.Password,
+	}
+
+	// If you want to use multiple clients with the same DB, you
+	// should set a distinct database account ID for each one.
+	cryptoHelper.DBAccountID = mcfg.DBAccountID
+	if err := cryptoHelper.Init(); err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	cli.Crypto = cryptoHelper
+	markdown := r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
+
+	hOpts := matrixch.HomeOpts{
+		// We prefix the key with "_" to set the label as an internal
+		// label on the ticket. see ticket labels.
+		KeyPrefix:     "_mx",
+		OkEmoji:       mcfg.OKEmoji,
+		CommandPrefix: mcfg.CommandPrefix,
+		Client:        cli,
+		KVStore:       s.TicketLabel(),
+		MarkDown:      markdown,
+		UI:            cfg.UI,
+	}
+
+	// Provide the server
+	router := matrixch.NewRouter(mcfg.CommandPrefix)
+	bootFn := func() error {
+		a := r.Service(registry.ServiceNameApp).(app.App)
+
+		// initialize the event handlers.
+		command.RegisterCommands(&hOpts, a, router)
+		return nil
+	}
+	srv := matrixch.NewServer(cli, router, bootFn) // command handler server
+
+	return matrixch.New(srv, &hOpts), nil
+}
+
+func DispatcherProvider(r hexa.ServiceRegistry) error {
+	// create Markdown parser extensions
+	homes := r.Service(registry.ServiceNameChannelHomes).(map[string]channel.Home)
+	chConf, err := config.LoadChannelsConfig(conf(r).ChannelsConfigFilePath)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	// make channels
+	channels := make(map[string]channel.Channel)
+	for name, ch := range chConf.Channels {
+		switch chConf.ChannelHomes[ch.Home].Type {
+		case config.ChannelHomeTypeMatrix:
+			var cfg matrixch.ChannelOptions
+			if err := ch.Config.Decode(&cfg); err != nil {
+				return tracer.Trace(fmt.Errorf("can not decode channel config, channel: %s: %w", name, err))
+			}
+			channels[name] = channel.Channel{
+				Home:   ch.Home,
+				Config: cfg,
+			}
+			// Put other cases here please.
+		}
+	}
+
+	d := channel.NewDispatcher(homes, channels, chConf.Policies)
+	r.Register(registry.ServiceNameDispatcher, d)
 	return nil
 }

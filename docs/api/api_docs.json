@@ -11,10 +11,10 @@
   ],
   "swagger": "2.0",
   "info": {
-    "description": "Space API docs",
+    "description": "T3 API docs",
     "version": "0.1.0"
   },
-  "host": "space.app",
+  "host": "t3.app",
   "paths": {
     "/api/v1/lab/ping": {
       "get": {
@@ -248,7 +248,7 @@
           "x-go-name": "UpdatedAt"
         }
       },
-      "x-go-package": "space.org/space/internal/model"
+      "x-go-package": "t3.org/t3/internal/model"
     },
     "Route": {
       "type": "object",

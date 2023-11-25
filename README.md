@@ -27,11 +27,11 @@ yarn --cwd ./docs/general install
 ### How to deploy docs using Docker?
 
 - build docs: `make build-docs`.
-- build the image: `docker build -t space-docs -f ./docs/general/Dockerfile ./docs/general`
+- build the image: `docker build -t t3-docs -f ./docs/general/Dockerfile ./docs/general`
 - Use the image in your server. To run it locally run the following command:
 
 ```bash
-docker run --rm -p 8080:80 space-docs
+docker run --rm -p 8080:80 t3-docs
 # and then open localhost:8080 on your browser.
 ```
 

@@ -7,7 +7,7 @@ import (
 
 // Version is the app version.
 // Inject the version using `-ldflags`.
-// go run -ldflags "-X t3.org/t3/internal/app.Version=`git rev-parse HEAD`" ./cmd/space/main.go version
+// go run -ldflags "-X t3.org/t3/internal/app.Version=`git rev-parse HEAD`" ./cmd/t3/main.go version
 var Version string
 
 // Banner function print the app's banner

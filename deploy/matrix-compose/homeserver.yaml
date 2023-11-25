@@ -24,6 +24,7 @@ database:
   args:
     database: /data/homeserver.db
 
+
 log_config: "/data/localhost.log.config"
 media_store_path: /data/media_store
 registration_shared_secret: "2.0bqUzrw~Lxj,6&j8=Gi~,uTDhS:.#~RnbGQNvPHkD#ko*OM@"

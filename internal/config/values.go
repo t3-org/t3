@@ -13,7 +13,7 @@ import (
 
 const (
 	// AppName is the name of the app to load its configurations.
-	AppName = "space"
+	AppName = "t3"
 	// FileName is name of the configuration file
 	FileName = "config"
 	// FileExtension is extension of the configuration file.
@@ -75,13 +75,14 @@ type Config struct {
 
 	AsynqConfig AsynqConfig `json:"asynq_config"`
 
-	RedisAddress  string       `json:"redis_address"`
-	RedisPassword string       `json:"redis_password"`
-	RedisDB       int          `json:"redis_db"`
-	Matrix        MatrixConfig `json:"matrix"`
-	UI            UI           `json:"ui"`
+	RedisAddress  string `json:"redis_address"`
+	RedisPassword string `json:"redis_password"`
+	RedisDB       int    `json:"redis_db"`
+	UI            UI     `json:"ui"`
 	// WebhookUniqueID is a unique value in webhook path to do not allow being guessable its path.
 	WebhookUniqueID string `json:"webhook_unique_id"`
+
+	ChannelsConfigFilePath string `json:"channels_config_file_path"`
 }
 
 func (c *Config) validate() error {

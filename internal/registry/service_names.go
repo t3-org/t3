@@ -21,13 +21,13 @@ const (
 	ServiceNameMarkdown       = "markdown"
 	//ServiceNameCacheProvider  = "cache_provider"
 
-	ServiceNameHttpServer      = "http_server"
-	ServiceNameJobs            = "jobs"
-	ServiceNameWorker          = "worker"
-	ServiceNameCron            = "cron"
-	ServiceNameMatrix          = "matrix"
-	ServiceNameChannels        = "channels"
-	ServiceNameMatrixBotServer = "matrix_bot_server" // listens to the evens.
+	ServiceNameHttpServer          = "http_server"
+	ServiceNameJobs                = "jobs"
+	ServiceNameWorker              = "worker"
+	ServiceNameCron                = "cron"
+	ServiceNameChannelHomes        = "channel_homes"
+	ServiceNamePrefixChannelClient = "channel_client_"
+	ServiceNameDispatcher          = "dispatcher"
 
 	// non service-provider's services:
 
@@ -66,15 +66,14 @@ func bootPriority() []string {
 		//ServiceNameCacheProvider,
 
 		ServiceNameStore,
-		ServiceNameMatrix,
-		ServiceNameChannels,
+		ServiceNameChannelHomes,
+		ServiceNameDispatcher,
 		ServiceNameApp,
 
 		ServiceNameHttpServer,
 		ServiceNameJobs,
 		ServiceNameWorker,
 		ServiceNameCron,
-		ServiceNameMatrixBotServer,
 	}
 }
 
@@ -95,8 +94,8 @@ func BaseServices(exclude ...string) []string {
 
 		//ServiceNameCacheProvider,
 		ServiceNameStore,
-		ServiceNameMatrix,
-		ServiceNameChannels,
+		ServiceNameChannelHomes,
+		ServiceNameDispatcher,
 		ServiceNameApp,
 	}
 

@@ -22,21 +22,20 @@ type GrafanaAlert struct {
 	Values       map[string]any    `json:"values"`
 }
 
-func (in *GrafanaWebhookPayload) PatchInputs(ch *Channel) []*PatchTicket {
+func (in *GrafanaWebhookPayload) PatchInputs() []*PatchTicket {
 	res := make([]*PatchTicket, len(in.Alerts))
 	for idx, val := range in.Alerts {
-		res[idx] = val.PatchInput(ch)
+		res[idx] = val.PatchInput()
 	}
 	return res
 }
 
-func (in *GrafanaAlert) PatchInput(ch *Channel) *PatchTicket {
+func (in *GrafanaAlert) PatchInput() *PatchTicket {
 	if in.Status == "resolved" {
 		return &PatchTicket{
 			Fingerprint: in.FingerPrint,
 			IsFiring:    gutil.NewBool(false),
 			EndedAt:     gutil.NewInt64(in.EndsAt.UnixMilli()),
-			Channel:     ch,
 		}
 	}
 
@@ -55,10 +54,8 @@ func (in *GrafanaAlert) PatchInput(ch *Channel) *PatchTicket {
 		StartedAt:       gutil.NewInt64(in.StartsAt.UnixMilli()),
 		Values:          values,
 		GeneratorUrl:    &in.GeneratorURL,
-		IsSpam:          gutil.NewBool(false),
 		Title:           gutil.NewString(gutil.StringDefault(in.Labels["alertname"], "(no_title)")),
 		Labels:          in.Labels,
 		SyncLabels:      false,
-		Channel:         ch,
 	}
 }
