@@ -13,6 +13,7 @@ import (
 // App is core of the project
 type App interface {
 	Health
+	Seeder
 	TicketService
 }
 
@@ -26,6 +27,10 @@ type Health interface {
 }
 
 var _ hexa.Health = Health(nil) // Assertion
+
+type Seeder interface {
+	Seed(ctx context.Context, count int32) error
+}
 
 type TicketService interface {
 	UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error)

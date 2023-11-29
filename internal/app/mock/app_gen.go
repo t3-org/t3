@@ -213,6 +213,20 @@ func (mr *MockAppMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadinessStatus", reflect.TypeOf((*MockApp)(nil).ReadinessStatus), ctx)
 }
 
+// Seed mocks base method.
+func (m *MockApp) Seed(ctx context.Context, count int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Seed", ctx, count)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Seed indicates an expected call of Seed.
+func (mr *MockAppMockRecorder) Seed(ctx, count interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Seed", reflect.TypeOf((*MockApp)(nil).Seed), ctx, count)
+}
+
 // UpsertTickets mocks base method.
 func (m *MockApp) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
 	m.ctrl.T.Helper()
@@ -305,6 +319,43 @@ func (m *MockHealth) ReadinessStatus(ctx context.Context) hexa.ReadinessStatus {
 func (mr *MockHealthMockRecorder) ReadinessStatus(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadinessStatus", reflect.TypeOf((*MockHealth)(nil).ReadinessStatus), ctx)
+}
+
+// MockSeeder is a mock of Seeder interface.
+type MockSeeder struct {
+	ctrl     *gomock.Controller
+	recorder *MockSeederMockRecorder
+}
+
+// MockSeederMockRecorder is the mock recorder for MockSeeder.
+type MockSeederMockRecorder struct {
+	mock *MockSeeder
+}
+
+// NewMockSeeder creates a new mock instance.
+func NewMockSeeder(ctrl *gomock.Controller) *MockSeeder {
+	mock := &MockSeeder{ctrl: ctrl}
+	mock.recorder = &MockSeederMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSeeder) EXPECT() *MockSeederMockRecorder {
+	return m.recorder
+}
+
+// Seed mocks base method.
+func (m *MockSeeder) Seed(ctx context.Context, count int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Seed", ctx, count)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Seed indicates an expected call of Seed.
+func (mr *MockSeederMockRecorder) Seed(ctx, count interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Seed", reflect.TypeOf((*MockSeeder)(nil).Seed), ctx, count)
 }
 
 // MockTicketService is a mock of TicketService interface.

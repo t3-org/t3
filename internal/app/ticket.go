@@ -50,7 +50,7 @@ func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTicket
 		t := tickets[val.Fingerprint]
 		if t == nil {
 			creationInput := input.CreateTicket(*val)
-			t, err = a.createTicket(ctx, &creationInput)
+			t, err = a.createTicket(ctx, &creationInput, true)
 			if err != nil {
 				return nil, tracer.Trace(err)
 			}
@@ -68,10 +68,10 @@ func (a *appCore) CreateTicket(ctx context.Context, in *input.CreateTicket) (*dt
 		return nil, tracer.Trace(err)
 	}
 
-	return a.createTicket(ctx, in)
+	return a.createTicket(ctx, in, true)
 }
 
-func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket) (*model.Ticket, error) {
+func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket, dispatch bool) (*model.Ticket, error) {
 	var ticket model.Ticket
 	if err := ticket.Create(in); err != nil {
 		return nil, tracer.Trace(err)
@@ -81,8 +81,10 @@ func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket) (*mo
 		return nil, tracer.Trace(err)
 	}
 
-	if err := a.dispatcher.Dispatch(ctx, &ticket); err != nil {
-		return nil, err
+	if dispatch {
+		if err := a.dispatcher.Dispatch(ctx, &ticket); err != nil {
+			return nil, err
+		}
 	}
 
 	return &ticket, nil

@@ -65,6 +65,26 @@ func (a *tracingLayer) HealthStatus(ctx context.Context) hexa.HealthStatus {
 
 	return r1
 }
+func (a *tracingLayer) Seed(ctx context.Context, count int32) error {
+	if ctx == nil {
+		return a.next.Seed(ctx, count)
+	}
+
+	var span trace.Span
+	ctx, span = a.t.Start(ctx, "Seed")
+	defer span.End()
+
+	r1 := a.next.Seed(ctx, count)
+
+	if apperr.IsInternalErr(r1) {
+		span.RecordError(r1)
+		span.SetStatus(codes.Error, r1.Error())
+	} else {
+		span.SetStatus(codes.Ok, "")
+	}
+
+	return r1
+}
 func (a *tracingLayer) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
 	if ctx == nil {
 		return a.next.UpsertTickets(ctx, in)

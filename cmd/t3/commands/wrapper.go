@@ -28,10 +28,15 @@ type WithAppHandler func(o *cmdOpts, cmd *cobra.Command, args []string) error
 // WithCtxHandler gets the hexa context, app, service-provider and config as params to handle the command
 type WithCtxHandler func(ctx context.Context, o *cmdOpts, cmd *cobra.Command, args []string) error
 
-func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error {
+func withApp(cmdF WithAppHandler, serviceNames ...string) func(cmd *cobra.Command, args []string) error {
+	// serviceNames never can not be empty (because at least the app itself should be in the list),
+	// so we'll check if it's empty, we'll set our default services list.
+	if len(serviceNames) == 0 {
+		serviceNames = registry.BaseServices()
+	}
 	return func(cmd *cobra.Command, args []string) error {
 		r := sr.New()
-		err := registry.ProvideByNames(r, registry.BaseServices()...)
+		err := registry.ProvideByNames(r, serviceNames...)
 		if err != nil {
 			return tracer.Trace(err)
 		}
@@ -53,7 +58,7 @@ func withApp(cmdF WithAppHandler) func(cmd *cobra.Command, args []string) error 
 }
 
 //nolint:unused
-func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error {
+func withCtx(cmdF WithCtxHandler, serviceNames ...string) func(cmd *cobra.Command, args []string) error {
 	return withApp(func(o *cmdOpts, cmd *cobra.Command, args []string) error {
 		s := services.New(o.Registry)
 		u := infra.NewServiceUser(infra.UserIdCommandLine)
@@ -65,5 +70,5 @@ func withCtx(cmdF WithCtxHandler) func(cmd *cobra.Command, args []string) error 
 			BaseTranslator: s.Translator(),
 		})
 		return cmdF(ctx, o, cmd, args)
-	})
+	}, serviceNames...)
 }

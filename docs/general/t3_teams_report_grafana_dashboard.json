@@ -1,0 +1,960 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select\n    count(*) as non_spams,\n    SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n    SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n    SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n    SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n    avg(tickets.seen_at - tickets.started_at)            mtts,\n    avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'group'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ('region-1','region-2'))\n                or (key = 'group' and val = 'group-d')\n             group by ticket_id\n             having count(key) = 2)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Overall: $group ($region)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select\n    ticket_labels.val as                                 team,\n    count(*) as non_spams,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n       avg(tickets.seen_at - tickets.started_at)            mtts,\n       avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Teams",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "non_spams"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n    count(*) as non_spams\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "refId": "non_spams",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Non-spam Tickets",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n    count(*) as spams\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = true\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Spam Tickets",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Tickets Severity",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dtdurations"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mtt_see team-a"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       avg(tickets.seen_at - tickets.started_at)/1000            MTT_See\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "MTTSee by teams Teams",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "dtdurationms"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "mtt_resolve team-a"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       avg(tickets.ended_at - tickets.started_at)           MTT_Resolve\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "MTTResolve by teams",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "local_postgres_t3",
+          "value": "c0d03b41-60db-411a-bb3d-8c2f64381c22"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "DB",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "postgres",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "region-1",
+            "region-2"
+          ],
+          "value": [
+            "region-1",
+            "region-2"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "${datasource}"
+        },
+        "definition": "select val as region from ticket_labels where key='region' group by val;",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Region",
+        "multi": true,
+        "name": "region",
+        "options": [],
+        "query": "select val as region from ticket_labels where key='region' group by val;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "group-d",
+          "value": "group-d"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "${datasource}"
+        },
+        "definition": "select val as group\nfrom ticket_labels\nwhere key = 'group'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and val in ($region)))\ngroup by val;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Group",
+        "multi": false,
+        "name": "group",
+        "options": [],
+        "query": "select val as group\nfrom ticket_labels\nwhere key = 'group'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and val in ($region)))\ngroup by val;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "team-a",
+            "team-b"
+          ],
+          "value": [
+            "team-a",
+            "team-b"
+          ]
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "${datasource}"
+        },
+        "definition": "select val as team\nfrom ticket_labels\nwhere key = 'team'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and l.val in ($region))\n                    or (key='group' and l.val = '$group')\n                    group by l.ticket_id having count(l.key)=2\n                    )\ngroup by val;",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Team",
+        "multi": true,
+        "name": "team",
+        "options": [],
+        "query": "select val as team\nfrom ticket_labels\nwhere key = 'team'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and l.val in ($region))\n                    or (key='group' and l.val = '$group')\n                    group by l.ticket_id having count(l.key)=2\n                    )\ngroup by val;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-7d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "T3 teams report",
+  "uid": "f1494c26-2417-4a54-a141-1ba6f4abd55b",
+  "version": 16,
+  "weekStart": ""
+}

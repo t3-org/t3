@@ -8,12 +8,12 @@ import (
 	"t3.org/t3/internal/registry/services"
 )
 
-var workerCommand = &cobra.Command{
+var workerCmd = &cobra.Command{
 	Use:   "worker",
 	Short: "Manage worker",
 }
 
-var workerRunCommand = &cobra.Command{
+var workerRunCmd = &cobra.Command{
 	Use:     "run",
 	Short:   "Run to do tasks",
 	Example: "worker run",
@@ -22,8 +22,8 @@ var workerRunCommand = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(workerCommand)
-	workerCommand.AddCommand(workerRunCommand)
+	rootCmd.AddCommand(workerCmd)
+	workerCmd.AddCommand(workerRunCmd)
 }
 
 func runWorker(o *cmdOpts, _ *cobra.Command, _ []string) error {

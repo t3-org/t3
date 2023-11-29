@@ -94,15 +94,18 @@ func (s *services) Worker() hjob.Worker {
 }
 
 func (s *services) ChannelClients() map[string]channel.Home {
-	return s.r.Service(registry.ServiceNameChannelHomes).(map[string]channel.Home)
+	srv, _ := s.r.Service(registry.ServiceNameChannelHomes).(map[string]channel.Home)
+	return srv
 }
 
 func (s *services) Markdown() *md.Markdown {
-	return s.r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
+	srv, _ := s.r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
+	return srv
 }
 
 func (s *services) Dispatcher() *channel.Dispatcher {
-	return s.r.Service(registry.ServiceNameDispatcher).(*channel.Dispatcher)
+	srv, _ := s.r.Service(registry.ServiceNameDispatcher).(*channel.Dispatcher)
+	return srv
 }
 
 // New returns a Services facade.

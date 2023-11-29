@@ -16,7 +16,7 @@ var serverCmd = &cobra.Command{
 	Short: "Management of the http server",
 }
 
-var serverListenCMD = &cobra.Command{
+var serverListenCmd = &cobra.Command{
 	Use:     "listen",
 	Short:   "Run the http server",
 	Example: "listen",
@@ -24,7 +24,7 @@ var serverListenCMD = &cobra.Command{
 }
 
 func init() {
-	serverCmd.AddCommand(serverListenCMD)
+	serverCmd.AddCommand(serverListenCmd)
 
 	rootCmd.AddCommand(serverCmd)
 }
