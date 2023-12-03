@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -86,7 +86,13 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "mtts"
+          }
+        ]
       },
       "pluginVersion": "10.2.2",
       "targets": [
@@ -98,7 +104,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select\n    count(*) as non_spams,\n    SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n    SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n    SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n    SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n    avg(tickets.seen_at - tickets.started_at)            mtts,\n    avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'group'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n             group by ticket_id\n             having count(key) = 2)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;",
+          "rawSql": "select\n    count(*) as non_spams,\n    SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n    SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n    SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n    SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n    avg(tickets.seen_at - tickets.started_at)            mtts,\n    avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val = '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -119,7 +125,8 @@
           }
         }
       ],
-      "title": "Overall: $group ($region)",
+      "title": "Overall: $team ($region)",
+      "transformations": [],
       "type": "table"
     },
     {
@@ -198,7 +205,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select\n    ticket_labels.val as                                 team,\n    count(*) as non_spams,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n       avg(tickets.seen_at - tickets.started_at)            mtts,\n       avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;\n",
+          "rawSql": "select\n    ticket_labels.val as                                 product,\n    count(*) as non_spams,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified_severity,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low_Severity,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium_severity,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high_severity,\n       avg(tickets.seen_at - tickets.started_at)            mtts,\n       avg(tickets.ended_at - tickets.started_at)           mttr\nfrom tickets\n         left join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val = '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by ticket_labels.val;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -219,7 +226,7 @@
           }
         }
       ],
-      "title": "Teams",
+      "title": "Products",
       "type": "table"
     },
     {
@@ -288,7 +295,7 @@
               "options": {
                 "mode": "exclude",
                 "names": [
-                  "non_spams"
+                  "non_spams product-b"
                 ],
                 "prefix": "All except:",
                 "readOnly": true
@@ -336,7 +343,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n    count(*) as non_spams\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 product,\n    count(*) as non_spams\nfrom tickets\n         left join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val =  '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
           "refId": "non_spams",
           "sql": {
             "columns": [
@@ -449,7 +456,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n    count(*) as spams\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = true\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 product,\n    count(*) as non_spams\nfrom tickets\n         left join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = true\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val =  '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -520,8 +527,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -562,7 +568,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 product,\n       SUM(CASE WHEN severity is null THEN 1 ELSE 0 END)    unspecified,\n       SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END)    low,\n       SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) medium,\n       SUM(CASE WHEN severity = 'high' THEN 1 ELSE 0 END)   high\nfrom tickets\n         left join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val = '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -633,8 +639,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -644,32 +649,7 @@
           },
           "unit": "dtdurations"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mtt_see team-a"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -700,7 +680,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       avg(tickets.seen_at - tickets.started_at)/1000            MTT_See\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 product,\n       avg(tickets.seen_at - tickets.started_at)/1000            MTT_See\nfrom tickets\n         left join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val = '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -771,8 +751,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -782,32 +761,7 @@
           },
           "unit": "dtdurationms"
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  "mtt_resolve team-a"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -838,7 +792,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 team,\n       avg(tickets.ended_at - tickets.started_at)           MTT_Resolve\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'team'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val in ($team))\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
+          "rawSql": "select\n   $__unixEpochGroup(ended_at/1000,'5h') time,\n    ticket_labels.val as                                 product,\n       avg(tickets.ended_at - tickets.started_at)           MTT_Resolve\nfrom tickets\n         join ticket_labels on\n            tickets.id = ticket_labels.ticket_id and\n            ticket_labels.key = 'product'\nwhere is_spam = false\n  and id in (select ticket_id\n             from ticket_labels\n             where (key = 'region' and val in ($region))\n                or (key = 'group' and val = '$group')\n                or (key = 'team' and val = '$team')\n             group by ticket_id\n             having count(key) = 3)\n  and ended_at >=  $__unixEpochFrom()::bigint*1000\n  AND ended_at <= $__unixEpochTo()::bigint *1000\ngroup by time, ticket_labels.val order by time;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -943,15 +897,9 @@
       },
       {
         "current": {
-          "selected": true,
-          "text": [
-            "team-a",
-            "team-b"
-          ],
-          "value": [
-            "team-a",
-            "team-b"
-          ]
+          "selected": false,
+          "text": "team-a",
+          "value": "team-a"
         },
         "datasource": {
           "type": "postgres",
@@ -959,9 +907,9 @@
         },
         "definition": "select val as team\nfrom ticket_labels\nwhere key = 'team'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and l.val in ($region))\n                    or (key='group' and l.val = '$group')\n                    group by l.ticket_id having count(l.key)=2\n                    )\ngroup by val;",
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": "Team",
-        "multi": true,
+        "multi": false,
         "name": "team",
         "options": [],
         "query": "select val as team\nfrom ticket_labels\nwhere key = 'team'\n  and ticket_id in (select l.ticket_id\n                    from ticket_labels l\n                    where (key = 'region' and l.val in ($region))\n                    or (key='group' and l.val = '$group')\n                    group by l.ticket_id having count(l.key)=2\n                    )\ngroup by val;",
@@ -979,8 +927,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "T3 teams report",
-  "uid": "f1494c26-2417-4a54-a141-1ba6f4abd55b",
-  "version": 18,
+  "title": "T3 products report",
+  "uid": "f1494c26-2417-4a54-a141-1ba6f4abd55c",
+  "version": 7,
   "weekStart": ""
 }
