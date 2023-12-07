@@ -12,6 +12,7 @@ import (
 
 var (
 	ErrInvalidIDValue = hexa.NewError(http.StatusBadRequest, "t3.invalid_id_value")
+	ErrInvalidQuery   = hexa.NewError(http.StatusBadRequest, "t3.invalid_query")
 )
 
 //--------------------------------

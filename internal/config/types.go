@@ -15,6 +15,9 @@ import (
 	sqldblogger "github.com/simukti/sqldb-logger"
 )
 
+const InternalLabelKeyPrefix = "t."
+const QueryTicketFieldsPrefix = "f." // e.g., f.is_spam=false,f.source=grafana
+
 const (
 	DBDriverMysql    = "mysql"
 	DBDriverPostgres = "postgres"

@@ -3,9 +3,9 @@ export const Source = { // ticket source values.
 }
 
 export const SeveritiesList = [
-    {name: "Low", value: "low"},
-    {name: "Medium", value: "medium"},
-    {name: "High", value: "high"},
+    {name: "low", value: "low"},
+    {name: "medium", value: "medium"},
+    {name: "high", value: "high"},
 ]
 
 export const ticketZeroVal = {title: "", is_spam: false, is_firing: true}

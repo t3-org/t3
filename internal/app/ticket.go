@@ -4,9 +4,12 @@ import (
 	"context"
 	"strings"
 
+	"github.com/kamva/hexa"
 	"github.com/kamva/hexa/pagination"
 	"github.com/kamva/tracer"
+	"k8s.io/apimachinery/pkg/labels"
 	"t3.org/t3/internal/dto"
+	apperr "t3.org/t3/internal/error"
 	"t3.org/t3/internal/input"
 	"t3.org/t3/internal/model"
 )
@@ -134,12 +137,16 @@ func (a *appCore) DeleteTicket(ctx context.Context, id string) error {
 }
 
 func (a *appCore) QueryTickets(ctx context.Context, query string, page, perPage int) (*pagination.Pages, error) {
-	count, err := a.store.Ticket().Count(ctx, query)
+	q, err := labels.Parse(query)
+	if err != nil {
+		return nil, apperr.ErrInvalidQuery.SetData(hexa.Map{"query": query})
+	}
+	count, err := a.store.Ticket().Count(ctx, q)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 	p := pagination.New(page, perPage, count)
-	p.Items, err = a.store.Ticket().Query(ctx, query, uint64(p.Offset()), uint64(p.Limit()))
+	p.Items, err = a.store.Ticket().Query(ctx, q, uint64(p.Offset()), uint64(p.Limit()))
 
 	// TODO: Return ([]*model.Ticket,*pagination.Pages,error) as return result.
 	return p, tracer.Trace(err)

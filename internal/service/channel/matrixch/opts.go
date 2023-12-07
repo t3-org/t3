@@ -11,7 +11,7 @@ import (
 )
 
 type HomeOpts struct {
-	// Set keyPrefix with "_" to set that label as an internal label.
+	// Set keyPrefix with "." (config.InternalLabelKeyPrefix) to set that label as an internal label.
 	KeyPrefix     string
 	OkEmoji       string
 	CommandPrefix string

@@ -40,30 +40,31 @@ func New(srv *Server, o *HomeOpts) channel.Home {
 }
 func (m *Home) Dispatch(ctx context.Context, conf any, t *model.Ticket) error {
 	opts := conf.(ChannelOptions)
-	if t.IsFiring {
-		return m.Firing(ctx, opts.RoomID, t)
-	}
-	return m.Resolved(ctx, opts.RoomID, t)
-}
-func (m *Home) Firing(ctx context.Context, rID string, t *model.Ticket) error {
-	roomID := id.RoomID(rID)
-	res, err := m.sendText(roomID, "", fmt.Sprintf("__New Firing Ticket__ \n\n %s ", t.Markdown()))
-	if err != nil {
-		return tracer.Trace(err)
+	title := fmt.Sprintf("__Firing Ticket__ \n\n %s ", t.Markdown())
+	if !t.IsFiring {
+		title = fmt.Sprintf("__Resolved Ticket__ \n\n %s ", t.Markdown())
 	}
 
-	return tracer.Trace(m.kvStore.Set(ctx, t.ID, m.opts.Key(roomID), string(res.EventID)))
+	return tracer.Trace(m.dispatch(ctx, opts.RoomID, t, title))
 }
 
-func (m *Home) Resolved(ctx context.Context, rID string, t *model.Ticket) error {
+func (m *Home) dispatch(ctx context.Context, rID string, t *model.Ticket, title string) error {
 	roomID := id.RoomID(rID)
 	eventID, err := m.kvStore.Val(ctx, t.ID, m.opts.Key(roomID))
 	if err != nil && !errors.Is(err, apperr.ErrTicketKVNotFound) {
 		return tracer.Trace(err)
 	}
 
-	_, err = m.sendText(roomID, id.EventID(eventID), fmt.Sprintf("__Resolved Ticket__ \n\n %s ", t.Markdown()))
-	return tracer.Trace(err)
+	res, err := m.sendText(roomID, id.EventID(eventID), title)
+	if err != nil {
+		return tracer.Trace(err)
+	}
+
+	if eventID == "" {
+		return tracer.Trace(m.kvStore.Set(ctx, t.ID, m.opts.Key(roomID), string(res.EventID)))
+	}
+
+	return nil
 }
 
 func (m *Home) Shutdown(ctx context.Context) error {

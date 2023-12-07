@@ -126,9 +126,9 @@ func (m *Ticket) Patch(in *input.PatchTicket) error {
 		gutil.ExtendStrMap(in.Labels, in.Labels, true)
 	} else {
 		if m.Labels == nil {
-			m.Annotations = make(StringMap)
+			m.Labels = make(StringMap)
 		}
-		gutil.ExtendStrMap(m.Annotations, in.Annotations, true)
+		gutil.ExtendStrMap(m.Labels, in.Labels, true)
 	}
 
 	m.Touch()
@@ -142,6 +142,7 @@ func (m *Ticket) Markdown() string {
 	}
 
 	w("- id: `%s`", m.ID)
+	w("- title: %s", m.Title)
 	w("- is_firing: `%t`", m.IsFiring)
 	w("- is_spam: `%t`", m.IsSpam)
 
@@ -172,6 +173,15 @@ func (m *Ticket) Markdown() string {
 	w("- labels: \n")
 	for k, v := range m.Labels {
 		w("	- `%s`: `%s`", k, v)
+	}
+
+	w("- values: \n")
+	for k, v := range m.Values {
+		w("	- `%s`: `%s`", k, v)
+	}
+
+	if m.GeneratorUrl != nil {
+		w("- [generator](%s)", *m.GeneratorUrl)
 	}
 
 	return b.String()

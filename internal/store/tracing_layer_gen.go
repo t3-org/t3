@@ -9,6 +9,7 @@ import (
 	"github.com/kamva/hexa"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+	"k8s.io/apimachinery/pkg/labels"
 	apperr "t3.org/t3/internal/error"
 	"t3.org/t3/internal/model"
 	"t3.org/t3/pkg/sqld"
@@ -268,7 +269,7 @@ func (s *tracingLayerTicketStore) Delete(ctx context.Context, m *model.Ticket) e
 
 	return r1
 }
-func (s *tracingLayerTicketStore) Count(ctx context.Context, query string) (int, error) {
+func (s *tracingLayerTicketStore) Count(ctx context.Context, query labels.Selector) (int, error) {
 	if ctx == nil {
 		return s.next.Count(ctx, query)
 	}
@@ -287,7 +288,7 @@ func (s *tracingLayerTicketStore) Count(ctx context.Context, query string) (int,
 
 	return r1, r2
 }
-func (s *tracingLayerTicketStore) Query(ctx context.Context, query string, offset uint64, limit uint64) ([]*model.Ticket, error) {
+func (s *tracingLayerTicketStore) Query(ctx context.Context, query labels.Selector, offset uint64, limit uint64) ([]*model.Ticket, error) {
 	if ctx == nil {
 		return s.next.Query(ctx, query, offset, limit)
 	}

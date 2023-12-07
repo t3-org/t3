@@ -543,7 +543,7 @@ func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (chann
 	hOpts := matrixch.HomeOpts{
 		// We prefix the key with "_" to set the label as an internal
 		// label on the ticket. see ticket labels.
-		KeyPrefix:     "_mx",
+		KeyPrefix:     config.InternalLabelKeyPrefix + "mx.", // e.g., t.mx.
 		OkEmoji:       mcfg.OKEmoji,
 		CommandPrefix: mcfg.CommandPrefix,
 		Client:        cli,

@@ -1,8 +1,11 @@
 package input
 
 import (
+	"strings"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/kamva/gutil"
+	"t3.org/t3/internal/config"
 )
 
 type CreateTicket PatchTicket
@@ -80,7 +83,7 @@ func (i *PatchTicket) Validate() error {
 
 func RemoveInternalLabels(values map[string]string) {
 	for k, _ := range values {
-		if len(k) != 0 && k[0] == '_' {
+		if len(k) >= len(config.InternalLabelKeyPrefix) && strings.Index(k, config.InternalLabelKeyPrefix) == 0 {
 			delete(values, k)
 		}
 	}

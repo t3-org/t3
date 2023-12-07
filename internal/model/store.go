@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/kamva/hexa"
+	"k8s.io/apimachinery/pkg/labels"
 	"t3.org/t3/pkg/sqld"
 )
 
@@ -60,8 +61,8 @@ type TicketStore interface {
 	Create(ctx context.Context, m *Ticket) error
 	Update(ctx context.Context, m *Ticket) error
 	Delete(ctx context.Context, m *Ticket) error
-	Count(ctx context.Context, query string) (int, error)
-	Query(ctx context.Context, query string, offset, limit uint64) ([]*Ticket, error)
+	Count(ctx context.Context, query labels.Selector) (int, error)
+	Query(ctx context.Context, query labels.Selector, offset, limit uint64) ([]*Ticket, error)
 }
 
 type TicketLabelStore interface {

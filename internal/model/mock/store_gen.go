@@ -10,6 +10,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	hexa "github.com/kamva/hexa"
+	labels "k8s.io/apimachinery/pkg/labels"
 	model "t3.org/t3/internal/model"
 	sqld "t3.org/t3/pkg/sqld"
 )
@@ -267,7 +268,7 @@ func (m *MockTicketStore) EXPECT() *MockTicketStoreMockRecorder {
 }
 
 // Count mocks base method.
-func (m *MockTicketStore) Count(ctx context.Context, query string) (int, error) {
+func (m *MockTicketStore) Count(ctx context.Context, query labels.Selector) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Count", ctx, query)
 	ret0, _ := ret[0].(int)
@@ -370,7 +371,7 @@ func (mr *MockTicketStoreMockRecorder) GetByCode(ctx, code interface{}) *gomock.
 }
 
 // Query mocks base method.
-func (m *MockTicketStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
+func (m *MockTicketStore) Query(ctx context.Context, query labels.Selector, offset, limit uint64) ([]*model.Ticket, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Query", ctx, query, offset, limit)
 	ret0, _ := ret[0].([]*model.Ticket)

@@ -5,6 +5,9 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/kamva/tracer"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/selection"
+	"k8s.io/apimachinery/pkg/util/sets"
 	apperr "t3.org/t3/internal/error"
 	"t3.org/t3/internal/helpers"
 	"t3.org/t3/internal/model"
@@ -104,18 +107,39 @@ func (s *ticketStore) Update(ctx context.Context, ticket *model.Ticket) error {
 }
 
 //nolint:revive // To disable unused query param issue.
-func (s *ticketStore) Count(ctx context.Context, query string) (int, error) {
+func (s *ticketStore) Count(ctx context.Context, query labels.Selector) (int, error) {
 	var count int
-	err := s.tbl.Count(ctx).Scan(&count)
+	q := s.tbl.Count(ctx)
+
+	subQuery, err := s.makeQuery(ctx, query)
+	if err != nil {
+		return 0, tracer.Trace(err)
+	}
+	if subQuery != nil {
+		q = q.Where(subQuery)
+	}
+
+	err = q.Scan(&count)
 	return count, err
 }
 
 //nolint:revive // To disable unused query param issue.
-func (s *ticketStore) Query(ctx context.Context, query string, offset, limit uint64) ([]*model.Ticket, error) {
-	rows, err := s.tbl.Select(ctx).Limit(limit).Offset(offset).QueryContext(ctx)
+func (s *ticketStore) Query(ctx context.Context, query labels.Selector, offset, limit uint64) ([]*model.Ticket, error) {
+	// Base query
+	q := s.tbl.Select(ctx).Limit(limit).Offset(offset).OrderBy("started_at DESC")
+	// TODO: Add query on the ticket fields based on query fields. e.g., `f.is_spam=false,f.source=grafana`. use config.QueryTicketFieldsPrefix
+
+	// Apply query
+	subQuery, err := s.makeQuery(ctx, query)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
+	if subQuery != nil {
+		q = q.Where(subQuery)
+	}
+
+	// Fetch
+	rows, err := q.QueryContext(ctx)
 
 	l, err := sqld.ScanRows(rows, ticketFields)
 	if err != nil {
@@ -123,6 +147,37 @@ func (s *ticketStore) Query(ctx context.Context, query string, offset, limit uin
 	}
 
 	return l, s.fetchLabelsForAll(ctx, l...)
+}
+
+func (s *ticketStore) makeQuery(ctx context.Context, query labels.Selector) (*sq.SelectBuilder, error) {
+	requirements, selectable := query.Requirements()
+	if !selectable || len(requirements) == 0 {
+		return nil, nil
+	}
+
+	keys := sets.New[string]()
+	conditions := sq.Or{}
+	for _, r := range requirements {
+		switch r.Operator() {
+		case selection.Equals, selection.DoubleEquals, selection.In:
+			conditions = append(conditions, sq.Eq{"key": r.Key(), "val": r.Values().List()})
+			keys.Insert(r.Key())
+		case selection.NotEquals, selection.NotIn:
+			conditions = append(conditions, sq.NotEq{"key": r.Key(), "val": r.Values().List()})
+			keys.Insert(r.Key())
+		case selection.Exists:
+			conditions = append(conditions, sq.NotEq{"key": r.Key()})
+			keys.Insert(r.Key())
+		}
+	}
+
+	q := s.labelTbl.Select(ctx, "1").Prefix("EXISTS(").Suffix(")").
+		Where("ticket_id = tickets.id").
+		Where(conditions).
+		GroupBy("ticket_id").
+		Having(sq.Eq{"count(*)": len(keys)})
+
+	return &q, nil
 }
 
 func (s *ticketStore) Delete(ctx context.Context, m *model.Ticket) error {

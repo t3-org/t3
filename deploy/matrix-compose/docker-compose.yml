@@ -14,7 +14,7 @@ services:
 #    networks:
 #      - matrix
   element:
-    image: vectorim/element-web:v1.11.47
+    image: vectorim/element-web:v1.11.51-rc.0
     restart: unless-stopped
     volumes:
       - ./element-config.json:/app/config.json
@@ -24,13 +24,13 @@ services:
       - matrix
   # admin: username: root, password: root
   synapse:
-    image: matrixdotorg/synapse:v1.95.1
+    image: matrixdotorg/synapse:v1.97.0
     restart: unless-stopped
     environment:
-      - SYNAPSE_CONFIG_PATH=/etc/homeserver.yaml
+      - SYNAPSE_CONFIG_PATH=/etc/synapse/homeserver.yaml
     volumes:
       - ./synapse:/data
-      - ./homeserver.yaml:/etc/homeserver.yaml
+      - ./synapse-config:/etc/synapse
     ports:
       - "8008:8008"
     networks:

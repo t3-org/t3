@@ -57,9 +57,9 @@ function updateTicketById(ticket) {
 
 const debounceQuery = _.debounce(function (e) {
   tickets.query = e.target.value;
-}, 500)
+}, 1000)
 
-watch(() => tickets.query, search);
+// watch(() => tickets.query, search); // uncomment this line to search on changing the query value.
 watch(() => tickets.pagination, search, {deep: true});
 
 

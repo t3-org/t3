@@ -136,7 +136,7 @@ const isTicketChanged = computed(() => {
           <div>
             <span class="text-gray-400">Values:</span>
             <ul>
-              <li v-for="(val,key) in value.values">
+              <li v-for="(val,key) in value.values" :key="key">
                 <span>{{ key }}</span>:
                 <code>{{ val }}</code>
               </li>
@@ -154,7 +154,7 @@ const isTicketChanged = computed(() => {
         </div>
         <div class="labels my-6" v-if="selectedBlock === BlockView.LABELS">
           <ul>
-            <li v-for="(val,key) in value.labels" class="mb-2">
+            <li v-for="(val,key) in value.labels" class="mb-2" :key="key">
               <span class="text-gray-400">{{ key }}</span>:
               <Chip><code class="p-1">{{ val }}</code></Chip>
             </li>
@@ -162,7 +162,7 @@ const isTicketChanged = computed(() => {
         </div>
         <div class="annotations mb-6" v-if="selectedBlock === BlockView.ANNOTATIONS">
           <ul>
-            <li v-for="(val,key) in value.annotations" class="mb-2">
+            <li v-for="(val,key) in value.annotations" class="mb-2" :key="key">
               <span class="text-gray-400">{{ key }}</span>:
               <span>{{ val }}</span>
             </li>
@@ -174,7 +174,12 @@ const isTicketChanged = computed(() => {
           <div>
             <span class="inline-flex align-items-center mr-4">
               <span class="font-bold mr-1">Severity: </span>
-              <Dropdown v-model="ticket.severity" :options="SeveritiesList" optionLabel="name" placeholder="Severity"/>
+              <Dropdown
+                  v-model="ticket.severity"
+                  :options="SeveritiesList"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Severity"/>
             </span>
             <span class="inline-flex align-items-center mr-4">
               <span class="font-bold mr-1">Is Firing: </span>
