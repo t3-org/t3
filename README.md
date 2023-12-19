@@ -1,5 +1,7 @@
 T3(The Ticket Tracker) tracks the tickets (e.g., grafana alerts).
 
+__Project status__: Under development. it's not stable yet.
+
 __Prerequisites__
 
 - Postgres
