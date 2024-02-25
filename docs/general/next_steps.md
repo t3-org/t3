@@ -1,17 +1,21 @@
 ### Features
-- Auto spam
-- Post-mortem
-- Auto label (will be used to set oncall user)
-- Limited labels (to keep some label values in a white list)
-- Plugin ecosystem for channels(matrix,...) and sources(grafana,...).
-- Reporting dashboard
-- tickets graph and merge [feature.md](tickets_graph_and_merge_feature.md)
-- AI assistant
+-[ ]  Auto spam
+-[ ] Post-mortem
+-[ ] Auto label (will be used to set on-call user) as a plugin
+-[ ] Limited labels (to keep some label values in a white list)
+-[ ] Plugin ecosystem for channels(matrix,...) and sources(grafana,...).
+-[ ] Reporting dashboard
+-[ ] tickets graph and merge [feature.md](tickets_graph_and_merge_feature.md)
+-[ ] AI assistant
+
 
 ### Improvements
-- better message rendering for channels
+- [ ] better message rendering for channels
   - set date format like this: `Feb 14, 2023, 1:42 PM` (get a local in the app config to localize dates in the chanenls messages)
-- Have a filter in the tickets-search page to view single ticket by id.
+- [x] Have a filter in the tickets-search page to view single ticket by id.
+- [ ] sync filter with the url (to be able to share and open the tickets page with specific filters)
+- [ ] In the edit link of matrix plugin, add filter to the url to show that ticket on the page.
+- [ ] Add search-help doc on the search input.
 
 ### spam feature
 
