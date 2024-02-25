@@ -2,12 +2,17 @@ package sqlstore
 
 import (
 	"context"
+	"strconv"
+	"strings"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/kamva/hexa"
 	"github.com/kamva/tracer"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"t3.org/t3/internal/config"
 	apperr "t3.org/t3/internal/error"
 	"t3.org/t3/internal/helpers"
 	"t3.org/t3/internal/model"
@@ -15,6 +20,10 @@ import (
 )
 
 const tableTicket = "tickets"
+
+var queryableTicketCols = sets.New("id", "fingerprint", "source", "is_firing", "started_at", "ended_at", "is_spam", "severity", "seen_at")
+var queryableDateCols = sets.New("started_at", "ended_at", "seen_at")
+var queryableBoolCols = sets.New("is_firing", "is_spam")
 
 type ticketStore struct {
 	s        SqlStore
@@ -107,36 +116,31 @@ func (s *ticketStore) Update(ctx context.Context, ticket *model.Ticket) error {
 }
 
 //nolint:revive // To disable unused query param issue.
-func (s *ticketStore) Count(ctx context.Context, query labels.Selector) (int, error) {
+func (s *ticketStore) Count(ctx context.Context, selector labels.Selector) (int, error) {
 	var count int
 	q := s.tbl.Count(ctx)
-
-	subQuery, err := s.makeQuery(ctx, query)
+	var err error
+	builder, err := s.makeQuery(ctx, q, selector)
 	if err != nil {
 		return 0, tracer.Trace(err)
 	}
-	if subQuery != nil {
-		q = q.Where(subQuery)
-	}
+	q = *builder
 
 	err = q.Scan(&count)
 	return count, err
 }
 
 //nolint:revive // To disable unused query param issue.
-func (s *ticketStore) Query(ctx context.Context, query labels.Selector, offset, limit uint64) ([]*model.Ticket, error) {
+func (s *ticketStore) Query(ctx context.Context, selector labels.Selector, offset, limit uint64) ([]*model.Ticket, error) {
 	// Base query
 	q := s.tbl.Select(ctx).Limit(limit).Offset(offset).OrderBy("started_at DESC")
-	// TODO: Add query on the ticket fields based on query fields. e.g., `f.is_spam=false,f.source=grafana`. use config.QueryTicketFieldsPrefix
 
 	// Apply query
-	subQuery, err := s.makeQuery(ctx, query)
+	builder, err := s.makeQuery(ctx, q, selector)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
-	if subQuery != nil {
-		q = q.Where(subQuery)
-	}
+	q = *builder
 
 	// Fetch
 	rows, err := q.QueryContext(ctx)
@@ -149,35 +153,117 @@ func (s *ticketStore) Query(ctx context.Context, query labels.Selector, offset, 
 	return l, s.fetchLabelsForAll(ctx, l...)
 }
 
-func (s *ticketStore) makeQuery(ctx context.Context, query labels.Selector) (*sq.SelectBuilder, error) {
-	requirements, selectable := query.Requirements()
+func (s *ticketStore) makeQuery(ctx context.Context, b sq.SelectBuilder, selector labels.Selector) (*sq.SelectBuilder, error) {
+	requirements, selectable := selector.Requirements()
 	if !selectable || len(requirements) == 0 {
 		return nil, nil
 	}
 
+	builder, err := s.makeTicketConditions(b, requirements)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+
+	return s.makeLabelConditions(ctx, *builder, requirements)
+}
+
+func (s *ticketStore) makeTicketConditions(b sq.SelectBuilder, requirements labels.Requirements) (*sq.SelectBuilder, error) {
+	// Add ticket conditions
+	conditions := sq.Or{}
+	for _, r := range requirements {
+		key := strings.TrimPrefix(r.Key(), config.QueryTicketFieldsPrefix)
+		if strings.Index(r.Key(), config.QueryTicketFieldsPrefix) != 0 {
+			continue
+		}
+
+		// Make sure the col is in the white list:
+		if !queryableTicketCols.Has(key) {
+			return nil, apperr.ErrInvalidQuery.SetData(hexa.Map{"key": r.Key()})
+		}
+
+		values := make([]any, len(r.Values().List()))
+
+		// convert values types if needed.
+		for i, val := range r.Values().List() {
+			var res any = val
+			var err error
+			if queryableDateCols.Has(key) {
+				res, err = time.Parse(time.DateTime, val)
+				if err != nil {
+					return nil, apperr.ErrInvalidQuery.SetError(err)
+				}
+
+			} else if queryableBoolCols.Has(key) {
+				res, err = strconv.ParseBool(val)
+				if err != nil {
+					return nil, apperr.ErrInvalidQuery.SetError(err)
+				}
+			}
+
+			values[i] = res
+		}
+
+		var op sq.Sqlizer
+		switch r.Operator() {
+		case selection.Equals, selection.DoubleEquals, selection.In:
+			op = sq.Eq{key: values}
+		case selection.NotEquals, selection.NotIn:
+			op = sq.NotEq{key: r.Values().List()}
+		case selection.Exists:
+			op = sq.NotEq{key: nil}
+		default:
+			return nil, apperr.ErrInvalidQuery.SetData(hexa.Map{"key": r.Key(), "operator": r.Operator()})
+		}
+		conditions = append(conditions, op)
+	}
+
+	if len(conditions) == 0 {
+		return &b, nil
+	}
+
+	b = b.Where(conditions)
+	return &b, nil
+}
+
+func (s *ticketStore) makeLabelConditions(ctx context.Context, b sq.SelectBuilder, requirements labels.Requirements) (*sq.SelectBuilder, error) {
+	// Add labels conditions
 	keys := sets.New[string]()
 	conditions := sq.Or{}
 	for _, r := range requirements {
+		key := r.Key()
+		if strings.Index(key, config.QueryTicketFieldsPrefix) == 0 {
+			continue
+		}
+
+		var op sq.Sqlizer
 		switch r.Operator() {
 		case selection.Equals, selection.DoubleEquals, selection.In:
-			conditions = append(conditions, sq.Eq{"key": r.Key(), "val": r.Values().List()})
-			keys.Insert(r.Key())
+			op = sq.Eq{"key": key, "val": r.Values().List()}
 		case selection.NotEquals, selection.NotIn:
-			conditions = append(conditions, sq.NotEq{"key": r.Key(), "val": r.Values().List()})
-			keys.Insert(r.Key())
+			op = sq.NotEq{"key": key, "val": r.Values().List()}
 		case selection.Exists:
-			conditions = append(conditions, sq.NotEq{"key": r.Key()})
-			keys.Insert(r.Key())
+			op = sq.NotEq{"key": key}
+		default:
+			return nil, apperr.ErrInvalidQuery.SetData(hexa.Map{"key": r.Key(), "operator": r.Operator()})
 		}
+
+		conditions = append(conditions, op)
+		keys.Insert(r.Key())
 	}
 
-	q := s.labelTbl.Select(ctx, "1").Prefix("EXISTS(").Suffix(")").
+	if len(conditions) == 0 {
+		return &b, nil
+	}
+
+	// make the labels query
+	labelsQuery := s.labelTbl.Select(ctx, "1").Prefix("EXISTS(").Suffix(")").
 		Where("ticket_id = tickets.id").
 		Where(conditions).
 		GroupBy("ticket_id").
 		Having(sq.Eq{"count(*)": len(keys)})
 
-	return &q, nil
+	b = b.Where(labelsQuery) // and labels query
+	return &b, nil
 }
 
 func (s *ticketStore) Delete(ctx context.Context, m *model.Ticket) error {
@@ -263,3 +349,8 @@ func (s *ticketStore) fetchLabelsForAll(ctx context.Context, tickets ...*model.T
 }
 
 var _ model.TicketStore = &ticketStore{}
+
+type TicketQueryMaker struct {
+	queryCols       []string
+	ticketColPrefix string
+}

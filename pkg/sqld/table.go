@@ -70,7 +70,8 @@ func (t *Table) UpdateBuilder(ctx context.Context, dest []any) sq.UpdateBuilder 
 
 func (t *Table) Select(ctx context.Context, fields ...string) sq.SelectBuilder {
 	if len(fields) == 0 {
-		fields = t.fields
+		//fields = t.fields
+		fields = []string{"*"}
 	}
 	return t.builder(ctx).Select(fields...).From(t.name)
 }

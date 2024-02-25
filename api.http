@@ -1,8 +1,5 @@
 ### Send POST request with json body
-POST http://{{apiv1}}
+POST http://{{apiv1}}/webhooks/grafana
 Content-Type: application/json
 
-{
-  "id": 999,
-  "value": "content"
-}
+< ./docs/general/grafana_webhook/example_payload_from_docs.json

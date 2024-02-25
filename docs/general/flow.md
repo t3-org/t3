@@ -1,49 +1,38 @@
-- Create channels in the config.
+### Prerequisites
+- Setup [channels config](./channels.md).
+- Register a webhook in Grafana to send tickets to T3.
 
-```yaml
-channels:
-  matrix: # the map's key is the channel name.
-    - type: matrix
-      homeserver: "https://..."
-      username: "..."
-      password: "..."
-
-
-```
-
-- Create webhooks. Each webhook can have a channel optionally (spcify the channel by its name).
+### Ticket Flow
 - Grafana will send a firing alert to our webhook.
-- Create the ticket (if it's not already created by another webhook, check by its fingerprint). and then
-  get its channel instance (we'll have a map of channels instances) and calls it's `firing` method to send
-  a message to the target third-party service(e.g., matrix).
-- Do the same for resolved grafana alert. I mean update its state in DB(if it's not upated already) and use
-  the webhook's channel to send a message.
+- When it gets an alert in the firing state:
+  - Creates a ticket for the alert  (with started_at,tags,...) if it's not created already(by another webhook)
+  - Send a message to the channels that match with the ticket's labels (by calling the `firing` method of each channel).
+  - 
+
+- When it get a alert in the resolved state:
+  - Sets the `end_date` of the alert(if it's not set already by the users) by finding the alert in the database
+    using `fingerprint` field.
+
 
 - Now we should let various interfaces update the ticket data(matrix commands, ui,cmd...).
-- I'll describe for matrix.
-- Per each channel call its `start` method which should start listening to messages. just like the api server that
-  we call its listen at the start time of the app, do the same per each channel instance to listen to the messages.
-- for matrix follow the matrix specs to see how should be the message format to do some action.
 
-### Matrix messages format.
+### User actions
 
-Matrix commands have a configured prefix(default: `!!`). we'll use `!!` as our prefix in the next sections of the doc.
+- users should set `level`, `seen_at` of each ticket.
+- Users can set all ticket's fields if they want.
 
-__Matrix commands__
+Users do actions via the following ways:
 
-- `!!seen {minutes(default: 0)}`. set the `seen_at` of a ticket. e.g. `!!seen -10` meaning i've seen 10 minutes ago.
-- `!!spam`, `!!spam true` `!!spam false`. set the spam field of a ticket.
-- `!!resolved {minutes(default: 0)}`. e.g., `!!resolved` the alert is resolved now.
-- `!!firing`. just changes the `is_firing` field to `true`.
-- `!!level {level: low,medium or high}`: the set level of a ticket. e.g., `!!level low`.
-- `!!description {msg}`. set the `description` field(it'll remove the previous content if it's not empty).
-- `!!init_description {msg}`. set the `description` field if it's empty.
+- cli
+- ui
+- channels(e.g., through matrix UI).
 
-- `!!edit`: Get a link to the ticket edition form in the UI.
-- `!!ticket`: Get the ticket.
+__notifications that we'll send to the channels(e.g., matrix room)__
 
-Non-ticket-related commands (commands that are not for specific command)
+- ticket created(firing).
+- ticket reoslved
 
-- `!!new`: get a link to the ticket creation form in the UI.
-- `!!dashboard` get a link to the dashboard.
-- `!!help` get a help message for all commands and also some useful links like dashboard link.
+
+
+
+

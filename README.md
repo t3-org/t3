@@ -10,11 +10,8 @@ __Prerequisites__
 
 - generate a config file: `cp config.example.yaml config.yaml`
 - Update config values.
-- Run the server:
-
-```bash
-  go run ./cmd/t3/main.go server listen
-```
+- Run the server: `go run ./cmd/t3/main.go server listen`
+- Run the UI server following steps [here](./webui/README.md)
 
 ### How to update docs?
 

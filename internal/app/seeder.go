@@ -9,7 +9,7 @@ import (
 
 func (a *appCore) Seed(ctx context.Context, count int32) error {
 	for i := int32(0); i < count; i++ {
-		in := input.RandomCreatTicket()
+		in := input.RandomTicketCreationInput()
 		if _, err := a.createTicket(ctx, in, false); err != nil {
 			return tracer.Trace(err)
 		}

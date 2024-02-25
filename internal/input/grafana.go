@@ -22,15 +22,16 @@ type GrafanaAlert struct {
 	Values       map[string]any    `json:"values"`
 }
 
-func (in *GrafanaWebhookPayload) PatchInputs() []*PatchTicket {
+// ToPatchInputs converts the input to PatchTicket list.
+func (in *GrafanaWebhookPayload) ToPatchInputs() []*PatchTicket {
 	res := make([]*PatchTicket, len(in.Alerts))
 	for idx, val := range in.Alerts {
-		res[idx] = val.PatchInput()
+		res[idx] = val.ToPatchInput()
 	}
 	return res
 }
 
-func (in *GrafanaAlert) PatchInput() *PatchTicket {
+func (in *GrafanaAlert) ToPatchInput() *PatchTicket {
 	if in.Status == "resolved" {
 		return &PatchTicket{
 			Fingerprint: in.FingerPrint,
@@ -40,7 +41,7 @@ func (in *GrafanaAlert) PatchInput() *PatchTicket {
 	}
 
 	// Send the patch ticket input for firing state:
-	var values map[string]string
+	values := make(map[string]string)
 	for k, v := range in.Values {
 		values[k] = fmt.Sprint(v)
 	}

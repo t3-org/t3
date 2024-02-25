@@ -1,16 +1,16 @@
-We have two of reports:
+We have two types of reports:
 
 - numeric data
 - chart data
 
 We can use dedicated dashboard for it or use grafana.
 
-### Files
+### Filters
 
 Filters are:
 
 - time range
-- a labelSet. for example we can get report for previous month with label set `region=teh1,team=orders`.
+- a labelSet. for example we can get reports with label set `region=teh1,team=orders`.
 - An optional `group` label key. e.g., group reports by `product`. In this case we'll add a list of reports grouped
   by the group label to the report too(in addition to the base report). For example we'll return a report for
   the `orders` team and also a list of reports of the `orders` team's products.

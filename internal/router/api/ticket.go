@@ -70,8 +70,8 @@ func (r *ticketResource) Delete(c echo.Context) error {
 }
 
 func (r *ticketResource) Query(c echo.Context) error {
-	_, page, perPage := r.QueryAndPaginationParams(c)
-	res, err := r.app.QueryTickets(c.Request().Context(), c.QueryParam("query"), page, perPage)
+	query, page, perPage := r.QueryAndPaginationParams(c)
+	res, err := r.app.QueryTickets(c.Request().Context(), query, page, perPage)
 	if err != nil {
 		return tracer.Trace(err)
 	}

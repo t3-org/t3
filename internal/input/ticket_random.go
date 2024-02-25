@@ -6,7 +6,7 @@ import (
 	"github.com/kamva/gutil"
 )
 
-func RandomCreatTicket() *CreateTicket {
+func RandomTicketCreationInput() *CreateTicket {
 	raw := `{
   "receiver": "tmp_webhook",
   "status": "firing",
