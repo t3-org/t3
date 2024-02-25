@@ -156,7 +156,7 @@ func (s *ticketStore) Query(ctx context.Context, selector labels.Selector, offse
 func (s *ticketStore) makeQuery(ctx context.Context, b sq.SelectBuilder, selector labels.Selector) (*sq.SelectBuilder, error) {
 	requirements, selectable := selector.Requirements()
 	if !selectable || len(requirements) == 0 {
-		return nil, nil
+		return &b, nil
 	}
 
 	builder, err := s.makeTicketConditions(b, requirements)
