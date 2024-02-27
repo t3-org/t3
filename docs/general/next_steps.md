@@ -7,7 +7,7 @@
 -[ ] Reporting dashboard
 -[ ] tickets graph and merge [feature.md](tickets_graph_and_merge_feature.md)
 -[ ] AI assistant
-
+-[ ] Auto-refresh the channels configs peridically (e.g., every 10 minutes and also provide an api endpoint to refresh it).
 
 ### Improvements
 - [ ] better message rendering for channels
@@ -16,6 +16,7 @@
 - [ ] sync filter with the url (to be able to share and open the tickets page with specific filters)
 - [ ] In the edit link of matrix plugin, add filter to the url to show that ticket on the page.
 - [ ] Add search-help doc on the search input.
+- [ ] Dispatch ticket changes to channels as async jobs.
 
 ### spam feature
 

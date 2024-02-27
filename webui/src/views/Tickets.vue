@@ -1,13 +1,14 @@
 <script setup>
 import Ticket from "@/components/Ticket.vue";
 
-import {onMounted, reactive, watch} from 'vue';
+import {computed, onMounted, reactive, watch} from 'vue';
 import T3Service from "@/service/T3Service";
 import {useToast} from "primevue/usetoast";
-import _ from "lodash";
+import {useRouter} from "vue-router";
 
 const cli = new T3Service()
 const toast = useToast()
+const router = useRouter();
 
 // initialization
 onMounted(search)
@@ -15,7 +16,6 @@ onMounted(search)
 
 const tickets = reactive({
   items: [],
-  query: "",
   ignorePaginationChanges: false,
   pagination: {
     page: 1,
@@ -27,12 +27,12 @@ const tickets = reactive({
 
 
 async function search() {
-  if (tickets.ignorePaginationChanges){
-    tickets.ignorePaginationChanges=false
+  if (tickets.ignorePaginationChanges) {
+    tickets.ignorePaginationChanges = false
     return
   }
   const res = await cli.queryTickets(
-      tickets.query,
+      query.value,
       tickets.pagination.page,
       tickets.pagination.per_page,
   )
@@ -55,12 +55,40 @@ function updateTicketById(ticket) {
   }
 }
 
+/* uncomment this line to search on changing the query value
+// and also use the specified debounce function for the search input.
+// watch(() => query, search);
+// e.g.,
+
+import _ from "lodash";
+
 const debounceQuery = _.debounce(function (e) {
-  tickets.query = e.target.value;
+  query.value = e.target.value;
 }, 1000)
 
-// watch(() => tickets.query, search); // uncomment this line to search on changing the query value.
+      <InputText :value="query"
+                 v-on:input="debounceQuery"
+                 size="large"
+                 placeholder="search in k8s label selector format (e.g., team=ordering)"/>
+**/
 watch(() => tickets.pagination, search, {deep: true});
+
+// Bind query param 'q' to the 'query' variable.
+const query = computed({
+  get: function () {
+    return router.currentRoute.value.query.q // e.g. abc.com?q=...
+  },
+  set(val) {
+    // using replace to do not pushing a new page to the history stack.
+    router.replace({
+      query: {
+        ...router.currentRoute.value.query,
+        q: val
+      }
+    })
+  }
+})
+
 
 
 </script>
@@ -68,8 +96,7 @@ watch(() => tickets.pagination, search, {deep: true});
 <template>
   <form @submit.prevent="search">
     <div class="p-inputgroup mb-2">
-      <InputText :value="tickets.query"
-                 v-on:input="debounceQuery"
+      <InputText v-model="query"
                  size="large"
                  placeholder="search in k8s label selector format (e.g., team=ordering)"/>
     </div>
