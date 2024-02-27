@@ -32,7 +32,7 @@ onMounted(async () => {
 })
 
 watch(() => keepOpen.value, () => {
-  router.push({name: 'dashboard'})
+  router.push({name: 'dashboard', query: router.currentRoute.value.query})
 });
 
 

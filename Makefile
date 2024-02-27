@@ -23,25 +23,14 @@ extract-api-docs:
 build-api-docs:
 	swagger generate spec -o ./docs/api/api_docs.json
 
-.PHONY: api-docs-server
-api-docs-server:
+.PHONY: serve-api-docs
+serve-api-docs:
 	 serve -l 1000 ./docs/api
 
 .PHONY: publish-api-docs
 publish-api-docs:
 	vercel ./docs/api --prod
 
-.PHONY: docs-server
-docs-server:
-	yarn --cwd ./docs/general docs:dev .
-
-.PHONY: build-docs
-build-docs:
-	yarn --cwd ./docs/general docs:build .
-
-.PHONY: publish-docs
-publish-docs:
-	vercel ./docs/general --prod
 
 .PHONY: install-lint
 install-lint:

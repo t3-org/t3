@@ -41,7 +41,7 @@ type replyCode struct {
 
 // route:begin: lab::ping
 // swagger:route GET /api/v1/lab/ping lab labPingParams
-//
+// Ping API server.
 // responses:
 //   200: labPingSuccessResponse
 
@@ -65,7 +65,7 @@ type labPingResponseWrapper struct {
 
 // route:begin: lab::routes
 // swagger:route GET /api/v1/lab/routes lab labRoutesParams
-// Returns routes.
+// Get all routes(Debug mode).
 // responses:
 //   200: labRoutesSuccessResponse
 
@@ -90,14 +90,14 @@ type labRoutesResponseWrapper struct {
 
 // route:end: lab::routes
 
-// route:begin: planets::create
-// swagger:route POST /api/v1/planets planets planetsCreateParams
-// Create a planet.
+// route:begin: tickets::create
+// swagger:route POST /api/v1/tickets tickets ticketsCreateParams
+// Create a ticket.
 // responses:
-//   200: planetsCreateSuccessResponse
+//   200: ticketsCreateSuccessResponse
 
-// swagger:parameters planetsCreateParams
-type planetsCreateParamsWrapper struct {
+// swagger:parameters ticketsCreateParams
+type ticketsCreateParamsWrapper struct {
 	// in:body
 	Body struct {
 		input.CreateTicket
@@ -105,8 +105,8 @@ type planetsCreateParamsWrapper struct {
 }
 
 // success response
-// swagger:response planetsCreateSuccessResponse
-type planetsCreateResponseWrapper struct {
+// swagger:response ticketsCreateSuccessResponse
+type ticketsCreateResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
@@ -114,16 +114,16 @@ type planetsCreateResponseWrapper struct {
 	}
 }
 
-// route:end: planets::create
+// route:end: tickets::create
 
-// route:begin: planets::delete
-// swagger:route DELETE /api/v1/planets/{id} planets planetsDeleteParams
-// Delete a planet.
+// route:begin: tickets::delete
+// swagger:route DELETE /api/v1/tickets/{id} tickets ticketsDeleteParams
+// Delete a ticket.
 // responses:
-//   200: planetsDeleteSuccessResponse
+//   200: ticketsDeleteSuccessResponse
 
-// swagger:parameters planetsDeleteParams
-type planetsDeleteParamsWrapper struct {
+// swagger:parameters ticketsDeleteParams
+type ticketsDeleteParamsWrapper struct {
 	// in:path
 	Id string `json:"id"`
 
@@ -133,26 +133,26 @@ type planetsDeleteParamsWrapper struct {
 }
 
 // success response
-// swagger:response planetsDeleteSuccessResponse
-type planetsDeleteResponseWrapper struct {
+// swagger:response ticketsDeleteSuccessResponse
+type ticketsDeleteResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
 	}
 }
 
-// route:end: planets::delete
+// route:end: tickets::delete
 
-// route:begin: planets::getByCode
-// swagger:route GET /api/v1/planets/code/{code} planets planetsGetByCodeParams
-// Get a planet by code.
+// route:begin: tickets::get
+// swagger:route GET /api/v1/tickets/{id} tickets ticketsGetParams
+//
 // responses:
-//   200: planetsGetByCodeSuccessResponse
+//   200: ticketsGetSuccessResponse
 
-// swagger:parameters planetsGetByCodeParams
-type planetsGetByCodeParamsWrapper struct {
+// swagger:parameters ticketsGetParams
+type ticketsGetParamsWrapper struct {
 	// in:path
-	Code string `json:"code"`
+	Id string `json:"id"`
 
 	// in:body
 	Body struct {
@@ -160,8 +160,8 @@ type planetsGetByCodeParamsWrapper struct {
 }
 
 // success response
-// swagger:response planetsGetByCodeSuccessResponse
-type planetsGetByCodeResponseWrapper struct {
+// swagger:response ticketsGetSuccessResponse
+type ticketsGetResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
@@ -169,16 +169,16 @@ type planetsGetByCodeResponseWrapper struct {
 	}
 }
 
-// route:end: planets::getByCode
+// route:end: tickets::get
 
-// route:begin: planets::put
-// swagger:route PUT /api/v1/planets/{id} planets planetsPutParams
-// Patch a planet.
+// route:begin: tickets::patch
+// swagger:route PATCH /api/v1/tickets/{id} tickets ticketsPatchParams
+// Patch a ticket.
 // responses:
-//   200: planetsPutSuccessResponse
+//   200: ticketsPatchSuccessResponse
 
-// swagger:parameters planetsPutParams
-type planetsPutParamsWrapper struct {
+// swagger:parameters ticketsPatchParams
+type ticketsPatchParamsWrapper struct {
 	// in:path
 	Id string `json:"id"`
 
@@ -189,8 +189,8 @@ type planetsPutParamsWrapper struct {
 }
 
 // success response
-// swagger:response planetsPutSuccessResponse
-type planetsPutResponseWrapper struct {
+// swagger:response ticketsPatchSuccessResponse
+type ticketsPatchResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
@@ -198,33 +198,72 @@ type planetsPutResponseWrapper struct {
 	}
 }
 
-// route:end: planets::put
+// route:end: tickets::patch
 
-// route:begin: planets::query
-// swagger:route GET /api/v1/planets planets planetsQueryParams
-// Query planets.
+// route:begin: tickets::query
+// swagger:route GET /api/v1/tickets tickets ticketsQueryParams
+// Query tickets.
 // responses:
-//   200: planetsQuerySuccessResponse
+//   200: ticketsQuerySuccessResponse
 
-// swagger:parameters planetsQueryParams
-type planetsQueryParamsWrapper struct {
+// swagger:parameters ticketsQueryParams
+type ticketsQueryParamsWrapper struct {
 	// in:body
 	Body struct {
+		// Query should be in k8s label-selector format. read its
+		// docs on T3 dashbaord in the tickets search page.
 		Query string `json:"query"`
+		Pagination
 	}
 }
 
 // success response
-// swagger:response planetsQuerySuccessResponse
-type planetsQueryResponseWrapper struct {
+// swagger:response ticketsQuerySuccessResponse
+type ticketsQueryResponseWrapper struct {
 	// in:body
 	Body struct {
 		replyCode
 		Data struct {
-			pagination.Pages
-			Items []*dto.Ticket `json:"items"`
-		} `json:"data"`
+			pagination.Pagination
+			Ietms []dto.Ticket `json:"ietms"`
+		}
 	}
 }
 
-// route:end: planets::query
+// route:end: tickets::query
+
+// route:begin: webhooks::call
+// swagger:route POST /api/v1/webhooks/{webhook_type} webhooks webhooksCallParams
+// Webhook endpoint.
+// This Endpoint is called by sources(grafana...) as the webhook endpoint.
+// responses:
+//   200: webhooksCallSuccessResponse
+
+// swagger:parameters webhooksCallParams
+type webhooksCallParamsWrapper struct {
+	// Its value could be : grafana
+	// in:path
+	Webhook_type string `json:"webhook_type"`
+
+	// in:body
+	input.GrafanaWebhookPayload
+
+	// in:body
+	Body struct {
+		// Body is variable based on the webhook type. for example
+		// for Grafana its the Grafana alert data.
+		input.GrafanaWebhookPayload
+	}
+}
+
+// success response
+// swagger:response webhooksCallSuccessResponse
+type webhooksCallResponseWrapper struct {
+	// in: body
+	Body struct {
+		replyCode
+		Data dto.Ticket `json:"data"`
+	}
+}
+
+// route:end: webhooks::call

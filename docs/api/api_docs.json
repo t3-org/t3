@@ -11,7 +11,7 @@
   ],
   "swagger": "2.0",
   "info": {
-    "description": "T3 API docs",
+    "description": "# T3 API docs",
     "version": "0.1.0"
   },
   "host": "t3.app",
@@ -21,6 +21,7 @@
         "tags": [
           "lab"
         ],
+        "summary": "Ping API server.",
         "operationId": "labPingParams",
         "parameters": [
           {
@@ -43,7 +44,7 @@
         "tags": [
           "lab"
         ],
-        "summary": "Returns routes.",
+        "summary": "Get all routes(Debug mode).",
         "operationId": "labRoutesParams",
         "parameters": [
           {
@@ -61,13 +62,13 @@
         }
       }
     },
-    "/api/v1/planets": {
+    "/api/v1/tickets": {
       "get": {
         "tags": [
-          "planets"
+          "tickets"
         ],
-        "summary": "Query planets.",
-        "operationId": "planetsQueryParams",
+        "summary": "Query tickets.",
+        "operationId": "ticketsQueryParams",
         "parameters": [
           {
             "name": "Body",
@@ -75,7 +76,18 @@
             "schema": {
               "type": "object",
               "properties": {
+                "page": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "Page"
+                },
+                "per_page": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "PerPage"
+                },
                 "query": {
+                  "description": "Query should be in k8s label-selector format. read its\ndocs on T3 dashbaord in the tickets search page.",
                   "type": "string",
                   "x-go-name": "Query"
                 }
@@ -85,16 +97,16 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/planetsQuerySuccessResponse"
+            "$ref": "#/responses/ticketsQuerySuccessResponse"
           }
         }
       },
       "post": {
         "tags": [
-          "planets"
+          "tickets"
         ],
-        "summary": "Create a planet.",
-        "operationId": "planetsCreateParams",
+        "summary": "Create a ticket.",
+        "operationId": "ticketsCreateParams",
         "parameters": [
           {
             "name": "Body",
@@ -102,13 +114,86 @@
             "schema": {
               "type": "object",
               "properties": {
-                "code": {
-                  "type": "string",
-                  "x-go-name": "Code"
+                "annotations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Annotations"
                 },
-                "name": {
+                "description": {
                   "type": "string",
-                  "x-go-name": "Name"
+                  "x-go-name": "Description"
+                },
+                "ended_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "EndedAt"
+                },
+                "fingerprint": {
+                  "description": "In patch requests, we'll ignore the fingerprint field. in creation\nrequests it's required.",
+                  "type": "string",
+                  "x-go-name": "Fingerprint"
+                },
+                "generator_url": {
+                  "type": "string",
+                  "x-go-name": "GeneratorUrl"
+                },
+                "is_firing": {
+                  "type": "boolean",
+                  "x-go-name": "IsFiring"
+                },
+                "is_spam": {
+                  "type": "boolean",
+                  "x-go-name": "IsSpam"
+                },
+                "labels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Labels"
+                },
+                "raw": {
+                  "type": "string",
+                  "x-go-name": "Raw"
+                },
+                "seen_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "SeenAt"
+                },
+                "severity": {
+                  "type": "string",
+                  "x-go-name": "Severity"
+                },
+                "source": {
+                  "type": "string",
+                  "x-go-name": "Source"
+                },
+                "started_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "StartedAt"
+                },
+                "sync_annotations": {
+                  "type": "boolean",
+                  "x-go-name": "SyncAnnotations"
+                },
+                "sync_labels": {
+                  "type": "boolean",
+                  "x-go-name": "SyncLabels"
+                },
+                "title": {
+                  "type": "string",
+                  "x-go-name": "Title"
+                },
+                "values": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Values"
                 }
               }
             }
@@ -116,23 +201,22 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/planetsCreateSuccessResponse"
+            "$ref": "#/responses/ticketsCreateSuccessResponse"
           }
         }
       }
     },
-    "/api/v1/planets/code/{code}": {
+    "/api/v1/tickets/{id}": {
       "get": {
         "tags": [
-          "planets"
+          "tickets"
         ],
-        "summary": "Get a planet by code.",
-        "operationId": "planetsGetByCodeParams",
+        "operationId": "ticketsGetParams",
         "parameters": [
           {
             "type": "string",
-            "x-go-name": "Code",
-            "name": "code",
+            "x-go-name": "Id",
+            "name": "id",
             "in": "path",
             "required": true
           },
@@ -146,56 +230,16 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/planetsGetByCodeSuccessResponse"
-          }
-        }
-      }
-    },
-    "/api/v1/planets/{id}": {
-      "put": {
-        "tags": [
-          "planets"
-        ],
-        "summary": "Update a planet.",
-        "operationId": "planetsPutParams",
-        "parameters": [
-          {
-            "type": "string",
-            "x-go-name": "Id",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "Body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string",
-                  "x-go-name": "Code"
-                },
-                "name": {
-                  "type": "string",
-                  "x-go-name": "Name"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/planetsPutSuccessResponse"
+            "$ref": "#/responses/ticketsGetSuccessResponse"
           }
         }
       },
       "delete": {
         "tags": [
-          "planets"
+          "tickets"
         ],
-        "summary": "Delete a planet.",
-        "operationId": "planetsDeleteParams",
+        "summary": "Delete a ticket.",
+        "operationId": "ticketsDeleteParams",
         "parameters": [
           {
             "type": "string",
@@ -214,41 +258,220 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/planetsDeleteSuccessResponse"
+            "$ref": "#/responses/ticketsDeleteSuccessResponse"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "tickets"
+        ],
+        "summary": "Patch a ticket.",
+        "operationId": "ticketsPatchParams",
+        "parameters": [
+          {
+            "type": "string",
+            "x-go-name": "Id",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "annotations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Annotations"
+                },
+                "description": {
+                  "type": "string",
+                  "x-go-name": "Description"
+                },
+                "ended_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "EndedAt"
+                },
+                "fingerprint": {
+                  "description": "In patch requests, we'll ignore the fingerprint field. in creation\nrequests it's required.",
+                  "type": "string",
+                  "x-go-name": "Fingerprint"
+                },
+                "generator_url": {
+                  "type": "string",
+                  "x-go-name": "GeneratorUrl"
+                },
+                "is_firing": {
+                  "type": "boolean",
+                  "x-go-name": "IsFiring"
+                },
+                "is_spam": {
+                  "type": "boolean",
+                  "x-go-name": "IsSpam"
+                },
+                "labels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Labels"
+                },
+                "raw": {
+                  "type": "string",
+                  "x-go-name": "Raw"
+                },
+                "seen_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "SeenAt"
+                },
+                "severity": {
+                  "type": "string",
+                  "x-go-name": "Severity"
+                },
+                "source": {
+                  "type": "string",
+                  "x-go-name": "Source"
+                },
+                "started_at": {
+                  "type": "integer",
+                  "format": "int64",
+                  "x-go-name": "StartedAt"
+                },
+                "sync_annotations": {
+                  "type": "boolean",
+                  "x-go-name": "SyncAnnotations"
+                },
+                "sync_labels": {
+                  "type": "boolean",
+                  "x-go-name": "SyncLabels"
+                },
+                "title": {
+                  "type": "string",
+                  "x-go-name": "Title"
+                },
+                "values": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "x-go-name": "Values"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ticketsPatchSuccessResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/webhooks/{webhook_type}": {
+      "post": {
+        "description": "This Endpoint is called by sources(grafana...) as the webhook endpoint.",
+        "tags": [
+          "webhooks"
+        ],
+        "summary": "Webhook endpoint.",
+        "operationId": "webhooksCallParams",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/GrafanaAlert"
+            },
+            "x-go-name": "Alerts",
+            "name": "alerts",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Webhook_type",
+            "description": "Its value could be : grafana",
+            "name": "webhook_type",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "alerts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/GrafanaAlert"
+                  },
+                  "x-go-name": "Alerts"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/webhooksCallSuccessResponse"
           }
         }
       }
     }
   },
   "definitions": {
-    "Planet": {
+    "GrafanaAlert": {
       "type": "object",
       "properties": {
-        "code": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Annotations"
+        },
+        "endsAt": {
           "type": "string",
-          "x-go-name": "Code"
+          "format": "date-time",
+          "x-go-name": "EndsAt"
         },
-        "created_at": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "CreatedAt"
-        },
-        "id": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "ID"
-        },
-        "name": {
+        "fingerprint": {
           "type": "string",
-          "x-go-name": "Name"
+          "x-go-name": "FingerPrint"
         },
-        "updated_at": {
-          "type": "integer",
-          "format": "int64",
-          "x-go-name": "UpdatedAt"
+        "generatorURL": {
+          "type": "string",
+          "x-go-name": "GeneratorURL"
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Labels"
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "StartsAt"
+        },
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        },
+        "values": {
+          "type": "object",
+          "additionalProperties": {},
+          "x-go-name": "Values"
         }
       },
-      "x-go-package": "t3.org/t3/internal/model"
+      "x-go-package": "t3.org/t3/internal/input"
     },
     "Route": {
       "type": "object",
@@ -268,6 +491,98 @@
         }
       },
       "x-go-package": "github.com/labstack/echo/v4"
+    },
+    "StringMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "x-go-package": "t3.org/t3/internal/model"
+    },
+    "Ticket": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "$ref": "#/definitions/StringMap"
+        },
+        "created_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt"
+        },
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "ended_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "EndedAt"
+        },
+        "fingerprint": {
+          "type": "string",
+          "x-go-name": "Fingerprint"
+        },
+        "generator_url": {
+          "type": "string",
+          "x-go-name": "GeneratorUrl"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "is_firing": {
+          "type": "boolean",
+          "x-go-name": "IsFiring"
+        },
+        "is_spam": {
+          "type": "boolean",
+          "x-go-name": "IsSpam"
+        },
+        "labels": {
+          "description": "Internal labels start with \"_\". API can not touch(edit,remove...) internal labels.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-go-name": "Labels"
+        },
+        "raw": {
+          "type": "string",
+          "x-go-name": "Raw"
+        },
+        "seen_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "SeenAt"
+        },
+        "severity": {
+          "type": "string",
+          "x-go-name": "Severity"
+        },
+        "source": {
+          "type": "string",
+          "x-go-name": "Source"
+        },
+        "started_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "StartedAt"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "updated_at": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt"
+        },
+        "values": {
+          "$ref": "#/definitions/StringMap"
+        }
+      },
+      "x-go-package": "t3.org/t3/internal/model"
     }
   },
   "responses": {
@@ -310,7 +625,7 @@
         }
       }
     },
-    "planetsCreateSuccessResponse": {
+    "ticketsCreateSuccessResponse": {
       "description": "success response",
       "schema": {
         "type": "object",
@@ -321,12 +636,12 @@
             "x-go-name": "Code"
           },
           "data": {
-            "$ref": "#/definitions/Planet"
+            "$ref": "#/definitions/Ticket"
           }
         }
       }
     },
-    "planetsDeleteSuccessResponse": {
+    "ticketsDeleteSuccessResponse": {
       "description": "success response",
       "schema": {
         "type": "object",
@@ -339,23 +654,7 @@
         }
       }
     },
-    "planetsGetByCodeSuccessResponse": {
-      "description": "success response",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "description": "response code",
-            "type": "string",
-            "x-go-name": "Code"
-          },
-          "data": {
-            "$ref": "#/definitions/Planet"
-          }
-        }
-      }
-    },
-    "planetsPutSuccessResponse": {
+    "ticketsGetSuccessResponse": {
       "description": "success response",
       "schema": {
         "type": "object",
@@ -366,12 +665,12 @@
             "x-go-name": "Code"
           },
           "data": {
-            "$ref": "#/definitions/Planet"
+            "$ref": "#/definitions/Ticket"
           }
         }
       }
     },
-    "planetsQuerySuccessResponse": {
+    "ticketsPatchSuccessResponse": {
       "description": "success response",
       "schema": {
         "type": "object",
@@ -382,14 +681,25 @@
             "x-go-name": "Code"
           },
           "data": {
+            "$ref": "#/definitions/Ticket"
+          }
+        }
+      }
+    },
+    "ticketsQuerySuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "Data": {
             "type": "object",
             "properties": {
-              "items": {
+              "ietms": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/Planet"
+                  "$ref": "#/definitions/Ticket"
                 },
-                "x-go-name": "Items"
+                "x-go-name": "Ietms"
               },
               "page": {
                 "type": "integer",
@@ -411,8 +721,28 @@
                 "format": "int64",
                 "x-go-name": "TotalCount"
               }
-            },
-            "x-go-name": "Data"
+            }
+          },
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          }
+        }
+      }
+    },
+    "webhooksCallSuccessResponse": {
+      "description": "success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "description": "response code",
+            "type": "string",
+            "x-go-name": "Code"
+          },
+          "data": {
+            "$ref": "#/definitions/Ticket"
           }
         }
       }

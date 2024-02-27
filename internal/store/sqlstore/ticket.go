@@ -169,7 +169,7 @@ func (s *ticketStore) makeQuery(ctx context.Context, b sq.SelectBuilder, selecto
 
 func (s *ticketStore) makeTicketConditions(b sq.SelectBuilder, requirements labels.Requirements) (*sq.SelectBuilder, error) {
 	// Add ticket conditions
-	conditions := sq.Or{}
+	conditions := sq.And{}
 	for _, r := range requirements {
 		key := strings.TrimPrefix(r.Key(), config.QueryTicketFieldsPrefix)
 		if strings.Index(r.Key(), config.QueryTicketFieldsPrefix) != 0 {

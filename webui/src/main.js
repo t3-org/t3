@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import App from './App.vue';
 import router from './router';
 
@@ -101,11 +101,13 @@ import TriStateCheckbox from 'primevue/tristatecheckbox';
 import VirtualScroller from 'primevue/virtualscroller';
 
 import '@/assets/styles.scss';
+import InputGroup from "primevue/inputgroup";
+import InputGroupAddon from "primevue/inputgroupaddon";
 
 const app = createApp(App);
 
 app.use(router);
-app.use(PrimeVue, { ripple: true });
+app.use(PrimeVue, {ripple: true});
 app.use(ToastService);
 app.use(DialogService);
 app.use(ConfirmationService);
@@ -157,6 +159,8 @@ app.component('Inplace', Inplace);
 app.component('InputMask', InputMask);
 app.component('InputNumber', InputNumber);
 app.component('InputSwitch', InputSwitch);
+app.component('InputGroup', InputGroup);
+app.component('InputGroupAddon', InputGroupAddon);
 app.component('InputText', InputText);
 app.component('Knob', Knob);
 app.component('Listbox', Listbox);

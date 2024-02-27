@@ -158,14 +158,14 @@ func (m *Ticket) Markdown() string {
 		w("- description: `null`")
 	}
 
-	w("- started_at: `%s`", time.UnixMilli(m.StartedAt).Format(time.RFC3339))
+	w("- started_at: `%s`", time.UnixMilli(m.StartedAt).Format(time.RFC1123))
 	if m.EndedAt != nil {
-		w("- ended_at: `%s`", time.UnixMilli(*m.EndedAt).Format(time.RFC3339))
+		w("- ended_at: `%s`", time.UnixMilli(*m.EndedAt).Format(time.RFC1123))
 	} else {
 		w("- ended_at: `null`")
 	}
 	if m.SeenAt != nil {
-		w("- seen_at: `%s`", time.UnixMilli(*m.SeenAt).Format(time.RFC3339))
+		w("- seen_at: `%s`", time.UnixMilli(*m.SeenAt).Format(time.RFC1123))
 	} else {
 		w("- seen_at: `null`")
 	}

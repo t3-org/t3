@@ -3,6 +3,17 @@
     opacity: 0.0;
   }
 }
+
 .blink {
   animation: blink 1s step-start 0s infinite;
+}
+
+.code{
+  background-color: var(--gray-200);
+  border-radius: 6px;
+  //color: var(--doc-highlight-text-color);
+  font-size: .875rem;
+  font-style: normal;
+  font-weight: 500;
+  padding: 2px 6px;
 }

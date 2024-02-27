@@ -3,19 +3,20 @@
 -[ ] Post-mortem
 -[ ] Auto label (will be used to set on-call user) as a plugin
 -[ ] Limited labels (to keep some label values in a white list)
--[ ] Plugin ecosystem for channels(matrix,...) and sources(grafana,...).
+-[ ] [Plugin system](./features/plugin_system.md) for channels(matrix,...) and sources(grafana,...).
 -[ ] Reporting dashboard
--[ ] tickets graph and merge [feature.md](tickets_graph_and_merge_feature.md)
+-[ ] tickets graph and merge [feature.md](features/tickets_graph_and_merge_feature.md)
 -[ ] AI assistant
 -[ ] Auto-refresh the channels configs peridically (e.g., every 10 minutes and also provide an api endpoint to refresh it).
 
 ### Improvements
 - [ ] better message rendering for channels
-  - set date format like this: `Feb 14, 2023, 1:42 PM` (get a local in the app config to localize dates in the chanenls messages)
+  - [x] set date format like this: `Feb 14, 2023, 1:42 PM` 
+  - [ ] get a local in the app config to localize dates in the channels messages
 - [x] Have a filter in the tickets-search page to view single ticket by id.
-- [ ] sync filter with the url (to be able to share and open the tickets page with specific filters)
-- [ ] In the edit link of matrix plugin, add filter to the url to show that ticket on the page.
-- [ ] Add search-help doc on the search input.
+- [x] sync tickets filter input with the url (to be able to share and open the tickets page with specific filters)
+- [x] In the edit link of matrix plugin, add filter to the url to show that ticket on the page.
+- [x] Add search-help doc on the search input.
 - [ ] Dispatch ticket changes to channels as async jobs.
 
 ### spam feature

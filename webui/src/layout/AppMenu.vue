@@ -9,7 +9,7 @@ const model = ref([
         items: [
             { label: 'Tickets', icon: 'pi pi-fw pi-home', to: '/' },
             { label: 'Docs', icon: 'pi pi-fw pi-book', to: '/docs' },
-            { label: 'Docs', icon: 'pi pi-fw pi-info', to: '/about' }
+            { label: 'About', icon: 'pi pi-fw pi-info', to: '/about' }
         ]
     },
     // {

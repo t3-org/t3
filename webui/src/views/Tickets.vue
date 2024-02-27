@@ -1,10 +1,11 @@
 <script setup>
 import Ticket from "@/components/Ticket.vue";
 
-import {computed, onMounted, reactive, watch} from 'vue';
+import {computed, onMounted, reactive, ref, watch} from 'vue';
 import T3Service from "@/service/T3Service";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
+import QueryHelp from "../components/docs/QueryHelp.vue";
 
 const cli = new T3Service()
 const toast = useToast()
@@ -13,7 +14,7 @@ const router = useRouter();
 // initialization
 onMounted(search)
 
-
+const showHelp = ref(false)
 const tickets = reactive({
   items: [],
   ignorePaginationChanges: false,
@@ -76,6 +77,10 @@ watch(() => tickets.pagination, search, {deep: true});
 // Bind query param 'q' to the 'query' variable.
 const query = computed({
   get: function () {
+    // set to empty value if it's undefined
+    if (router.currentRoute.value.query.q === undefined) {
+      return ""
+    }
     return router.currentRoute.value.query.q // e.g. abc.com?q=...
   },
   set(val) {
@@ -90,15 +95,18 @@ const query = computed({
 })
 
 
-
 </script>
 
 <template>
+
+  <QueryHelp v-show="showHelp"></QueryHelp>
   <form @submit.prevent="search">
-    <div class="p-inputgroup mb-2">
-      <InputText v-model="query"
+    <div class="p-inputgroup p-overlay-badge mb-2">
+      <Badge value="?" class="border-circle cursor-pointer" @click="showHelp=!showHelp"></Badge>
+      <InputText v-model="query" class="shadow-none"
                  size="large"
                  placeholder="search in k8s label selector format (e.g., team=ordering)"/>
+
     </div>
 
   </form>

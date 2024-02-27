@@ -1,0 +1,22 @@
+channel_homes:
+  element_org:
+    type: matrix # Type of the channel (currently just support matrix)
+    config:
+      command_prefix: "!!"
+      ok_emoji: "👍️"
+      pickle_key: "meow"
+      home_server_addr: "https://matrix-client.matrix.org"
+      username: "my-matrix-bot"
+      password: "pasword_on_my_bot"
+      db_account_id: "element_org" # a unique value per matrix home to let persist other matrix homes data in the same DB
+
+channels:
+  element_org_t3:
+    home: element_org
+    config:
+      room_id: "!sGJfweifjewfpYkVKdz:matrix.org"
+
+# Policies connect channels to tickets by their labels.
+# In the following example we're sending all tickets to the "element_org_t3" channel.
+policies:
+  - channels: [ 'element_org_t3' ] # send all tickets to the element org channel
