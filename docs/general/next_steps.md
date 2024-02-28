@@ -1,13 +1,13 @@
 ### Features
--[ ]  Auto spam
--[ ] Post-mortem
--[ ] Auto label (will be used to set on-call user) as a plugin
--[ ] Limited labels (to keep some label values in a white list)
--[ ] [Plugin system](./features/plugin_system.md) for channels(matrix,...) and sources(grafana,...).
--[ ] Reporting dashboard
--[ ] tickets graph and merge [feature.md](features/tickets_graph_and_merge_feature.md)
--[ ] AI assistant
--[ ] Auto-refresh the channels configs peridically (e.g., every 10 minutes and also provide an api endpoint to refresh it).
+- [ ] Auto spam
+- [ ] Post-mortem
+- [ ] Auto label (will be used to set on-call user) as a plugin
+- [ ] Limited labels (to keep some label values in a white list)
+- [ ] [Plugin system](./features/plugin_system.md) for channels(matrix,...) and sources(grafana,...).
+- [ ] Reporting dashboard
+- [ ] tickets graph and merge [feature.md](features/tickets_graph_and_merge_feature.md)
+- [ ] AI assistant
+- [ ] Auto-refresh the channels configs peridically (e.g., every 10 minutes and also provide an api endpoint to refresh it).
 
 ### Improvements
 - [ ] better message rendering for channels

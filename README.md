@@ -5,6 +5,27 @@ T3(The Ticket Tracker) tracks the tickets (e.g., grafana alerts).
 
 __Project status__: Under development. it's not stable yet.
 
+### Features
+- Track the Grafana alerts and manual tickets.
+- Update tickets through chat (currently we support matrix).
+- Save metrics about tickets (time to see, time to resolve)
+- mark spam tickets to do not affect the reporting system.
+- Grafana dashboard about the tickets' metrics.
+
+### Next Steps
+- OnCall feature: System will automatically set the oncall user on each ticket.
+- AI Assistant
+  - The AI will analyze your comments on channels and update tickets.
+  - It will help you find the root cause of an issue.
+- Ticket merging: Sometimes you may have a lot of tickets for one incident, in that case we'll merge all related tickets.
+- Auto postmortem generator.
+
+You can read more about the next steps [here](./docs/general/next_steps.md).
+
+### API Docs
+You can find the OpenAPI docs [here](./docs/api/api_docs.json).
+
+
 __Prerequisites__
 
 - Postgres
@@ -18,29 +39,6 @@ __Prerequisites__
 - Run the UI server by following its steps [here](./webui/README.md)
 
 
-### How to generate api docs?
-
-- Extract new routes:
-
-```bash
-make extract-api-docs
-```
-
-- Update generated document for new routes in the `internal/router/api/doc/api_docs.go` file.
-
-- Generate openapi docs
-
-```bash
- make build-api-docs
-```
-
-- Run the api docs server: `make serve-api-docs`
-
-- For production run docs on a server.
-
-__Notes for developers__
-
-- To sync your packages with the `vendor` dir run `go mod vendor` command.
 
 ### How to enable jaeger in local env
 
@@ -83,6 +81,8 @@ http://{probe_server_address}/live
 http://{probe_server_address}/ready
 ```
 
+### Contribution
+If you want to contribute to this project, [this doc](./contribution.md) can help you.
+
 ### TODO
-- Read the [next steps](./docs/general/next_steps.md)
-- Write tests
+- [ ] Write tests
