@@ -16,6 +16,7 @@ jobs:
 
       - name: Set up Go
         uses: actions/setup-go@v4
+        run: apt install libolm-dev # Install libolm c Binding to use by go app.
         with:
           go-version: '1.20'
 
