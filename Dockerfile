@@ -1,7 +1,5 @@
 FROM golang:1.18.4-alpine as build
 
-MAINTAINER Mehran Prs <mehran@kamva.ir>
-
 WORKDIR /app
 
 COPY . .
