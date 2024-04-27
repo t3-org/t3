@@ -2,7 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ $default-branch,"wflow" ]
+    branches: [ $default-branchb ]
+  release:
+    types: [ published ]
 
 env:
   REGISTRY: ghcr.io
