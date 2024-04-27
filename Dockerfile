@@ -1,16 +1,17 @@
-FROM golang:1.18.4-alpine as build
-
-MAINTAINER Mehran Prs <mehran@kamva.ir>
+FROM golang:1.20.14-bullseye as build
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y libolm-dev
+
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags "-X t3.org/t3/internal/app.Version=`cat .version`" -o built/app cmd/t3/main.go
+# cgo must be enabled because of olm package.
+RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags "-X t3.org/t3/internal/app.Version=`cat .version`" -o built/app cmd/t3/main.go
 
-FROM golang:1.18.4-alpine
+FROM golang:1.20.14-bullseye
 
-#RUN apk add ca-certificates
+RUN apt-get update && apt-get install -y libolm-dev ca-certificates
 
 WORKDIR /app
 
