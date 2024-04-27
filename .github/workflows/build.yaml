@@ -31,6 +31,7 @@ jobs:
   #      - name: Test # Currently we can not pass tests because they need to a postgres DB service. we'll config this step.
   #        run: go test -mod=vendor -v ./...
   build-and-push-t3-server-image:
+    needs: run-tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -57,6 +58,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   build-and-push-t3-web-ui-image:
+    needs: run-tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
