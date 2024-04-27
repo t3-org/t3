@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [ $default-branchb ]
+    branches: [ $default-branch ]
   release:
     types: [ published ]
 
