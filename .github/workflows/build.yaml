@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ 'main' ]
   release:
     types: [ published ]
 
@@ -28,8 +28,8 @@ jobs:
       - name: Build
         run: go build -mod=vendor -v ./...
 
-#      - name: Test # Currently we can not pass tests because they need to a postgres DB service. we'll config this step.
-#        run: go test -mod=vendor -v ./...
+  #      - name: Test # Currently we can not pass tests because they need to a postgres DB service. we'll config this step.
+  #        run: go test -mod=vendor -v ./...
   build-and-push-t3-server-image:
     runs-on: ubuntu-latest
     permissions:
