@@ -89,7 +89,7 @@ func BaseServices(exclude ...string) []string {
 		ServiceNameTracerProvider,
 		ServiceNameMeterProvider,
 		ServiceNameOpenTelemetry,
-		ServiceNameRedis,
+		//ServiceNameRedis,
 		ServiceNameMarkdown,
 
 		//ServiceNameCacheProvider,
