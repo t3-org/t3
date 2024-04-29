@@ -8,6 +8,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// ChannelsEnvSuffix is the suffix that we use to specify our channel config should be read from env.
+// e.g., "__ENV__USERNAME" means we should read the field's value from the "USERNAME" environment variable.
+const ChannelsEnvSuffix = "__ENV__"
+
 type ChannelsConfig struct {
 	ChannelHomes map[string]ChannelHome `yaml:"channel_homes"` // map's key is the client name.
 	Channels     map[string]Channel     `yaml:"channels"`

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/gomarkdown/markdown/html"
@@ -499,6 +501,20 @@ func channelHomeProvider(r hexa.ServiceRegistry, rawCfg config.ChannelHome) (cha
 		if err := rawCfg.Config.Decode(&cfg); err != nil {
 			return nil, tracer.Trace(err)
 		}
+
+		// Resolve env variables
+		if strings.HasSuffix(cfg.HomeServerAddr, config.ChannelsEnvSuffix) {
+			cfg.HomeServerAddr = os.Getenv(strings.TrimSuffix(cfg.HomeServerAddr, config.ChannelsEnvSuffix))
+		}
+
+		if strings.HasSuffix(cfg.Username, config.ChannelsEnvSuffix) {
+			cfg.Username = os.Getenv(strings.TrimSuffix(cfg.Username, config.ChannelsEnvSuffix))
+		}
+
+		if strings.HasSuffix(cfg.Password, config.ChannelsEnvSuffix) {
+			cfg.Password = os.Getenv(strings.TrimSuffix(cfg.Password, config.ChannelsEnvSuffix))
+		}
+
 		return matrixProvider(r, cfg)
 	}
 	// Add other channel types to the switch case.
