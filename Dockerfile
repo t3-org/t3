@@ -18,6 +18,6 @@ WORKDIR /app
 COPY --from=build /app/built ./built
 COPY --from=build /app/res ./res
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["./built/app"]
