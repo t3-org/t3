@@ -541,9 +541,15 @@ func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (chann
 	}
 
 	cryptoHelper.LoginAs = &mautrix.ReqLogin{
-		Type:       mautrix.AuthTypePassword,
-		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierType(mcfg.IdentifierType), User: mcfg.Username},
-		Password:   mcfg.Password,
+		Type:                     mautrix.AuthTypePassword,
+		InitialDeviceDisplayName: "T3",
+		Identifier: mautrix.UserIdentifier{
+			Type:    mautrix.IdentifierType(mcfg.IdentifierType),
+			Medium:  mcfg.Medium,
+			Address: mcfg.Address,
+			User:    mcfg.Username,
+		},
+		Password: mcfg.Password,
 	}
 
 	// If you want to use multiple clients with the same DB, you
