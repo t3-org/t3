@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/kamva/tracer"
 	"gopkg.in/yaml.v3"
@@ -59,6 +60,25 @@ type MatrixHomeConfig struct {
 	// If you want to use multiple clients with the same DB,
 	// you should set a distinct database account ID for each one.
 	DBAccountID string `yaml:"db_account_id" yaml:"db_account_id"`
+}
+
+func (c *MatrixHomeConfig) ResolveEnvs(envSuffix string) {
+	// Resolve env variables
+	if strings.HasPrefix(c.HomeServerAddr, envSuffix) {
+		c.HomeServerAddr = os.Getenv(strings.TrimSuffix(c.HomeServerAddr, envSuffix))
+	}
+
+	if strings.HasPrefix(c.Username, envSuffix) {
+		c.Username = os.Getenv(strings.TrimSuffix(c.Username, envSuffix))
+	}
+
+	if strings.HasPrefix(c.Address, envSuffix) {
+		c.Address = os.Getenv(strings.TrimSuffix(c.Address, envSuffix))
+	}
+
+	if strings.HasPrefix(c.Password, envSuffix) {
+		c.Password = os.Getenv(strings.TrimSuffix(c.Password, envSuffix))
+	}
 }
 
 type ChannelHome struct {
