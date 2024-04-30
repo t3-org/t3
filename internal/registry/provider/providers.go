@@ -511,6 +511,10 @@ func channelHomeProvider(r hexa.ServiceRegistry, rawCfg config.ChannelHome) (cha
 			cfg.Username = os.Getenv(strings.TrimSuffix(cfg.Username, config.ChannelsEnvSuffix))
 		}
 
+		if strings.HasSuffix(cfg.Address, config.ChannelsEnvSuffix) {
+			cfg.Address = os.Getenv(strings.TrimSuffix(cfg.Address, config.ChannelsEnvSuffix))
+		}
+
 		if strings.HasSuffix(cfg.Password, config.ChannelsEnvSuffix) {
 			cfg.Password = os.Getenv(strings.TrimSuffix(cfg.Password, config.ChannelsEnvSuffix))
 		}
