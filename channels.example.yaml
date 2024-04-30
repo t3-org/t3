@@ -6,6 +6,7 @@ channel_homes:
       ok_emoji: "👍️"
       pickle_key: "meow"
       home_server_addr: "https://matrix-client.matrix.org"
+      identifier_type: "m.id.user"
       username: "my-matrix-bot"
       password: "pasword_on_my_bot"
       db_account_id: "element_org" # a unique value per matrix home to let persist other matrix homes data in the same DB

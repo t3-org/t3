@@ -542,7 +542,7 @@ func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (chann
 
 	cryptoHelper.LoginAs = &mautrix.ReqLogin{
 		Type:       mautrix.AuthTypePassword,
-		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierTypeUser, User: mcfg.Username},
+		Identifier: mautrix.UserIdentifier{Type: mautrix.IdentifierType(mcfg.IdentifierType), User: mcfg.Username},
 		Password:   mcfg.Password,
 	}
 

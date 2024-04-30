@@ -46,12 +46,14 @@ func (c *ChannelsConfig) Validate() error {
 
 type MatrixHomeConfig struct {
 	// CommandPrefix is the prefix of each command. e.g., "!t"
-	CommandPrefix  string `yaml:"command_prefix" yaml:"command_prefix"`
-	OKEmoji        string `yaml:"ok_emoji" yaml:"ok_emoji"` // The emoji we use to set a command as done.
-	PickleKey      string `yaml:"pickle_key" yaml:"pickle_key"`
-	HomeServerAddr string `yaml:"home_server_addr" yaml:"home_server_addr"`
-	Username       string `yaml:"username" yaml:"username"`
-	Password       string `yaml:"password" yaml:"password"`
+	CommandPrefix  string `json:"command_prefix" yaml:"command_prefix"`
+	OKEmoji        string `json:"ok_emoji" yaml:"ok_emoji"` // The emoji we use to set a command as done.
+	PickleKey      string `json:"pickle_key" yaml:"pickle_key"`
+	HomeServerAddr string `json:"home_server_addr" yaml:"home_server_addr"`
+	IdentifierType string `json:"identifier_type" yaml:"identifier_type"`
+	Username       string `json:"username" yaml:"username"`
+	Password       string `json:"password" yaml:"password"`
+
 	// If you want to use multiple clients with the same DB,
 	// you should set a distinct database account ID for each one.
 	DBAccountID string `yaml:"db_account_id" yaml:"db_account_id"`
