@@ -181,7 +181,7 @@ func (m *Ticket) Markdown() string {
 	}
 
 	if m.GeneratorUrl != nil {
-		w("- [generator](%s)", *m.GeneratorUrl)
+		w("- [source link](%s)", *m.GeneratorUrl)
 	}
 
 	return b.String()

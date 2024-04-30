@@ -49,17 +49,12 @@ type MatrixHomeConfig struct {
 	// CommandPrefix is the prefix of each command. e.g., "!t"
 	CommandPrefix  string `json:"command_prefix" yaml:"command_prefix"`
 	OKEmoji        string `json:"ok_emoji" yaml:"ok_emoji"` // The emoji we use to set a command as done.
-	PickleKey      string `json:"pickle_key" yaml:"pickle_key"`
 	HomeServerAddr string `json:"home_server_addr" yaml:"home_server_addr"`
 	IdentifierType string `json:"identifier_type" yaml:"identifier_type"`
 	Medium         string `json:"medium" yaml:"medium"`
 	Username       string `json:"username" yaml:"username"`
 	Address        string `json:"address" yaml:"address"` // The email address if medium field is email.
 	Password       string `json:"password" yaml:"password"`
-
-	// If you want to use multiple clients with the same DB,
-	// you should set a distinct database account ID for each one.
-	DBAccountID string `yaml:"db_account_id" yaml:"db_account_id"`
 }
 
 func (c *MatrixHomeConfig) ResolveEnvs(envSuffix string) {

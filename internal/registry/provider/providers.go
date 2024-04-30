@@ -24,7 +24,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/sony/sonyflake"
-	"go.mau.fi/util/dbutil"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
 	"go.opentelemetry.io/otel/exporters/prometheus"
@@ -40,7 +39,6 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.opentelemetry.io/otel/trace"
 	"maunium.net/go/mautrix"
-	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"t3.org/t3/internal/app"
 	"t3.org/t3/internal/config"
 	"t3.org/t3/internal/model"
@@ -512,22 +510,13 @@ func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (chann
 	cfg := conf(r)
 
 	s := r.Service(registry.ServiceNameStore).(model.Store)
-	db, err := dbutil.NewWithDB(s.DBLayer().(sqlstore.SqlStore).DB(), cfg.DB.Driver)
-	if err != nil {
-		return nil, tracer.Trace(err)
-	}
 
 	cli, err := mautrix.NewClient(mcfg.HomeServerAddr, "", "")
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	cryptoHelper, err := cryptohelper.NewCryptoHelper(cli, []byte(mcfg.PickleKey), db)
-	if err != nil {
-		return nil, tracer.Trace(err)
-	}
-
-	cryptoHelper.LoginAs = &mautrix.ReqLogin{
+	_, err = cli.Login(&mautrix.ReqLogin{
 		Type:                     mautrix.AuthTypePassword,
 		InitialDeviceDisplayName: "T3",
 		Identifier: mautrix.UserIdentifier{
@@ -536,17 +525,13 @@ func matrixProvider(r hexa.ServiceRegistry, mcfg config.MatrixHomeConfig) (chann
 			Address: mcfg.Address,
 			User:    mcfg.Username,
 		},
-		Password: mcfg.Password,
-	}
-
-	// If you want to use multiple clients with the same DB, you
-	// should set a distinct database account ID for each one.
-	cryptoHelper.DBAccountID = mcfg.DBAccountID
-	if err := cryptoHelper.Init(); err != nil {
+		Password:         mcfg.Password,
+		StoreCredentials: true,
+	})
+	if err != nil {
 		return nil, tracer.Trace(err)
 	}
 
-	cli.Crypto = cryptoHelper
 	markdown := r.Service(registry.ServiceNameMarkdown).(*md.Markdown)
 
 	hOpts := matrixch.HomeOpts{
