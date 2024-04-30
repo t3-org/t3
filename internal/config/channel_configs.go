@@ -60,19 +60,19 @@ type MatrixHomeConfig struct {
 func (c *MatrixHomeConfig) ResolveEnvs(envSuffix string) {
 	// Resolve env variables
 	if strings.HasPrefix(c.HomeServerAddr, envSuffix) {
-		c.HomeServerAddr = os.Getenv(strings.TrimSuffix(c.HomeServerAddr, envSuffix))
+		c.HomeServerAddr = os.Getenv(strings.TrimPrefix(c.HomeServerAddr, envSuffix))
 	}
 
 	if strings.HasPrefix(c.Username, envSuffix) {
-		c.Username = os.Getenv(strings.TrimSuffix(c.Username, envSuffix))
+		c.Username = os.Getenv(strings.TrimPrefix(c.Username, envSuffix))
 	}
 
 	if strings.HasPrefix(c.Address, envSuffix) {
-		c.Address = os.Getenv(strings.TrimSuffix(c.Address, envSuffix))
+		c.Address = os.Getenv(strings.TrimPrefix(c.Address, envSuffix))
 	}
 
 	if strings.HasPrefix(c.Password, envSuffix) {
-		c.Password = os.Getenv(strings.TrimSuffix(c.Password, envSuffix))
+		c.Password = os.Getenv(strings.TrimPrefix(c.Password, envSuffix))
 	}
 }
 

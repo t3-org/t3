@@ -15,9 +15,9 @@ func TestMatrixHomeConfig_ResolveEnvs(t *testing.T) {
 		Password:       "pass123",
 	}
 
-	require.NoError(t, os.Setenv("__ENV__HOME_ADDR", "home123"))
-	require.NoError(t, os.Setenv("__ENV__ADDRESS", "email123"))
-	require.NoError(t, os.Setenv("__ENV__USERNAME", "username123"))
+	require.NoError(t, os.Setenv("HOME_ADDR", "home123"))
+	require.NoError(t, os.Setenv("ADDRESS", "email123"))
+	require.NoError(t, os.Setenv("USERNAME", "username123"))
 
 	c.ResolveEnvs("__ENV__")
 
@@ -28,7 +28,7 @@ func TestMatrixHomeConfig_ResolveEnvs(t *testing.T) {
 
 	// Set just one field
 	c.Password = "__ENV__PASSWORD"
-	require.NoError(t, os.Setenv("__ENV__PASSWORD", "pass456"))
+	require.NoError(t, os.Setenv("PASSWORD", "pass456"))
 
 	// Make sure it doesn't resolve any un-prefixed value.
 	c.ResolveEnvs("__ENV__")
