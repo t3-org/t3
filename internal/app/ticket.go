@@ -10,11 +10,13 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"t3.org/t3/internal/dto"
 	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/helpers"
 	"t3.org/t3/internal/input"
 	"t3.org/t3/internal/model"
+	"t3.org/t3/internal/service/channel"
 )
 
-func (a *appCore) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {
+func (a *appCore) TicketEditionUrl(ctx context.Context, key, val string) (string, error) {
 	ticket, err := a.store.Ticket().FirstByTicketLabel(ctx, key, val)
 	if err != nil {
 		return "", tracer.Trace(err)
@@ -32,11 +34,16 @@ func (a *appCore) GetTicket(ctx context.Context, id string) (*dto.Ticket, error)
 }
 
 func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error) {
-	l, err := a.store.Ticket().GetAllByFingerprint(ctx, in.Fingerprints())
+	globalFingerprints, err := in.GlobalFingerprints()
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
-	tickets := model.TicketsMapByFingerprint(l...)
+
+	l, err := a.store.Ticket().GetAllByGlobalFingerprint(ctx, globalFingerprints)
+	if err != nil {
+		return nil, tracer.Trace(err)
+	}
+	tickets := model.TicketsMapByGlobalFingerprint(l...)
 
 	// Validate data
 	for _, in := range in.Tickets {
@@ -50,7 +57,7 @@ func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTicket
 	// upsert
 	finalTickets := make([]*dto.Ticket, len(in.Tickets))
 	for i, val := range in.Tickets {
-		t := tickets[val.Fingerprint]
+		t := tickets[helpers.GlobalFingerprint(val.StartedAt, val.Fingerprint)]
 		if t == nil {
 			creationInput := input.CreateTicket(*val)
 			t, err = a.createTicket(ctx, &creationInput, true)
@@ -85,7 +92,7 @@ func (a *appCore) createTicket(ctx context.Context, in *input.CreateTicket, disp
 	}
 
 	if dispatch {
-		if err := a.dispatcher.Dispatch(ctx, &ticket); err != nil {
+		if err := a.dispatcher.Dispatch(ctx, &channel.DispatchInput{Ticket: &ticket}); err != nil {
 			return nil, err
 		}
 	}
@@ -110,7 +117,12 @@ func (a *appCore) PatchTicketByLabel(ctx context.Context, key, val string, in *i
 }
 
 func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.PatchTicket) (*dto.Ticket, error) {
+	// TODO: In case the ticket is resolved and we get a firing input from the ticketGenerator,
+	// we'll dispatch the ticket again, but because we don't change the spam status, it just send
+	// a resolved ticket again, we can either do not send ticket in this situation or just create a
+	// copy of it with firing=true status and dispatch it instead of the real ticket.
 	isChangedFiring := in.IsFiring != nil && *in.IsFiring != t.IsFiring
+
 	if err := t.Patch(in); err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -118,8 +130,13 @@ func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.Pa
 		return nil, tracer.Trace(err)
 	}
 
-	if isChangedFiring {
-		if err := a.dispatcher.Dispatch(ctx, t); err != nil {
+	dispatchIn := &channel.DispatchInput{Ticket: t}
+	if in.IsFromTicketGenerator {
+		dispatchIn.IsFiringOnTicketGenerator = in.IsFiring
+	}
+
+	if isChangedFiring || in.IsFromTicketGenerator {
+		if err := a.dispatcher.Dispatch(ctx, dispatchIn); err != nil {
 			return nil, tracer.Trace(err)
 		}
 	}

@@ -20,7 +20,8 @@ var (
 //--------------------------------
 
 var (
-	ErrTicketNotFound = hexa.NewError(http.StatusNotFound, "t3.ticket.not_found_error")
+	ErrTicketNotFound              = hexa.NewError(http.StatusNotFound, "t3.ticket.not_found_error")
+	ErrTicketRequiredFieldsMissing = hexa.NewError(http.StatusForbidden, "t3.ticket.required_fields_missing")
 )
 
 // --------------------------------

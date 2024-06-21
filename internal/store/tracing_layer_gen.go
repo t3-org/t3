@@ -155,15 +155,15 @@ func (s *tracingLayerTicketStore) Get(ctx context.Context, id string) (*model.Ti
 
 	return r1, r2
 }
-func (s *tracingLayerTicketStore) GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
+func (s *tracingLayerTicketStore) GetAllByGlobalFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
 	if ctx == nil {
-		return s.next.GetAllByFingerprint(ctx, fingerprints)
+		return s.next.GetAllByGlobalFingerprint(ctx, fingerprints)
 	}
 
-	ctx, span := s.t.Start(ctx, "TicketStore.GetAllByFingerprint")
+	ctx, span := s.t.Start(ctx, "TicketStore.GetAllByGlobalFingerprint")
 	defer span.End()
 
-	r1, r2 := s.next.GetAllByFingerprint(ctx, fingerprints)
+	r1, r2 := s.next.GetAllByGlobalFingerprint(ctx, fingerprints)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)
@@ -183,25 +183,6 @@ func (s *tracingLayerTicketStore) FirstByTicketLabel(ctx context.Context, key st
 	defer span.End()
 
 	r1, r2 := s.next.FirstByTicketLabel(ctx, key, val)
-
-	if apperr.IsInternalErr(r2) {
-		span.RecordError(r2)
-		span.SetStatus(codes.Error, r2.Error())
-	} else {
-		span.SetStatus(codes.Ok, "")
-	}
-
-	return r1, r2
-}
-func (s *tracingLayerTicketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
-	if ctx == nil {
-		return s.next.GetByCode(ctx, code)
-	}
-
-	ctx, span := s.t.Start(ctx, "TicketStore.GetByCode")
-	defer span.End()
-
-	r1, r2 := s.next.GetByCode(ctx, code)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)

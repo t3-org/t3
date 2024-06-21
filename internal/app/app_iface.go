@@ -34,7 +34,7 @@ type Seeder interface {
 
 type TicketService interface {
 	UpsertTickets(ctx context.Context, in *input.BatchUpsertTickets) ([]*dto.Ticket, error)
-	EditTicketUrlByKey(ctx context.Context, key, val string) (string, error)
+	TicketEditionUrl(ctx context.Context, key, val string) (string, error)
 	GetTicketByKey(ctx context.Context, key, val string) (*dto.Ticket, error)
 	GetTicket(ctx context.Context, id string) (*dto.Ticket, error)
 	CreateTicket(ctx context.Context, in *input.CreateTicket) (*dto.Ticket, error)

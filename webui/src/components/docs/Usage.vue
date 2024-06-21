@@ -61,7 +61,7 @@
 
       !!edit_link: Get a link to the ticket edition form in the UI.
 
-      !!ticket: Get the ticket.
+      !!ticket: Get the ticket in different formats(yaml, short, verbose). e.g., !!ticket, !!ticket short, !!ticket yaml
 
       !!ticket_yaml: Get the ticket in yaml format.
 

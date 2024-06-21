@@ -38,14 +38,11 @@ func New(srv *Server, o *HomeOpts) channel.Home {
 		md:      o.MarkDown,
 	}
 }
-func (m *Home) Dispatch(ctx context.Context, conf any, t *model.Ticket) error {
-	opts := conf.(ChannelOptions)
-	title := fmt.Sprintf("__Firing Ticket__ \n\n %s ", t.Markdown())
-	if !t.IsFiring {
-		title = fmt.Sprintf("__Resolved Ticket__ \n\n %s ", t.Markdown())
-	}
 
-	return tracer.Trace(m.dispatch(ctx, opts.RoomID, t, title))
+func (m *Home) Dispatch(ctx context.Context, conf any, in *channel.DispatchInput) error {
+	opts := conf.(ChannelOptions)
+	content := fmt.Sprintf("%s \n\n %s", in.TitleMarkdown(in.IsFiringOnTicketGenerator), in.Markdown(false))
+	return tracer.Trace(m.dispatch(ctx, opts.RoomID, in.Ticket, content))
 }
 
 func (m *Home) dispatch(ctx context.Context, rID string, t *model.Ticket, title string) error {

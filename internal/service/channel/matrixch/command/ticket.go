@@ -15,12 +15,11 @@ import (
 )
 
 func registerTicketCommands(r *matrixch.Router, res *ticketResource) {
-	r.Register("new", res.New, "Creaet a new ticket by providing its yaml data")                   // non-thread command
+	r.Register("new", res.New, "Create a new ticket by providing its yaml data")                   // non-thread command
 	r.Register("new_link", res.NewTicketLink, "get a link to the ticket creation form in the UI.") // non-thread command
 	r.Register("patch", res.Patch, "Patch the ticket using yaml value passed as param of the command")
 	r.Register("edit_link", res.EditTicketLink, "Get a link to the ticket edition form in the UI.")
-	r.Register("ticket", res.GetTicket, "Get the ticket.")
-	r.Register("ticket_yaml", res.GetTicketInYaml, "Get the ticket in yaml format.")
+	r.Register("ticket", res.GetTicket, "Get the ticket. eg., `!!ticket`, `!!ticket yaml`, `!!ticket short`, `!!ticket verbose(default)`")
 
 	r.Register("seen", res.SetSeen, "mark ticket as seen. e.g., `!!seen {minutes(default: 0)`")
 	r.Register("spam", res.SetSpam, "set the spam flag on the ticket. e.g., `!!spam`, `!!spam false`, `!!spam true(default)`")
@@ -66,7 +65,7 @@ func (r *ticketResource) EditTicketLink(ctx context.Context, cmd *matrixch.Comma
 		return apperr.ErrTicketNotFound
 	}
 
-	url, err := r.app.EditTicketUrlByKey(ctx, r.o.Key(cmd.Event.RoomID), threadID)
+	url, err := r.app.TicketEditionUrl(ctx, r.o.Key(cmd.Event.RoomID), threadID)
 	if err != nil {
 		return tracer.Trace(err)
 	}
@@ -85,7 +84,17 @@ func (r *ticketResource) GetTicket(ctx context.Context, cmd *matrixch.Command) e
 		return tracer.Trace(err)
 	}
 
-	return r.SendTextWithSameRelation(cmd.Event, fmt.Sprintf("__Ticket__ \n\n %s ", t.Markdown()))
+	format := gutil.StringDefault(cmd.Params, "verbose")
+	content := fmt.Sprintf("%s \n\n %s ", t.TitleMarkdown(nil), t.Markdown(format == "verbose"))
+	if format == "yaml" {
+		res, err := yaml.Marshal(t)
+		if err != nil {
+			return tracer.Trace(err)
+		}
+		content = fmt.Sprintf(`<code><pre>%s</pre></code>`, string(res))
+	}
+
+	return r.SendTextWithSameRelation(cmd.Event, content)
 }
 
 func (r *ticketResource) GetTicketInYaml(ctx context.Context, cmd *matrixch.Command) error {

@@ -68,9 +68,9 @@ func (mr *MockAppMockRecorder) DeleteTicket(ctx, id interface{}) *gomock.Call {
 }
 
 // EditTicketUrlByKey mocks base method.
-func (m *MockApp) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {
+func (m *MockApp) TicketEditionUrl(ctx context.Context, key, val string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "EditTicketUrlByKey", ctx, key, val)
+	ret := m.ctrl.Call(m, "TicketEditionUrl", ctx, key, val)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -79,7 +79,7 @@ func (m *MockApp) EditTicketUrlByKey(ctx context.Context, key, val string) (stri
 // EditTicketUrlByKey indicates an expected call of EditTicketUrlByKey.
 func (mr *MockAppMockRecorder) EditTicketUrlByKey(ctx, key, val interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditTicketUrlByKey", reflect.TypeOf((*MockApp)(nil).EditTicketUrlByKey), ctx, key, val)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TicketEditionUrl", reflect.TypeOf((*MockApp)(nil).TicketEditionUrl), ctx, key, val)
 }
 
 // GetTicket mocks base method.
@@ -411,9 +411,9 @@ func (mr *MockTicketServiceMockRecorder) DeleteTicket(ctx, id interface{}) *gomo
 }
 
 // EditTicketUrlByKey mocks base method.
-func (m *MockTicketService) EditTicketUrlByKey(ctx context.Context, key, val string) (string, error) {
+func (m *MockTicketService) TicketEditionUrl(ctx context.Context, key, val string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "EditTicketUrlByKey", ctx, key, val)
+	ret := m.ctrl.Call(m, "TicketEditionUrl", ctx, key, val)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -422,7 +422,7 @@ func (m *MockTicketService) EditTicketUrlByKey(ctx context.Context, key, val str
 // EditTicketUrlByKey indicates an expected call of EditTicketUrlByKey.
 func (mr *MockTicketServiceMockRecorder) EditTicketUrlByKey(ctx, key, val interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditTicketUrlByKey", reflect.TypeOf((*MockTicketService)(nil).EditTicketUrlByKey), ctx, key, val)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TicketEditionUrl", reflect.TypeOf((*MockTicketService)(nil).TicketEditionUrl), ctx, key, val)
 }
 
 // GetTicket mocks base method.
