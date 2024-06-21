@@ -51,12 +51,12 @@ func (s *ticketStore) Get(ctx context.Context, id string) (*model.Ticket, error)
 	return &ticket, nil
 }
 
-func (s *ticketStore) GetAllByFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
+func (s *ticketStore) GetAllByGlobalFingerprint(ctx context.Context, fingerprints []string) ([]*model.Ticket, error) {
 	if len(fingerprints) == 0 {
 		return nil, nil
 	}
 
-	rows, err := s.tbl.Select(ctx).Where(sq.Eq{"fingerprint": fingerprints}).QueryContext(ctx)
+	rows, err := s.tbl.Select(ctx).Where(sq.Eq{"global_fingerprint": fingerprints}).QueryContext(ctx)
 	if err != nil {
 		return nil, tracer.Trace(err)
 	}
@@ -80,20 +80,6 @@ func (s *ticketStore) FirstByTicketLabel(ctx context.Context, key, val string) (
 	if err := s.fetchLabels(ctx, &ticket); err != nil {
 		return nil, tracer.Trace(err)
 	}
-	return &ticket, nil
-}
-
-func (s *ticketStore) GetByCode(ctx context.Context, code string) (*model.Ticket, error) {
-	var ticket model.Ticket
-	err := s.tbl.First(ctx, ticketFields(&ticket), sq.Eq{"code": code})
-	if err != nil {
-		return nil, tracer.Trace(sqld.ReplaceNotFound(err, apperr.ErrTicketNotFound))
-	}
-
-	if err := s.fetchLabels(ctx, &ticket); err != nil {
-		return nil, tracer.Trace(err)
-	}
-
 	return &ticket, nil
 }
 

@@ -19,6 +19,15 @@ type Dispatcher struct {
 	policies []config.Policy
 }
 
+type DispatchInput struct {
+	*model.Ticket
+	// IsFiringOnTicketGenerator spefiees whether the ticket is firing on the ticket generator or not.
+	// User may fix the issue and mark the ticket as resolved, but on the ticket generator(e.g., grafana)
+	// ticket continue firing, in that case this field will be True and dispatcher can notify user that/
+	// the ticket is set as resolved but is firing on the ticket generator.
+	IsFiringOnTicketGenerator *bool
+}
+
 func NewDispatcher(homes map[string]Home, channels map[string]Channel, policies []config.Policy) *Dispatcher {
 	return &Dispatcher{
 		homes:    homes,
@@ -27,12 +36,12 @@ func NewDispatcher(homes map[string]Home, channels map[string]Channel, policies 
 	}
 }
 
-func (d *Dispatcher) Dispatch(ctx context.Context, ticket *model.Ticket) error {
-	for _, p := range d.matchedPolicies(ticket.Labels) {
+func (d *Dispatcher) Dispatch(ctx context.Context, in *DispatchInput) error {
+	for _, p := range d.matchedPolicies(in.Labels) {
 		for _, ch := range p.Channels {
 			channel := d.channels[ch]
 			// TODO: convert this call to an async job.
-			if err := d.homes[channel.Home].Dispatch(ctx, channel.Config, ticket); err != nil {
+			if err := d.homes[channel.Home].Dispatch(ctx, channel.Config, in); err != nil {
 				return tracer.Trace(err)
 			}
 		}

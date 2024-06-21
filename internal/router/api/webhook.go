@@ -35,7 +35,7 @@ func (r *webhookResource) handleGrafanaWebhook(c echo.Context) error {
 		return tracer.Trace(err)
 	}
 
-	in := input.BatchUpsertTickets{Tickets: webhook.ToPatchInputs()}
+	in := input.BatchUpsertTickets{Tickets: webhook.ToPatchTickets()}
 	in.RemoveInternalLabels() // We do not allow API to change our internal labels:
 
 	dto, err := r.app.UpsertTickets(c.Request().Context(), &in)

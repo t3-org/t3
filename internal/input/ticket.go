@@ -5,7 +5,10 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/kamva/gutil"
+	"github.com/kamva/hexa"
 	"t3.org/t3/internal/config"
+	apperr "t3.org/t3/internal/error"
+	"t3.org/t3/internal/helpers"
 )
 
 type CreateTicket PatchTicket
@@ -26,6 +29,10 @@ func (i *CreateTicket) Validate() error {
 
 type PatchTicket struct {
 	isCreation bool
+	// Set true when this input it's from a ticket generator(grafana alertManager,...)
+	// For manual created tickets we don't have any ticketGenerator and don't need to set
+	// this field to true.
+	IsFromTicketGenerator bool `json:"-" yaml:"-"`
 
 	// In patch requests, we'll ignore the fingerprint field. in creation
 	// requests it's required.
@@ -98,12 +105,19 @@ func (i *BatchUpsertTickets) Validate() error {
 		validation.Field(&i.Tickets, validation.Each(validation.Required)))
 }
 
-func (i *BatchUpsertTickets) Fingerprints() []string {
+func (i *BatchUpsertTickets) GlobalFingerprints() ([]string, error) {
 	res := make([]string, len(i.Tickets))
 	for i, v := range i.Tickets {
-		res[i] = v.Fingerprint
+		f := helpers.GlobalFingerprint(v.StartedAt, v.Fingerprint)
+		if f == "" {
+			return nil, apperr.ErrTicketRequiredFieldsMissing.SetReportData(hexa.Map{
+				"required_field": v.StartedAt,
+				"fingerprint":    v.Fingerprint,
+			})
+		}
+		res[i] = f
 	}
-	return res
+	return res, nil
 }
 
 func (i *BatchUpsertTickets) RemoveInternalLabels() {

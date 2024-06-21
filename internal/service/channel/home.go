@@ -2,8 +2,6 @@ package channel
 
 import (
 	"context"
-
-	"t3.org/t3/internal/model"
 )
 
 type KVStore interface {
@@ -16,5 +14,5 @@ type KVStore interface {
 // We use the Home to send messages to the channel server(like a client).
 // And also use it to serve the channel's commands from the channel's server.
 type Home interface {
-	Dispatch(ctx context.Context, cfg any, ticket *model.Ticket) error
+	Dispatch(ctx context.Context, cfg any, in *DispatchInput) error
 }

@@ -1,24 +1,25 @@
 create type TicketSeverity AS ENUM ('low','medium','high');
 CREATE TABLE tickets
 (
-    id            text PRIMARY KEY,
-    fingerprint   text UNIQUE NOT NULL,
-    source        text,
-    raw           text,
-    annotations   text,
-    is_firing     BOOLEAN     not null,
-    started_at    bigint      NOT NULL,
-    ended_at      bigint,
-    values        text,
-    generator_url text,
+    id                 text PRIMARY KEY,
+    global_fingerprint text UNIQUE NOT NULL, -- started_at+fingerprint. this is unique globally.
+    fingerprint        text        NOT NULL, -- this fingerprint field is unique per firing alerts in the alert-manager.
+    source             text,
+    raw                text,
+    annotations        text,
+    is_firing          BOOLEAN     not null,
+    started_at         bigint      NOT NULL,
+    ended_at           bigint,
+    values             text,
+    generator_url      text,
 
-    is_spam       boolean     not null,
-    severity      TicketSeverity,
-    title         text        not null,
-    description   text,
-    seen_at       bigint,
-    created_at    bigint,
-    updated_at    bigint
+    is_spam            boolean     not null,
+    severity           TicketSeverity,
+    title              text        not null,
+    description        text,
+    seen_at            bigint,
+    created_at         bigint,
+    updated_at         bigint
 );
 
 -- ticket indexes

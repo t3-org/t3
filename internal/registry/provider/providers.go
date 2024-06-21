@@ -464,8 +464,7 @@ func MarkdownProvider(r hexa.ServiceRegistry) error {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 
 	// create HTML renderer options
-	htmlFlags := html.CommonFlags | html.HrefTargetBlank
-	opts := html.RendererOptions{Flags: htmlFlags}
+	opts := html.RendererOptions{Flags: html.CommonFlags | html.HrefTargetBlank}
 
 	r.Register(registry.ServiceNameMarkdown, md.NewMarkdown(extensions, opts))
 	return nil

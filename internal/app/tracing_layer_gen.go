@@ -105,16 +105,16 @@ func (a *tracingLayer) UpsertTickets(ctx context.Context, in *input.BatchUpsertT
 
 	return r1, r2
 }
-func (a *tracingLayer) EditTicketUrlByKey(ctx context.Context, key string, val string) (string, error) {
+func (a *tracingLayer) TicketEditionUrl(ctx context.Context, key string, val string) (string, error) {
 	if ctx == nil {
-		return a.next.EditTicketUrlByKey(ctx, key, val)
+		return a.next.TicketEditionUrl(ctx, key, val)
 	}
 
 	var span trace.Span
-	ctx, span = a.t.Start(ctx, "EditTicketUrlByKey")
+	ctx, span = a.t.Start(ctx, "TicketEditionUrl")
 	defer span.End()
 
-	r1, r2 := a.next.EditTicketUrlByKey(ctx, key, val)
+	r1, r2 := a.next.TicketEditionUrl(ctx, key, val)
 
 	if apperr.IsInternalErr(r2) {
 		span.RecordError(r2)

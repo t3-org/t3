@@ -22,24 +22,16 @@ type GrafanaAlert struct {
 	Values       map[string]any    `json:"values"`
 }
 
-// ToPatchInputs converts the input to PatchTicket list.
-func (in *GrafanaWebhookPayload) ToPatchInputs() []*PatchTicket {
+// ToPatchTickets converts the input to PatchTicket list.
+func (in *GrafanaWebhookPayload) ToPatchTickets() []*PatchTicket {
 	res := make([]*PatchTicket, len(in.Alerts))
 	for idx, val := range in.Alerts {
-		res[idx] = val.ToPatchInput()
+		res[idx] = val.ToPatchTicket()
 	}
 	return res
 }
 
-func (in *GrafanaAlert) ToPatchInput() *PatchTicket {
-	if in.Status == "resolved" {
-		return &PatchTicket{
-			Fingerprint: in.FingerPrint,
-			IsFiring:    gutil.NewBool(false),
-			EndedAt:     gutil.NewInt64(in.EndsAt.UnixMilli()),
-		}
-	}
-
+func (in *GrafanaAlert) ToPatchTicket() *PatchTicket {
 	// Send the patch ticket input for firing state:
 	values := make(map[string]string)
 	for k, v := range in.Values {
@@ -50,18 +42,25 @@ func (in *GrafanaAlert) ToPatchInput() *PatchTicket {
 	// TODO: convert status available values to constant.
 	isSpam := gutil.NewBool(in.Status == "firing" && (in.Labels["alertname"] == "DatasourceError" || in.Labels["alertname"] == "DatasourceNoData"))
 
+	var endedAt *int64
+	if in.Status == "resolved" {
+		endedAt = gutil.NewInt64(in.EndsAt.UnixMilli())
+	}
+
 	return &PatchTicket{
-		Source:          gutil.NewString("grafana"),
-		Fingerprint:     in.FingerPrint,
-		Annotations:     in.Annotations,
-		SyncAnnotations: false,
-		IsFiring:        gutil.NewBool(in.Status == "firing"),
-		StartedAt:       gutil.NewInt64(in.StartsAt.UnixMilli()),
-		Values:          values,
-		GeneratorUrl:    &in.GeneratorURL,
-		IsSpam:          isSpam,
-		Title:           gutil.NewString(gutil.StringDefault(in.Labels["alertname"], "(no_title)")),
-		Labels:          in.Labels,
-		SyncLabels:      false,
+		IsFromTicketGenerator: true,
+		Source:                gutil.NewString("grafana"),
+		Fingerprint:           in.FingerPrint,
+		Annotations:           in.Annotations,
+		SyncAnnotations:       false,
+		IsFiring:              gutil.NewBool(in.Status == "firing"),
+		StartedAt:             gutil.NewInt64(in.StartsAt.UnixMilli()),
+		Values:                values,
+		GeneratorUrl:          &in.GeneratorURL,
+		IsSpam:                isSpam,
+		Title:                 gutil.NewString(gutil.StringDefault(in.Labels["alertname"], "(no_title)")),
+		Labels:                in.Labels,
+		SyncLabels:            false,
+		EndedAt:               endedAt,
 	}
 }
