@@ -40,7 +40,7 @@ func (in *GrafanaAlert) ToPatchTicket() *PatchTicket {
 
 	// Mark grafana nodata and datasourceError alerts as spam.
 	// TODO: convert status available values to constant.
-	isSpam := gutil.NewBool(in.Status == "firing" && (in.Labels["alertname"] == "DatasourceError" || in.Labels["alertname"] == "DatasourceNoData"))
+	isSpam := gutil.NewBool(in.Labels["alertname"] == "DatasourceError" || in.Labels["alertname"] == "DatasourceNoData")
 
 	var endedAt *int64
 	if in.Status == "resolved" {

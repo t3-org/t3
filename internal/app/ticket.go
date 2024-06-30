@@ -117,15 +117,12 @@ func (a *appCore) PatchTicketByLabel(ctx context.Context, key, val string, in *i
 }
 
 func (a *appCore) patchTicket(ctx context.Context, t *model.Ticket, in *input.PatchTicket) (*dto.Ticket, error) {
-	// TODO: In case the ticket is resolved and we get a firing input from the ticketGenerator,
-	// we'll dispatch the ticket again, but because we don't change the spam status, it just send
-	// a resolved ticket again, we can either do not send ticket in this situation or just create a
-	// copy of it with firing=true status and dispatch it instead of the real ticket.
 	isChangedFiring := in.IsFiring != nil && *in.IsFiring != t.IsFiring
 
 	if err := t.Patch(in); err != nil {
 		return nil, tracer.Trace(err)
 	}
+
 	if err := a.store.Ticket().Update(ctx, t); err != nil {
 		return nil, tracer.Trace(err)
 	}
