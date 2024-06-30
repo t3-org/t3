@@ -51,6 +51,7 @@ var (
 // --------------------------------
 // Webhook errors
 // --------------------------------
+
 var (
 	ErrInvalidWebhookType = hexa.NewError(http.StatusBadRequest, "t3.webhook.err")
 )

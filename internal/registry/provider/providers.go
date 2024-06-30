@@ -14,7 +14,6 @@ import (
 	"github.com/kamva/hexa"
 	hecho "github.com/kamva/hexa-echo"
 	"github.com/kamva/hexa-job/hsynq"
-	huner "github.com/kamva/hexa-tuner"
 	"github.com/kamva/hexa/hexatranslator"
 	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/hexa/hlog/logdriver"
@@ -125,9 +124,9 @@ func LoggerProvider(r hexa.ServiceRegistry) error {
 }
 
 func TranslatorProvider(r hexa.ServiceRegistry) error {
-	cfg := conf(r)
-
-	translator := huner.NewTranslator(cfg.I18nPath(), cfg.TranslateOptions())
+	// We do not want to support translation currently.
+	translator := hexatranslator.NewEmptyDriver()
+	//translator := huner.NewTranslator(cfg.I18nPath(), cfg.TranslateOptions())
 	hexatranslator.SetGlobal(translator)
 	r.Register(registry.ServiceNameTranslator, translator)
 	return nil

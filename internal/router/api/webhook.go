@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/kamva/hexa"
 	hecho "github.com/kamva/hexa-echo"
+	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/tracer"
 	"github.com/labstack/echo/v4"
 	"t3.org/t3/internal/app"
@@ -30,6 +31,8 @@ func (r *webhookResource) Handle(c echo.Context) error {
 }
 
 func (r *webhookResource) handleGrafanaWebhook(c echo.Context) error {
+	hlog.Info("Got a new Grafana webhook request")
+
 	var webhook input.GrafanaWebhookPayload
 	if err := c.Bind(&webhook); err != nil {
 		return tracer.Trace(err)

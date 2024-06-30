@@ -23,4 +23,10 @@ other = "Phone set successfully, we will sms the verification code for you"
 [success_set_email_and_send_verification_code]
 other = "Email set successfully, we will send the verification code to your email"
 
+[t3.webhook.handle.ok]
+other = "webhook request handled"
+
+[t3.ticket.query.ok]
+other = "Successful query"
+
 

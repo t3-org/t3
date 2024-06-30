@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/kamva/hexa"
+	"github.com/kamva/hexa/hlog"
 	"github.com/kamva/hexa/pagination"
 	"github.com/kamva/tracer"
 	"k8s.io/apimachinery/pkg/labels"
@@ -57,6 +58,7 @@ func (a *appCore) UpsertTickets(ctx context.Context, in *input.BatchUpsertTicket
 	// upsert
 	finalTickets := make([]*dto.Ticket, len(in.Tickets))
 	for i, val := range in.Tickets {
+		hlog.Info("Upsert a new ticket", hlog.Any("title", val.Title))
 		t := tickets[helpers.GlobalFingerprint(val.StartedAt, val.Fingerprint)]
 		if t == nil {
 			creationInput := input.CreateTicket(*val)
