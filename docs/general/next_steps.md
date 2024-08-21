@@ -1,42 +1,44 @@
 ### Features
-- [ ] Auto spam
-- [ ] Post-mortem
-- [ ] Auto label (will be used to set on-call user) as a plugin
-- [ ] Limited labels (to keep some label values in a white list)
+- [ ] Auto spam detection
+- [ ] Post-mortem generator
+- [ ] Auto label (will be used to set the on-call user) as a plugin
+- [ ] limited label values (to keep some label values in a white list) (e.g., the `team` label should be in the predefined list)
 - [ ] [Plugin system](./features/plugin_system.md) for channels(matrix,...) and sources(grafana,...).
-- [ ] Reporting dashboard
+- [ ] Reporting dashboard (currently we have the Grafana dashboard)
 - [ ] tickets graph and merge [feature.md](features/tickets_graph_and_merge_feature.md)
 - [ ] AI assistant
-- [ ] Auto-refresh the channels configs peridically (e.g., every 10 minutes and also provide an api endpoint to refresh it).
+- [ ] Hot reloading feature for the channels configs (e.g., every 10 minutes read 
+     from a git repo and also provide an API endpoint to refresh it).
 
 ### Improvements
 - [ ] better message rendering for channels
   - [x] set date format like this: `Feb 14, 2023, 1:42 PM` 
-  - [ ] get a local in the app config to localize dates in the channels messages
-- [x] Have a filter in the tickets-search page to view single ticket by id.
-- [x] sync tickets filter input with the url (to be able to share and open the tickets page with specific filters)
-- [x] In the edit link of matrix plugin, add filter to the url to show that ticket on the page.
-- [x] Add search-help doc on the search input.
-- [ ] Dispatch ticket changes to channels as async jobs.
+  - [ ] Localize dates in the messages
+- [x] Add an ID filter in the search page to view a ticket by its ID.
+- [x] Add filters of the search page to the page's URL on change (to be able to share and open the tickets page with specific filters)
+- [x] In the edit link of the matrix plugin, add the ticket's ID filter to the URL to let users see that specific ticket when they
+      open the edit page
+- [x] Add search-help doc to the search input.
+- [ ] Dispatch ticket changes to channels as an async job.
 
 ### spam feature
 
-- We'll detect if a ticket should be marked as spam or not by the following rule:
+- We'll detect if a ticket should be marked as spam by the following rule:
 
-- if the alert is because of `no_data` or `QueryError` on grafana.
+- if the alert is because of `no_data` or `QueryError` on Grafana.
 
-### Limited labels
-We should be able to limit some labels to have specific values.
+### pre-defined values for labels
+We should be able to limit the values of some labels.
 For example the `reason` label should be limited to e.g., `db,code,human,other-.*`.
-In this way we prevent from having invalid label values. e.g., `db` and `DB`...
-this will make our labelSets more clean and also provide better report in our report-system.
+In this way, we prevent invalid label values. e.g., `db` and `DB`...
+this will make our labelSets more clean and also provide better reports in our report system.
 
 
 ### Auto labels
-How should let users to set extra labels based on some other labels.
-e.g., If a new ticket has `team=orders`, add label `oncall=mehdi` to it.
-We'll use an API to be able to set the extra label's value too. in this way we'll have oncall feature too.
+How should we let users set extra labels based on some other labels?
+e.g., If a new ticket has `team=orders`, add the label `oncall=mehdi` to it.
+We'll use an API to set the extra label's value. in this way, we can provide the on-call feature as well.
 
 ### AI Assistant
-We can use AI to interpret the comments from users per ticket. in this way we can detect reason of firing some ticket
-and put it in the ticket's details.
+We can use AI to interpret the comments from users per ticket. in this way, we can detect the reason for a firing ticket
+and add it to the ticket's details.
